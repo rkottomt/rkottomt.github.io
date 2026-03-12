@@ -501,6 +501,148 @@ a:hover {
   border-color: var(--text-secondary);
 }
 
+.outside-note {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+.outside-note a {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.outside-note a:hover {
+  border-bottom-color: var(--text-primary);
+}
+
+.interest-tag-clickable {
+  cursor: pointer;
+  border-color: rgba(255,255,255,0.25);
+}
+
+.interest-tag-clickable:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  background: rgba(255,255,255,0.04);
+}
+
+/* ===================== MODAL ===================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  width: 380px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.open .modal-box {
+  transform: translateY(0) scale(1);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+
+.anime-list {
+  list-style: none;
+  counter-reset: anime;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.anime-list li {
+  counter-increment: anime;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: color 0.2s ease;
+}
+
+.anime-list li:hover {
+  color: var(--text-primary);
+}
+
+.anime-list li::before {
+  content: counter(anime, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  min-width: 22px;
+  opacity: 0.5;
+}
+
+.anime-list li:nth-child(-n+3)::before {
+  color: var(--text-primary);
+  opacity: 1;
+}
+
+.anime-list li:nth-child(-n+3) {
+  color: var(--text-primary);
+}
+
 /* ===================== COURSEWORK CAROUSEL ===================== */
 .coursework-section {
   margin-bottom: 64px;

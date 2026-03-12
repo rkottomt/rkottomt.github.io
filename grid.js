@@ -95,6 +95,33 @@
     pageWrapper.classList.remove('fade-out');
   });
 
+  // ==================== ANIME RANKING MODAL ====================
+  var animeTag = document.getElementById('animeTag');
+  var animeModal = document.getElementById('animeModal');
+  var animeModalClose = document.getElementById('animeModalClose');
+
+  if (animeTag && animeModal) {
+    animeTag.addEventListener('click', function () {
+      animeModal.classList.add('open');
+    });
+
+    animeModalClose.addEventListener('click', function () {
+      animeModal.classList.remove('open');
+    });
+
+    animeModal.addEventListener('click', function (e) {
+      if (e.target === animeModal) {
+        animeModal.classList.remove('open');
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && animeModal.classList.contains('open')) {
+        animeModal.classList.remove('open');
+      }
+    });
+  }
+
   // ==================== 3D COURSE CAROUSEL ====================
   var carousel = document.getElementById('courseCarousel');
   if (carousel) {
