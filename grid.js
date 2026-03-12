@@ -57,10 +57,10 @@
         var cx = rect.left + rect.width / 2;
         var cy = rect.top + rect.height / 2;
         var dist = Math.sqrt(Math.pow(e.clientX - cx, 2) + Math.pow(e.clientY - cy, 2));
-        var maxDist = 400;
+        var maxDist = 350;
         var norm = Math.min(dist / maxDist, 1);
-        var brightness = 1.35 - (norm * 0.65);
-        var borderAlpha = ((1 - norm) * 0.2).toFixed(3);
+        var brightness = 1.6 - (norm * 1.1);
+        var borderAlpha = ((1 - norm) * 0.35).toFixed(3);
         tile.style.filter = 'brightness(' + brightness.toFixed(2) + ')';
         tile.style.borderColor = 'rgba(255,255,255,' + borderAlpha + ')';
       });
@@ -68,7 +68,7 @@
 
     tileGrid.addEventListener('mouseleave', function () {
       tiles.forEach(function (tile) {
-        tile.style.filter = 'brightness(0.7)';
+        tile.style.filter = 'brightness(0.5)';
         tile.style.borderColor = '';
       });
     });
