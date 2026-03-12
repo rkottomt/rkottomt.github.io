@@ -410,10 +410,9 @@ a:hover {
 }
 
 .currently-list li .now-icon {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-secondary);
+  font-size: 0.9rem;
   flex-shrink: 0;
+  filter: grayscale(1) brightness(1.5);
 }
 
 .timeline {
