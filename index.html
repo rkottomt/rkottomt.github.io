@@ -202,15 +202,16 @@
             <div class="tile-front">
               <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <rect width="200" height="200" fill="#0a0a0a"/>
-                <path d="M0,20 C25,10 50,30 75,20 S125,10 150,20 S200,30 200,20" stroke="#fff" stroke-width="0.5" fill="none"/>
-                <path d="M0,40 C25,28 50,52 75,40 S125,28 150,40 S200,52 200,40" stroke="#fff" stroke-width="0.5" fill="none"/>
-                <path d="M0,60 C25,46 50,74 75,60 S125,46 150,60 S200,74 200,60" stroke="#fff" stroke-width="0.7" fill="none"/>
-                <path d="M0,80 C25,64 50,96 75,80 S125,64 150,80 S200,96 200,80" stroke="#fff" stroke-width="0.7" fill="none"/>
-                <path d="M0,100 C25,82 50,118 75,100 S125,82 150,100 S200,118 200,100" stroke="#fff" stroke-width="1" fill="none"/>
-                <path d="M0,120 C25,100 50,140 75,120 S125,100 150,120 S200,140 200,120" stroke="#fff" stroke-width="1" fill="none"/>
-                <path d="M0,140 C25,118 50,162 75,140 S125,118 150,140 S200,162 200,140" stroke="#fff" stroke-width="1.2" fill="none"/>
-                <path d="M0,160 C25,136 50,184 75,160 S125,136 150,160 S200,184 200,160" stroke="#fff" stroke-width="1.5" fill="none"/>
-                <path d="M0,180 C25,154 50,206 75,180 S125,154 150,180 S200,206 200,180" stroke="#fff" stroke-width="2" fill="none"/>
+                <g stroke="#fff" fill="none">
+                  <path d="M0,15 C17,15 17,5 33,5 C50,5 50,15 67,15 C83,15 83,5 100,5 C117,5 117,15 133,15 C150,15 150,5 167,5 C183,5 183,15 200,15" stroke-width="0.4"/>
+                  <path d="M0,35 C17,35 17,22 33,22 C50,22 50,35 67,35 C83,35 83,22 100,22 C117,22 117,35 133,35 C150,35 150,22 167,22 C183,22 183,35 200,35" stroke-width="0.5"/>
+                  <path d="M0,55 C17,55 17,39 33,39 C50,39 50,55 67,55 C83,55 83,39 100,39 C117,39 117,55 133,55 C150,55 150,39 167,39 C183,39 183,55 200,55" stroke-width="0.6"/>
+                  <path d="M0,78 C17,78 17,58 33,58 C50,58 50,78 67,78 C83,78 83,58 100,58 C117,58 117,78 133,78 C150,78 150,58 167,58 C183,58 183,78 200,78" stroke-width="0.7"/>
+                  <path d="M0,103 C17,103 17,78 33,78 C50,78 50,103 67,103 C83,103 83,78 100,78 C117,78 117,103 133,103 C150,103 150,78 167,78 C183,78 183,103 200,103" stroke-width="0.9"/>
+                  <path d="M0,130 C17,130 17,100 33,100 C50,100 50,130 67,130 C83,130 83,100 100,100 C117,100 117,130 133,130 C150,130 150,100 167,100 C183,100 183,130 200,130" stroke-width="1.1"/>
+                  <path d="M0,160 C17,160 17,124 33,124 C50,124 50,160 67,160 C83,160 83,124 100,124 C117,124 117,160 133,160 C150,160 150,124 167,124 C183,124 183,160 200,160" stroke-width="1.4"/>
+                  <path d="M0,195 C17,195 17,150 33,150 C50,150 50,195 67,195 C83,195 83,150 100,150 C117,150 117,195 133,195 C150,195 150,150 167,150 C183,150 183,195 200,195" stroke-width="1.8"/>
+                </g>
               </svg>
             </div>
             <div class="tile-back">
@@ -354,33 +355,28 @@
           </div>
         </div>
 
-        <!-- Tile 13: Checkerboard Varying -->
+        <!-- Tile 13: Concentric Diamonds -->
         <div class="tile" data-index="12" onclick="flipTile(this)">
           <div class="tile-inner">
             <div class="tile-front">
               <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <rect width="200" height="200" fill="#0a0a0a"/>
-                <g fill="rgba(255,255,255,0.12)">
-                  <rect x="0" y="0" width="25" height="25"/><rect x="50" y="0" width="25" height="25"/><rect x="100" y="0" width="25" height="25"/><rect x="150" y="0" width="25" height="25"/>
-                  <rect x="25" y="25" width="25" height="25"/><rect x="75" y="25" width="25" height="25"/><rect x="125" y="25" width="25" height="25"/><rect x="175" y="25" width="25" height="25"/>
-                  <rect x="0" y="50" width="25" height="25"/><rect x="50" y="50" width="25" height="25"/><rect x="100" y="50" width="25" height="25"/><rect x="150" y="50" width="25" height="25"/>
-                  <rect x="25" y="75" width="25" height="25"/><rect x="75" y="75" width="25" height="25"/><rect x="125" y="75" width="25" height="25"/><rect x="175" y="75" width="25" height="25"/>
-                </g>
-                <g fill="rgba(255,255,255,0.08)">
-                  <rect x="0" y="100" width="20" height="20"/><rect x="40" y="100" width="20" height="20"/><rect x="80" y="100" width="20" height="20"/><rect x="120" y="100" width="20" height="20"/><rect x="160" y="100" width="20" height="20"/>
-                  <rect x="20" y="120" width="20" height="20"/><rect x="60" y="120" width="20" height="20"/><rect x="100" y="120" width="20" height="20"/><rect x="140" y="120" width="20" height="20"/><rect x="180" y="120" width="20" height="20"/>
-                </g>
-                <g fill="rgba(255,255,255,0.05)">
-                  <rect x="0" y="140" width="14" height="14"/><rect x="28" y="140" width="14" height="14"/><rect x="56" y="140" width="14" height="14"/><rect x="84" y="140" width="14" height="14"/><rect x="112" y="140" width="14" height="14"/><rect x="140" y="140" width="14" height="14"/><rect x="168" y="140" width="14" height="14"/>
-                  <rect x="14" y="154" width="14" height="14"/><rect x="42" y="154" width="14" height="14"/><rect x="70" y="154" width="14" height="14"/><rect x="98" y="154" width="14" height="14"/><rect x="126" y="154" width="14" height="14"/><rect x="154" y="154" width="14" height="14"/><rect x="182" y="154" width="14" height="14"/>
-                  <rect x="0" y="168" width="14" height="14"/><rect x="28" y="168" width="14" height="14"/><rect x="56" y="168" width="14" height="14"/><rect x="84" y="168" width="14" height="14"/><rect x="112" y="168" width="14" height="14"/><rect x="140" y="168" width="14" height="14"/><rect x="168" y="168" width="14" height="14"/>
-                  <rect x="14" y="182" width="14" height="14"/><rect x="42" y="182" width="14" height="14"/><rect x="70" y="182" width="14" height="14"/><rect x="98" y="182" width="14" height="14"/><rect x="126" y="182" width="14" height="14"/><rect x="154" y="182" width="14" height="14"/><rect x="182" y="182" width="14" height="14"/>
+                <g stroke="#fff" fill="none">
+                  <polygon points="100,10 190,100 100,190 10,100" stroke-width="1.5"/>
+                  <polygon points="100,28 172,100 100,172 28,100" stroke-width="1.2"/>
+                  <polygon points="100,46 154,100 100,154 46,100" stroke-width="1"/>
+                  <polygon points="100,60 140,100 100,140 60,100" stroke-width="0.8"/>
+                  <polygon points="100,72 128,100 100,128 72,100" stroke-width="0.6"/>
+                  <polygon points="100,82 118,100 100,118 82,100" stroke-width="0.5"/>
+                  <polygon points="100,90 110,100 100,110 90,100" stroke-width="0.4"/>
+                  <line x1="100" y1="0" x2="100" y2="200" stroke-width="0.3"/>
+                  <line x1="0" y1="100" x2="200" y2="100" stroke-width="0.3"/>
                 </g>
               </svg>
             </div>
             <div class="tile-back">
               <span class="tile-label">Pattern 13</span>
-              <span class="tile-desc">variable checker</span>
+              <span class="tile-desc">concentric diamonds</span>
             </div>
           </div>
         </div>
