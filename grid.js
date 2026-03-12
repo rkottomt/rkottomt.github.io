@@ -31,8 +31,8 @@
   });
 
   function animateCursor() {
-    dotX += (cursorX - dotX) * 0.15;
-    dotY += (cursorY - dotY) * 0.15;
+    dotX += (cursorX - dotX) * 0.45;
+    dotY += (cursorY - dotY) * 0.45;
     cursorDot.style.transform = 'translate(' + dotX + 'px, ' + dotY + 'px)';
     requestAnimationFrame(animateCursor);
   }
