@@ -132,6 +132,12 @@ a:hover {
   line-height: 1.2;
   letter-spacing: -0.02em;
   margin-bottom: 6px;
+  display: block;
+  color: var(--text-primary);
+}
+
+.sidebar a.name:hover {
+  opacity: 0.7;
 }
 
 .sidebar .subtitle {
@@ -403,8 +409,11 @@ a:hover {
   gap: 10px;
 }
 
-.currently-list li span.emoji {
-  font-size: 0.9rem;
+.currently-list li .now-icon {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  flex-shrink: 0;
 }
 
 .timeline {
