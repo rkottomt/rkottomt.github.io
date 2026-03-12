@@ -95,6 +95,36 @@
     pageWrapper.classList.remove('fade-out');
   });
 
+  // ==================== INTEREST TAG EXPAND/COLLAPSE ====================
+  var tagPairs = [
+    { tag: 'pokerTag', detail: 'pokerDetail' },
+    { tag: 'nbaTag', detail: 'nbaDetail' },
+    { tag: 'shoesTag', detail: 'shoesDetail' },
+    { tag: 'musicTag', detail: 'musicDetail' },
+    { tag: 'foodTag', detail: 'foodDetail' }
+  ];
+
+  tagPairs.forEach(function (pair) {
+    var tag = document.getElementById(pair.tag);
+    var detail = document.getElementById(pair.detail);
+    if (tag && detail) {
+      tag.addEventListener('click', function () {
+        var isOpen = detail.classList.contains('visible');
+        // Close all others
+        tagPairs.forEach(function (p) {
+          var d = document.getElementById(p.detail);
+          var t = document.getElementById(p.tag);
+          if (d) d.classList.remove('visible');
+          if (t) t.classList.remove('active');
+        });
+        if (!isOpen) {
+          detail.classList.add('visible');
+          tag.classList.add('active');
+        }
+      });
+    }
+  });
+
   // ==================== ANIME RANKING MODAL ====================
   var animeTag = document.getElementById('animeTag');
   var animeModal = document.getElementById('animeModal');

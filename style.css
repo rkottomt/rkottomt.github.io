@@ -501,32 +501,43 @@ a:hover {
   border-color: var(--text-secondary);
 }
 
-.outside-note {
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  margin-top: 14px;
-  line-height: 1.5;
-}
-
-.outside-note a {
-  color: var(--text-primary);
-  border-bottom: 1px solid var(--border);
-}
-
-.outside-note a:hover {
-  border-bottom-color: var(--text-primary);
-}
-
 .interest-tag-clickable {
   cursor: pointer;
   border-color: rgba(255,255,255,0.25);
 }
 
-.interest-tag-clickable:hover {
+.interest-tag-clickable:hover,
+.interest-tag-clickable.active {
   color: var(--text-primary);
   border-color: var(--text-primary);
   background: rgba(255,255,255,0.04);
+}
+
+.tag-detail {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-top: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.3s ease;
+}
+
+.tag-detail.visible {
+  max-height: 120px;
+  opacity: 1;
+  margin-top: 14px;
+}
+
+.tag-detail a {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.tag-detail a:hover {
+  border-bottom-color: var(--text-primary);
 }
 
 /* ===================== MODAL ===================== */
