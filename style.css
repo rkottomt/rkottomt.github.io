@@ -465,7 +465,7 @@ a:hover {
   border-color: var(--text-secondary);
 }
 
-/* ===================== COURSEWORK ===================== */
+/* ===================== COURSEWORK CAROUSEL ===================== */
 .coursework-section {
   margin-bottom: 64px;
 }
@@ -478,153 +478,143 @@ a:hover {
   letter-spacing: -0.02em;
 }
 
-.semester-block {
-  margin-bottom: 40px;
+.carousel-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
 }
 
-.semester-header {
+.carousel-scene {
+  width: 100%;
+  height: 280px;
+  perspective: 1200px;
+  overflow: visible;
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  justify-content: center;
 }
 
-.semester-label {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  white-space: nowrap;
-}
-
-.semester-line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.semester-count {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-}
-
-.course-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.course-card {
+.carousel-ring {
+  width: 260px;
+  height: 220px;
   position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.carousel-card {
+  position: absolute;
+  width: 260px;
+  height: 220px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.carousel-card-inner {
+  width: 100%;
+  height: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: 22px 20px 20px;
-  overflow: hidden;
-  cursor: crosshair;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  opacity: 0;
-  animation: courseCardIn 0.5s ease forwards;
-}
-
-@keyframes courseCardIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.course-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  border-color: rgba(255,255,255,0.25);
-  box-shadow: 0 16px 48px rgba(255,255,255,0.06);
-}
-
-.course-card-accent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.15), transparent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.course-card:hover .course-card-accent {
-  opacity: 1;
-}
-
-.course-svg {
-  position: absolute;
-  bottom: -5px;
-  right: -5px;
-  width: 60px;
-  height: 60px;
-  opacity: 0.5;
-  transition: opacity 0.3s ease, transform 0.4s ease;
-  pointer-events: none;
-}
-
-.course-card:hover .course-svg {
-  opacity: 1;
-  transform: scale(1.15) rotate(5deg);
-}
-
-.course-card-content {
-  position: relative;
-  z-index: 1;
-}
-
-.course-card-top {
+  padding: 28px 26px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-.course-number {
+.carousel-card.active .carousel-card-inner {
+  border-color: rgba(255,255,255,0.2);
+  box-shadow:
+    0 0 40px rgba(255,255,255,0.04),
+    0 30px 80px rgba(0,0,0,0.6);
+}
+
+.carousel-semester {
   font-family: var(--font-mono);
-  font-size: 1.1rem;
+  font-size: 0.58rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.carousel-code {
+  font-family: var(--font-mono);
+  font-size: 2rem;
   font-weight: 500;
   color: var(--text-primary);
-  letter-spacing: 0.02em;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
-.course-dept {
+.carousel-name {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.carousel-dept {
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: 0.6rem;
   color: var(--text-secondary);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   border: 1px solid var(--border);
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 2px;
-  transition: all 0.3s ease;
+  align-self: flex-start;
 }
 
-.course-card:hover .course-dept {
-  color: var(--text-primary);
-  border-color: rgba(255,255,255,0.3);
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 28px;
 }
 
-.course-title {
-  font-family: var(--font-body);
-  font-size: 0.78rem;
+.carousel-btn {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid var(--border);
   color: var(--text-secondary);
-  line-height: 1.45;
-  transition: color 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  border-radius: 0;
 }
 
-.course-card:hover .course-title {
-  color: rgba(255,255,255,0.7);
+.carousel-btn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  box-shadow: 0 0 20px rgba(255,255,255,0.05);
+}
+
+.carousel-btn:active {
+  transform: scale(0.94);
+}
+
+.carousel-indicator {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 50px;
+  justify-content: center;
+}
+
+.carousel-current {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.carousel-divider {
+  opacity: 0.3;
 }
 
 .selected-work-section {
@@ -747,10 +737,6 @@ a:hover {
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 1024px) {
-  .course-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   :root {
     --sidebar-width: 0px;
   }
@@ -805,8 +791,18 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-  .course-cards {
-    grid-template-columns: 1fr;
+  .carousel-scene {
+    height: 240px;
+  }
+
+  .carousel-ring,
+  .carousel-card {
+    width: 220px;
+    height: 200px;
+  }
+
+  .carousel-code {
+    font-size: 1.6rem;
   }
 
   .sidebar {
