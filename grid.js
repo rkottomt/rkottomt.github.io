@@ -102,6 +102,7 @@
     var cards = carousel.querySelectorAll('.carousel-card');
     var total = cards.length;
     var currentIndex = 0;
+    var currentAngle = 0;
     var theta = 360 / total;
     var radius = Math.round((260 / 2) / Math.tan(Math.PI / total));
 
@@ -111,8 +112,7 @@
     });
 
     function rotateCarousel() {
-      var angle = -theta * currentIndex;
-      carousel.style.transform = 'translateZ(-' + radius + 'px) rotateY(' + angle + 'deg)';
+      carousel.style.transform = 'translateZ(-' + radius + 'px) rotateY(' + currentAngle + 'deg)';
       cards.forEach(function (card, i) {
         card.classList.toggle('active', i === currentIndex);
       });
@@ -130,28 +130,24 @@
     var prevBtn = document.getElementById('carouselPrev');
     var nextBtn = document.getElementById('carouselNext');
 
-    if (prevBtn) {
-      prevBtn.addEventListener('click', function () {
-        currentIndex = (currentIndex - 1 + total) % total;
-        rotateCarousel();
-      });
+    function goNext() {
+      currentIndex = (currentIndex + 1) % total;
+      currentAngle -= theta;
+      rotateCarousel();
     }
 
-    if (nextBtn) {
-      nextBtn.addEventListener('click', function () {
-        currentIndex = (currentIndex + 1) % total;
-        rotateCarousel();
-      });
+    function goPrev() {
+      currentIndex = (currentIndex - 1 + total) % total;
+      currentAngle += theta;
+      rotateCarousel();
     }
+
+    if (prevBtn) prevBtn.addEventListener('click', goPrev);
+    if (nextBtn) nextBtn.addEventListener('click', goNext);
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowLeft') {
-        currentIndex = (currentIndex - 1 + total) % total;
-        rotateCarousel();
-      } else if (e.key === 'ArrowRight') {
-        currentIndex = (currentIndex + 1) % total;
-        rotateCarousel();
-      }
+      if (e.key === 'ArrowLeft') goPrev();
+      else if (e.key === 'ArrowRight') goNext();
     });
   }
 })();

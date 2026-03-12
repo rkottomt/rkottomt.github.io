@@ -555,18 +555,6 @@ a:hover {
   line-height: 1.45;
 }
 
-.carousel-dept {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border: 1px solid var(--border);
-  padding: 3px 10px;
-  border-radius: 2px;
-  align-self: flex-start;
-}
-
 .carousel-controls {
   display: flex;
   align-items: center;
