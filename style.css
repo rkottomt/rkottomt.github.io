@@ -336,6 +336,34 @@ a:hover {
   letter-spacing: 0.04em;
 }
 
+/* ===================== PAGE ENTRANCE ANIMATIONS ===================== */
+.anim-in {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: animIn 0.55s ease forwards;
+}
+
+@keyframes animIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-in-divider {
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: dividerIn 0.5s ease forwards;
+}
+
+@keyframes dividerIn {
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
 /* ===================== ABOUT PAGE ===================== */
 .page-content {
   margin-left: var(--sidebar-width);
