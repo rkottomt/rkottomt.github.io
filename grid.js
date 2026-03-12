@@ -52,25 +52,24 @@
 
   if (tileGrid) {
     tileGrid.addEventListener('mousemove', function (e) {
-      var gridRect = tileGrid.getBoundingClientRect();
-
       tiles.forEach(function (tile) {
         var rect = tile.getBoundingClientRect();
-        var tileCenterX = rect.left + rect.width / 2;
-        var tileCenterY = rect.top + rect.height / 2;
-        var dx = e.clientX - tileCenterX;
-        var dy = e.clientY - tileCenterY;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        var maxDist = Math.max(gridRect.width, gridRect.height) * 0.5;
+        var cx = rect.left + rect.width / 2;
+        var cy = rect.top + rect.height / 2;
+        var dist = Math.sqrt(Math.pow(e.clientX - cx, 2) + Math.pow(e.clientY - cy, 2));
+        var maxDist = 400;
         var norm = Math.min(dist / maxDist, 1);
-        var brightness = 1.2 - (norm * 0.5);
+        var brightness = 1.35 - (norm * 0.65);
+        var borderAlpha = ((1 - norm) * 0.2).toFixed(3);
         tile.style.filter = 'brightness(' + brightness.toFixed(2) + ')';
+        tile.style.borderColor = 'rgba(255,255,255,' + borderAlpha + ')';
       });
     });
 
     tileGrid.addEventListener('mouseleave', function () {
       tiles.forEach(function (tile) {
-        tile.style.filter = 'brightness(0.85)';
+        tile.style.filter = 'brightness(0.7)';
+        tile.style.borderColor = '';
       });
     });
   }
