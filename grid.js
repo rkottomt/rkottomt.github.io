@@ -568,23 +568,6 @@
 
   // ==================== SCROLL-DRIVEN 3D EFFECTS ====================
 
-  // --- Landing page: subtle grid tilt on scroll ---
-  var gridWrapper = document.querySelector('.tile-grid-wrapper');
-  if (gridWrapper && tileGrid) {
-    gridWrapper.style.perspective = '1200px';
-    tileGrid.style.transformStyle = 'preserve-3d';
-    tileGrid.style.willChange = 'transform';
-    window.addEventListener('scroll', function () {
-      var scrollY = window.scrollY || window.pageYOffset;
-      var maxScroll = document.body.scrollHeight - window.innerHeight;
-      if (maxScroll <= 0) return;
-      var t = Math.min(scrollY / Math.min(maxScroll, 600), 1);
-      var rotX = t * 4;
-      var translateZ = t * -30;
-      tileGrid.style.transform = 'rotateX(' + rotX + 'deg) translateZ(' + translateZ + 'px)';
-    }, { passive: true });
-  }
-
   // --- About page: parallax depth layers ---
   var parallaxEls = document.querySelectorAll('[data-parallax]');
   if (parallaxEls.length > 0) {
