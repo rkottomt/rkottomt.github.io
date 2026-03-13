@@ -1,41 +1,319 @@
 (function () {
   'use strict';
 
-  // ==================== SCATTERED TILE ENTRANCE ====================
+  // ==================== 5-PHASE TILE ENTRANCE ANIMATION ====================
   var tiles = document.querySelectorAll('.tile');
   var cols = 4;
+  var tileGrid = document.getElementById('tileGrid');
+  var canvas = document.getElementById('animCanvas');
+  var progressFill = document.getElementById('animProgress');
+  var replayBtn = document.getElementById('animReplay');
 
-  if (tiles.length > 0 && document.getElementById('tileGrid')) {
-    tiles.forEach(function (tile) {
-      var randX = (Math.random() - 0.5) * 600;
-      var randY = (Math.random() - 0.5) * 600;
-      var randRot = (Math.random() - 0.5) * 120;
-      var randScale = 0.1 + Math.random() * 0.3;
-      tile.classList.add('tile-scattered');
-      tile.style.transform = 'scale(' + randScale + ') rotate(' + randRot + 'deg) translate(' + randX + 'px, ' + randY + 'px)';
-      tile.style.opacity = '0';
+  function runTileAnimation() {
+    if (!canvas || !tileGrid || tiles.length === 0) return;
+
+    tiles.forEach(function (t) {
+      t.classList.remove('tile-show', 'tile-ready', 'tile-glow');
+      t.style.opacity = '0';
+      t.style.transform = 'scale(0.7) translateY(10px)';
     });
 
-    setTimeout(function () {
-      tiles.forEach(function (tile, i) {
-        var row = Math.floor(i / cols);
-        var col = i % cols;
-        var diag = row + col;
-        var delay = diag * 80 + Math.random() * 40;
+    if (replayBtn) { replayBtn.classList.remove('visible'); }
 
-        setTimeout(function () {
-          tile.classList.remove('tile-scattered');
-          tile.style.transform = '';
-          tile.style.opacity = '';
-          tile.classList.add('tile-entering');
-        }, delay);
+    var wrapper = canvas.parentElement;
+    var W = wrapper.offsetWidth;
+    var H = wrapper.offsetHeight;
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        setTimeout(function () {
-          tile.classList.remove('tile-entering');
-          tile.classList.add('tile-ready');
-        }, delay + 1000);
+    var cx = W / 2;
+    var cy = H / 2;
+    var DURATION = 7000;
+
+    var tileTargets = [];
+    tiles.forEach(function (t) {
+      var r = t.getBoundingClientRect();
+      var wr = wrapper.getBoundingClientRect();
+      tileTargets.push({
+        x: r.left - wr.left + r.width / 2,
+        y: r.top - wr.top + r.height / 2,
+        w: r.width,
+        h: r.height
       });
-    }, 200);
+    });
+
+    var particles = [];
+    for (var i = 0; i < 16; i++) {
+      var angle = (i / 16) * Math.PI * 2;
+      var hue = 200 + (i / 16) * 80;
+      particles.push({
+        idx: i,
+        angle: angle,
+        orbitR: 80 + (i % 4) * 30,
+        orbitSpeed: (i % 2 === 0 ? 1 : -1) * (0.8 + Math.random() * 0.6),
+        hue: hue,
+        x: cx, y: cy,
+        snapX: 0, snapY: 0,
+        trail: [],
+        size: 3 + Math.random() * 2
+      });
+    }
+
+    var shockwaves = [];
+    var animId = null;
+    var startTime = 0;
+
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInOutCubic(t) { return t < 0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+
+    function draw(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var elapsed = timestamp - startTime;
+      var progress = Math.min(elapsed / DURATION, 1);
+      if (progressFill) progressFill.style.width = (progress * 100) + '%';
+
+      ctx.clearRect(0, 0, W, H);
+
+      // PHASE 1: Emergence (0–700ms)
+      if (elapsed < 700) {
+        var t1 = elapsed / 700;
+        var e1 = easeOutCubic(t1);
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          var dist = p.orbitR * e1;
+          p.x = cx + Math.cos(p.angle) * dist;
+          p.y = cy + Math.sin(p.angle) * dist;
+          var s = p.size * e1;
+          var alpha = e1;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, s + 4, 0, Math.PI * 2);
+          ctx.fillStyle = 'hsla(' + p.hue + ',70%,65%,' + (alpha * 0.15) + ')';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, s, 0, Math.PI * 2);
+          ctx.fillStyle = 'hsla(' + p.hue + ',70%,75%,' + alpha + ')';
+          ctx.fill();
+          p.trail = [{x: p.x, y: p.y}];
+        }
+      }
+
+      // PHASE 2: Constellation Orbit (700–2800ms)
+      else if (elapsed < 2800) {
+        var t2 = (elapsed - 700) / 2100;
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          var a = p.angle + t2 * Math.PI * 2 * p.orbitSpeed;
+          var wobble = Math.sin(t2 * Math.PI * 6 + i) * 15;
+          p.x = cx + Math.cos(a) * (p.orbitR + wobble);
+          p.y = cy + Math.sin(a) * (p.orbitR + wobble);
+          p.trail.push({x: p.x, y: p.y});
+          if (p.trail.length > 12) p.trail.shift();
+          p.snapX = p.x;
+          p.snapY = p.y;
+        }
+        // Constellation lines
+        for (var i = 0; i < particles.length; i++) {
+          for (var j = i + 1; j < particles.length; j++) {
+            var dx = particles[i].x - particles[j].x;
+            var dy = particles[i].y - particles[j].y;
+            var dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 140) {
+              var pulse = 0.08 + Math.sin(t2 * Math.PI * 8 + i + j) * 0.04;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = 'rgba(150,200,255,' + pulse + ')';
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        // Draw trails + particles
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          if (p.trail.length > 1) {
+            for (var k = 1; k < p.trail.length; k++) {
+              var ta = (k / p.trail.length) * 0.3;
+              ctx.beginPath();
+              ctx.moveTo(p.trail[k-1].x, p.trail[k-1].y);
+              ctx.lineTo(p.trail[k].x, p.trail[k].y);
+              ctx.strokeStyle = 'hsla(' + p.hue + ',70%,65%,' + ta + ')';
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size + 4, 0, Math.PI * 2);
+          ctx.fillStyle = 'hsla(' + p.hue + ',70%,65%,0.12)';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = 'hsla(' + p.hue + ',70%,75%,1)';
+          ctx.fill();
+        }
+      }
+
+      // PHASE 3: Magnetic Convergence (2800–4400ms)
+      else if (elapsed < 4400) {
+        var t3 = (elapsed - 2800) / 1600;
+        var e3 = easeInOutCubic(t3);
+        // Tile slot glow
+        for (var i = 0; i < tileTargets.length; i++) {
+          var tg = tileTargets[i];
+          var glowPulse = 0.08 + Math.sin(t3 * Math.PI * 4 + i) * 0.04;
+          ctx.strokeStyle = 'rgba(100,180,255,' + glowPulse + ')';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(tg.x - tg.w/2, tg.y - tg.h/2, tg.w, tg.h);
+        }
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          var tg = tileTargets[p.idx];
+          p.x = p.snapX + (tg.x - p.snapX) * e3;
+          p.y = p.snapY + (tg.y - p.snapY) * e3;
+          // Convergence trail
+          if (e3 > 0.1) {
+            var trailLen = 30 * (1 - e3);
+            var dx = tg.x - p.snapX;
+            var dy = tg.y - p.snapY;
+            var mag = Math.sqrt(dx*dx + dy*dy) || 1;
+            var tx = p.x - (dx/mag) * trailLen;
+            var ty = p.y - (dy/mag) * trailLen;
+            var grad = ctx.createLinearGradient(tx, ty, p.x, p.y);
+            grad.addColorStop(0, 'hsla(' + p.hue + ',70%,65%,0)');
+            grad.addColorStop(1, 'hsla(' + p.hue + ',70%,65%,0.4)');
+            ctx.beginPath();
+            ctx.moveTo(tx, ty);
+            ctx.lineTo(p.x, p.y);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * (1 + (1-e3)*0.5), 0, Math.PI * 2);
+          ctx.fillStyle = 'hsla(' + p.hue + ',70%,75%,1)';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * 2 + 6*(1-e3), 0, Math.PI * 2);
+          ctx.fillStyle = 'hsla(' + p.hue + ',70%,65%,' + (0.1 + 0.1*(1-e3)) + ')';
+          ctx.fill();
+        }
+        if (t3 > 0.85) {
+          tiles.forEach(function (t) { t.classList.add('tile-glow'); });
+        }
+      }
+
+      // PHASE 4: Impact + Tile Reveal (4400–5400ms)
+      else if (elapsed < 5400) {
+        var t4 = (elapsed - 4400) / 1000;
+        // Shockwaves
+        if (t4 < 0.05 && shockwaves.length === 0) {
+          for (var i = 0; i < particles.length; i++) {
+            var tg = tileTargets[i];
+            shockwaves.push({ x: tg.x, y: tg.y, r: 0, maxR: 60, hue: particles[i].hue, born: elapsed });
+            shockwaves.push({ x: tg.x, y: tg.y, r: 0, maxR: 40, hue: particles[i].hue + 20, born: elapsed + 80 });
+          }
+          // Reveal tiles in diagonal wave
+          tiles.forEach(function (tile, idx) {
+            var row = Math.floor(idx / cols);
+            var col = idx % cols;
+            var delay = (col + row) * 60;
+            setTimeout(function () {
+              tile.classList.remove('tile-glow');
+              tile.style.transform = '';
+              tile.style.opacity = '';
+              tile.classList.add('tile-show');
+            }, delay);
+            setTimeout(function () {
+              tile.classList.remove('tile-show');
+              tile.classList.add('tile-ready');
+            }, delay + 600);
+          });
+        }
+        // Draw shockwaves
+        var canvasAlpha = 1 - easeOutCubic(t4);
+        ctx.globalAlpha = canvasAlpha;
+        for (var s = shockwaves.length - 1; s >= 0; s--) {
+          var sw = shockwaves[s];
+          var age = (elapsed - sw.born) / 500;
+          if (age < 0) continue;
+          if (age > 1) { shockwaves.splice(s, 1); continue; }
+          var r = sw.maxR * easeOutCubic(age);
+          var a = 0.4 * (1 - age);
+          ctx.beginPath();
+          ctx.arc(sw.x, sw.y, r, 0, Math.PI * 2);
+          ctx.strokeStyle = 'hsla(' + sw.hue + ',70%,70%,' + a + ')';
+          ctx.lineWidth = 1.5 * (1 - age);
+          ctx.stroke();
+        }
+        // Fading particles
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          var tg = tileTargets[p.idx];
+          var fadeAlpha = 1 - easeOutCubic(t4);
+          ctx.beginPath();
+          ctx.arc(tg.x, tg.y, p.size * (1 - t4*0.5), 0, Math.PI * 2);
+          ctx.fillStyle = 'hsla(' + p.hue + ',70%,75%,' + fadeAlpha + ')';
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // PHASE 5: Settle (5400–7000ms)
+      else if (elapsed < DURATION) {
+        var t5 = (elapsed - 5400) / 1600;
+        var fadeOut = 1 - easeOutCubic(t5);
+        if (fadeOut > 0.01) {
+          ctx.globalAlpha = fadeOut * 0.3;
+          for (var i = 0; i < particles.length; i++) {
+            var tg = tileTargets[particles[i].idx];
+            ctx.beginPath();
+            ctx.arc(tg.x, tg.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'hsla(' + particles[i].hue + ',70%,75%,0.5)';
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      // Done
+      else {
+        ctx.clearRect(0, 0, W, H);
+        canvas.style.opacity = '0';
+        if (progressFill) progressFill.style.width = '100%';
+        if (replayBtn) replayBtn.classList.add('visible');
+        tiles.forEach(function (t) {
+          if (!t.classList.contains('tile-ready')) {
+            t.classList.remove('tile-show', 'tile-glow');
+            t.style.transform = '';
+            t.style.opacity = '';
+            t.classList.add('tile-ready');
+          }
+        });
+        return;
+      }
+
+      animId = requestAnimationFrame(draw);
+    }
+
+    canvas.style.opacity = '1';
+    if (animId) cancelAnimationFrame(animId);
+    startTime = 0;
+    shockwaves = [];
+    animId = requestAnimationFrame(draw);
+  }
+
+  if (canvas && tileGrid) {
+    runTileAnimation();
+    if (replayBtn) {
+      replayBtn.addEventListener('click', function () {
+        runTileAnimation();
+      });
+    }
   }
 
   // ==================== TILE FLIP ====================
