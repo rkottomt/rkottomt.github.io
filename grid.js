@@ -1,11 +1,36 @@
 (function () {
   'use strict';
 
-  // ==================== STAGGERED TILE ENTRY ====================
-  const tiles = document.querySelectorAll('.tile');
+  // ==================== SCATTERED TILE ENTRANCE ====================
+  var tiles = document.querySelectorAll('.tile');
+  var cols = 4;
+
   tiles.forEach(function (tile, i) {
-    tile.style.animationDelay = (i * 30) + 'ms';
+    var randX = (Math.random() - 0.5) * 600;
+    var randY = (Math.random() - 0.5) * 600;
+    var randRot = (Math.random() - 0.5) * 120;
+    var randScale = 0.1 + Math.random() * 0.3;
+    tile.style.transform = 'scale(' + randScale + ') rotate(' + randRot + 'deg) translate(' + randX + 'px, ' + randY + 'px)';
+    tile.style.opacity = '0';
   });
+
+  setTimeout(function () {
+    tiles.forEach(function (tile, i) {
+      var row = Math.floor(i / cols);
+      var col = i % cols;
+      var diag = row + col;
+      var delay = diag * 80 + Math.random() * 40;
+
+      setTimeout(function () {
+        tile.classList.add('tile-entering');
+      }, delay);
+
+      setTimeout(function () {
+        tile.classList.remove('tile-entering');
+        tile.classList.add('tile-ready');
+      }, delay + 950);
+    });
+  }, 200);
 
   // ==================== TILE FLIP ====================
   window.flipTile = function (tile) {
