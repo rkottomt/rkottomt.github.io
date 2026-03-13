@@ -50,13 +50,13 @@
     var particles = [];
     for (var i = 0; i < 16; i++) {
       var angle = (i / 16) * Math.PI * 2;
-      var hue = 200 + (i / 16) * 80;
+      var brightness = Math.round(80 + (i / 15) * 175);
       particles.push({
         idx: i,
         angle: angle,
         orbitR: 80 + (i % 4) * 30,
         orbitSpeed: (i % 2 === 0 ? 1 : -1) * (0.8 + Math.random() * 0.6),
-        hue: hue,
+        bri: brightness,
         x: cx, y: cy,
         snapX: 0, snapY: 0,
         trail: [],
@@ -88,17 +88,37 @@
           var dist = p.orbitR * e1;
           p.x = cx + Math.cos(p.angle) * dist;
           p.y = cy + Math.sin(p.angle) * dist;
+          p.trail = [{x: p.x, y: p.y}];
+        }
+        // Neural network lines during emergence
+        for (var i = 0; i < particles.length; i++) {
+          for (var j = i + 1; j < particles.length; j++) {
+            var dx = particles[i].x - particles[j].x;
+            var dy = particles[i].y - particles[j].y;
+            var dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 180) {
+              var lineAlpha = e1 * 0.12 * (1 - dist / 180);
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = 'rgba(255,255,255,' + lineAlpha + ')';
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
           var s = p.size * e1;
           var alpha = e1;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, s + 4, 0, Math.PI * 2);
-          ctx.fillStyle = 'hsla(' + p.hue + ',70%,65%,' + (alpha * 0.15) + ')';
+          ctx.arc(p.x, p.y, s + 5, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',' + (alpha * 0.12) + ')';
           ctx.fill();
           ctx.beginPath();
           ctx.arc(p.x, p.y, s, 0, Math.PI * 2);
-          ctx.fillStyle = 'hsla(' + p.hue + ',70%,75%,' + alpha + ')';
+          ctx.fillStyle = 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',' + alpha + ')';
           ctx.fill();
-          p.trail = [{x: p.x, y: p.y}];
         }
       }
 
@@ -116,20 +136,30 @@
           p.snapX = p.x;
           p.snapY = p.y;
         }
-        // Constellation lines
+        // Neural network constellation lines
         for (var i = 0; i < particles.length; i++) {
           for (var j = i + 1; j < particles.length; j++) {
             var dx = particles[i].x - particles[j].x;
             var dy = particles[i].y - particles[j].y;
             var dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < 140) {
-              var pulse = 0.08 + Math.sin(t2 * Math.PI * 8 + i + j) * 0.04;
+            if (dist < 160) {
+              var pulse = 0.1 + Math.sin(t2 * Math.PI * 8 + i + j) * 0.06;
+              var lineBri = Math.round((particles[i].bri + particles[j].bri) / 2);
               ctx.beginPath();
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.strokeStyle = 'rgba(150,200,255,' + pulse + ')';
-              ctx.lineWidth = 0.5;
+              ctx.strokeStyle = 'rgba(' + lineBri + ',' + lineBri + ',' + lineBri + ',' + pulse + ')';
+              ctx.lineWidth = 0.6;
               ctx.stroke();
+              // Small node dots at midpoints for neural-net feel
+              if (dist > 60) {
+                var mx = (particles[i].x + particles[j].x) / 2;
+                var my = (particles[i].y + particles[j].y) / 2;
+                ctx.beginPath();
+                ctx.arc(mx, my, 1, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255,255,255,' + (pulse * 0.4) + ')';
+                ctx.fill();
+              }
             }
           }
         }
@@ -138,22 +168,22 @@
           var p = particles[i];
           if (p.trail.length > 1) {
             for (var k = 1; k < p.trail.length; k++) {
-              var ta = (k / p.trail.length) * 0.3;
+              var ta = (k / p.trail.length) * 0.25;
               ctx.beginPath();
               ctx.moveTo(p.trail[k-1].x, p.trail[k-1].y);
               ctx.lineTo(p.trail[k].x, p.trail[k].y);
-              ctx.strokeStyle = 'hsla(' + p.hue + ',70%,65%,' + ta + ')';
+              ctx.strokeStyle = 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',' + ta + ')';
               ctx.lineWidth = 1;
               ctx.stroke();
             }
           }
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size + 4, 0, Math.PI * 2);
-          ctx.fillStyle = 'hsla(' + p.hue + ',70%,65%,0.12)';
+          ctx.arc(p.x, p.y, p.size + 5, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',0.1)';
           ctx.fill();
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = 'hsla(' + p.hue + ',70%,75%,1)';
+          ctx.fillStyle = 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',1)';
           ctx.fill();
         }
       }
@@ -165,27 +195,45 @@
         // Tile slot glow
         for (var i = 0; i < tileTargets.length; i++) {
           var tg = tileTargets[i];
-          var glowPulse = 0.08 + Math.sin(t3 * Math.PI * 4 + i) * 0.04;
-          ctx.strokeStyle = 'rgba(100,180,255,' + glowPulse + ')';
+          var glowPulse = 0.06 + Math.sin(t3 * Math.PI * 4 + i) * 0.04;
+          ctx.strokeStyle = 'rgba(255,255,255,' + glowPulse + ')';
           ctx.lineWidth = 1;
           ctx.strokeRect(tg.x - tg.w/2, tg.y - tg.h/2, tg.w, tg.h);
+        }
+        // Fading network lines between converging particles
+        if (e3 < 0.7) {
+          var lineAlpha = 0.08 * (1 - e3 / 0.7);
+          for (var i = 0; i < particles.length; i++) {
+            for (var j = i + 1; j < particles.length; j++) {
+              var dx = particles[i].x - particles[j].x;
+              var dy = particles[i].y - particles[j].y;
+              var dist = Math.sqrt(dx*dx + dy*dy);
+              if (dist < 200) {
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = 'rgba(200,200,200,' + (lineAlpha * (1 - dist/200)) + ')';
+                ctx.lineWidth = 0.4;
+                ctx.stroke();
+              }
+            }
+          }
         }
         for (var i = 0; i < particles.length; i++) {
           var p = particles[i];
           var tg = tileTargets[p.idx];
           p.x = p.snapX + (tg.x - p.snapX) * e3;
           p.y = p.snapY + (tg.y - p.snapY) * e3;
-          // Convergence trail
           if (e3 > 0.1) {
-            var trailLen = 30 * (1 - e3);
-            var dx = tg.x - p.snapX;
-            var dy = tg.y - p.snapY;
-            var mag = Math.sqrt(dx*dx + dy*dy) || 1;
-            var tx = p.x - (dx/mag) * trailLen;
-            var ty = p.y - (dy/mag) * trailLen;
+            var trailLen = 35 * (1 - e3);
+            var ddx = tg.x - p.snapX;
+            var ddy = tg.y - p.snapY;
+            var mag = Math.sqrt(ddx*ddx + ddy*ddy) || 1;
+            var tx = p.x - (ddx/mag) * trailLen;
+            var ty = p.y - (ddy/mag) * trailLen;
             var grad = ctx.createLinearGradient(tx, ty, p.x, p.y);
-            grad.addColorStop(0, 'hsla(' + p.hue + ',70%,65%,0)');
-            grad.addColorStop(1, 'hsla(' + p.hue + ',70%,65%,0.4)');
+            grad.addColorStop(0, 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',0)');
+            grad.addColorStop(1, 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',0.35)');
             ctx.beginPath();
             ctx.moveTo(tx, ty);
             ctx.lineTo(p.x, p.y);
@@ -195,11 +243,11 @@
           }
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size * (1 + (1-e3)*0.5), 0, Math.PI * 2);
-          ctx.fillStyle = 'hsla(' + p.hue + ',70%,75%,1)';
+          ctx.fillStyle = 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',1)';
           ctx.fill();
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size * 2 + 6*(1-e3), 0, Math.PI * 2);
-          ctx.fillStyle = 'hsla(' + p.hue + ',70%,65%,' + (0.1 + 0.1*(1-e3)) + ')';
+          ctx.fillStyle = 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',' + (0.08 + 0.08*(1-e3)) + ')';
           ctx.fill();
         }
         if (t3 > 0.85) {
@@ -214,8 +262,9 @@
         if (t4 < 0.05 && shockwaves.length === 0) {
           for (var i = 0; i < particles.length; i++) {
             var tg = tileTargets[i];
-            shockwaves.push({ x: tg.x, y: tg.y, r: 0, maxR: 60, hue: particles[i].hue, born: elapsed });
-            shockwaves.push({ x: tg.x, y: tg.y, r: 0, maxR: 40, hue: particles[i].hue + 20, born: elapsed + 80 });
+            var b = particles[i].bri;
+            shockwaves.push({ x: tg.x, y: tg.y, r: 0, maxR: 60, bri: b, born: elapsed });
+            shockwaves.push({ x: tg.x, y: tg.y, r: 0, maxR: 40, bri: Math.min(255, b + 30), born: elapsed + 80 });
           }
           // Reveal tiles in diagonal wave
           tiles.forEach(function (tile, idx) {
@@ -243,10 +292,10 @@
           if (age < 0) continue;
           if (age > 1) { shockwaves.splice(s, 1); continue; }
           var r = sw.maxR * easeOutCubic(age);
-          var a = 0.4 * (1 - age);
+          var a = 0.35 * (1 - age);
           ctx.beginPath();
           ctx.arc(sw.x, sw.y, r, 0, Math.PI * 2);
-          ctx.strokeStyle = 'hsla(' + sw.hue + ',70%,70%,' + a + ')';
+          ctx.strokeStyle = 'rgba(' + sw.bri + ',' + sw.bri + ',' + sw.bri + ',' + a + ')';
           ctx.lineWidth = 1.5 * (1 - age);
           ctx.stroke();
         }
@@ -257,7 +306,7 @@
           var fadeAlpha = 1 - easeOutCubic(t4);
           ctx.beginPath();
           ctx.arc(tg.x, tg.y, p.size * (1 - t4*0.5), 0, Math.PI * 2);
-          ctx.fillStyle = 'hsla(' + p.hue + ',70%,75%,' + fadeAlpha + ')';
+          ctx.fillStyle = 'rgba(' + p.bri + ',' + p.bri + ',' + p.bri + ',' + fadeAlpha + ')';
           ctx.fill();
         }
         ctx.globalAlpha = 1;
@@ -273,7 +322,8 @@
             var tg = tileTargets[particles[i].idx];
             ctx.beginPath();
             ctx.arc(tg.x, tg.y, 2, 0, Math.PI * 2);
-            ctx.fillStyle = 'hsla(' + particles[i].hue + ',70%,75%,0.5)';
+            var b = particles[i].bri;
+            ctx.fillStyle = 'rgba(' + b + ',' + b + ',' + b + ',0.5)';
             ctx.fill();
           }
           ctx.globalAlpha = 1;
