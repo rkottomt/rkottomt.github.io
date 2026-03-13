@@ -565,4 +565,79 @@
       else if (e.key === 'ArrowRight') goNext();
     });
   }
+
+  // ==================== SCROLL-DRIVEN 3D EFFECTS ====================
+
+  // --- Landing page: subtle grid tilt on scroll ---
+  var gridWrapper = document.querySelector('.tile-grid-wrapper');
+  if (gridWrapper && tileGrid) {
+    gridWrapper.style.perspective = '1200px';
+    tileGrid.style.transformStyle = 'preserve-3d';
+    tileGrid.style.willChange = 'transform';
+    window.addEventListener('scroll', function () {
+      var scrollY = window.scrollY || window.pageYOffset;
+      var maxScroll = document.body.scrollHeight - window.innerHeight;
+      if (maxScroll <= 0) return;
+      var t = Math.min(scrollY / Math.min(maxScroll, 600), 1);
+      var rotX = t * 4;
+      var translateZ = t * -30;
+      tileGrid.style.transform = 'rotateX(' + rotX + 'deg) translateZ(' + translateZ + 'px)';
+    }, { passive: true });
+  }
+
+  // --- About page: parallax depth layers ---
+  var parallaxEls = document.querySelectorAll('[data-parallax]');
+  if (parallaxEls.length > 0) {
+    window.addEventListener('scroll', function () {
+      var scrollY = window.scrollY || window.pageYOffset;
+      parallaxEls.forEach(function (el) {
+        var speed = parseFloat(el.getAttribute('data-parallax')) || 0;
+        var rect = el.getBoundingClientRect();
+        var center = rect.top + rect.height / 2;
+        var viewCenter = window.innerHeight / 2;
+        var offset = (center - viewCenter) * speed;
+        el.style.transform = 'translateY(' + offset + 'px)';
+      });
+    }, { passive: true });
+  }
+
+  // --- About page: 3D tilt on work cards ---
+  var workCards = document.querySelectorAll('.work-card');
+  workCards.forEach(function (card) {
+    card.style.transformStyle = 'preserve-3d';
+    card.style.willChange = 'transform';
+
+    card.addEventListener('mousemove', function (e) {
+      var rect = card.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width - 0.5;
+      var y = (e.clientY - rect.top) / rect.height - 0.5;
+      var rotY = x * 12;
+      var rotX = -y * 8;
+      card.style.transform = 'perspective(600px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) scale(1.02)';
+    });
+
+    card.addEventListener('mouseleave', function () {
+      card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale(1)';
+    });
+  });
+
+  // --- About page: scroll-driven reveal tilt for work cards ---
+  if (workCards.length > 0) {
+    function updateWorkCardScroll() {
+      workCards.forEach(function (card) {
+        var rect = card.getBoundingClientRect();
+        var viewH = window.innerHeight;
+        var center = rect.top + rect.height / 2;
+        var distFromCenter = (center - viewH / 2) / (viewH / 2);
+        var clamp = Math.max(-1, Math.min(1, distFromCenter));
+        if (!card.matches(':hover')) {
+          var tiltX = clamp * 6;
+          var tiltScale = 1 - Math.abs(clamp) * 0.03;
+          card.style.transform = 'perspective(600px) rotateX(' + tiltX + 'deg) scale(' + tiltScale + ')';
+        }
+      });
+    }
+    window.addEventListener('scroll', updateWorkCardScroll, { passive: true });
+    updateWorkCardScroll();
+  }
 })();
