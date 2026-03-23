@@ -1,0 +1,171 @@
+================================================================================
+CODING AGENT SESSION: Building rohitkottomtharayil.github.io
+Personal Portfolio Site — From Scratch to Fully Deployed
+================================================================================
+
+OVERVIEW
+--------
+Built a complete personal portfolio website for an ECE student at Carnegie Mellon
+University using plain HTML, CSS, and vanilla JavaScript — no frameworks, no build
+tools, deployable directly to GitHub Pages.
+
+The session covered the full lifecycle: initial build, iterative design refinement
+based on real-time user feedback, feature additions, bug fixes, and reversions.
+
+TECH STACK
+----------
+- HTML5, CSS3 (pure custom), Vanilla JavaScript
+- Google Fonts (Space Grotesk, Inter, JetBrains Mono)
+- Zero dependencies — no npm, no build step
+- Deployed via GitHub Pages
+
+================================================================================
+SESSION TIMELINE & KEY ACCOMPLISHMENTS
+================================================================================
+
+1. INITIAL BUILD
+   - Created complete site structure: index.html, about.html, resume.html,
+     style.css, grid.js, assets/
+   - Designed a strict black-and-white design system with custom scrollbar,
+     noise texture overlay, and crosshair cursor
+   - Built 16 unique inline SVG generative art tiles (concentric circles,
+     diagonal hatching, radial bursts, dot matrices, Mondrian grids, sine
+     waves, spirals, cross tiling, overlapping rectangles, triangle
+     subdivisions, arc segments, moiré patterns, diamonds, parallel curves,
+     voronoi polygons, noise segments)
+   - Fixed left sidebar with social links, consistent across all pages
+   - Responsive breakpoints: 4x4 grid → 3x3 tablet → 2x4 mobile
+
+2. ITERATIVE UI/UX REFINEMENTS (User Feedback Loop)
+   - Removed duplicate Resume link from sidebar
+   - Fixed cursor tracking speed (lerp → instant)
+   - Updated SVG patterns (fixed sine waves, replaced weak checkerboard)
+   - Changed tile back-face labels from generic to personal content
+   - Updated social links (LinkedIn, email, Beli)
+   - Added grayscale emoji filter for black-and-white aesthetic
+
+3. COURSEWORK SECTION EVOLUTION
+   - v1: Simple two-column grid (rejected)
+   - v2: Semester-grouped interactive cards with SVG decorations (rejected)
+   - v3: 3D rotating carousel with CSS perspective/rotateY/translateZ
+   - Fixed carousel wrap-around bug (cumulative angle tracking)
+   - Added cache-busting to force browser reload
+
+4. INTERACTIVE FEATURES
+   - Spotlight brightness ripple: mouse proximity controls tile brightness
+     via filter:brightness(), creating flashlight effect
+   - Custom cursor: 8px dot with lerp follow, expands to 24px ring on tiles
+   - Tile click-to-flip: CSS 3D transform with personal labels on back
+   - Page fade transitions on internal navigation
+   - Clickable name → home navigation on all pages
+   - "Outside the Lab" expandable tags (accordion pattern)
+   - Anime ranking modal (53-item list, triggered from "anime ↗" tag)
+
+5. 5-PHASE CANVAS PARTICLE ENTRANCE ANIMATION
+   The most complex feature — a 7-second choreographed animation:
+   
+   Phase 1 (0–0.7s): 16 grayscale particles bloom from center
+   Phase 2 (0.7–2.8s): Particles orbit with neural-network constellation lines
+   Phase 3 (2.8–4.4s): Tile slots glow, particles magnetically converge
+   Phase 4 (4.4–5.4s): Impact shockwaves, canvas fades, tiles spring in
+   Phase 5 (5.4–7s): Canvas fades to transparent, tiles settle
+   
+   - All particle physics driven by requestAnimationFrame with elapsed time
+   - Grayscale palette (rgb 80 to rgb 255) matching B&W aesthetic
+   - Neural network lines with midpoint nodes
+   - Progress bar + replay button
+   - Diagonal wave tile reveal (top-left to bottom-right)
+
+6. SCROLL-DRIVEN 3D EFFECTS
+   - Parallax depth layers on About page sections
+   - 3D tilt on Selected Work cards (mouse-driven rotateX/rotateY)
+   - Scroll-driven grid tilt (added then removed per user preference)
+   - Exploded wireframe view (added then reverted per user preference)
+
+7. CONTENT MANAGEMENT
+   - Integrated real course schedules from CMU SIO screenshots
+   - Added Senator Vin Gopal internship to experience timeline
+   - Personalized tile labels with interests, projects, experiences
+   - Food details with Beli link, music preferences, shoe collection,
+     NBA team preferences, anime ranking
+
+================================================================================
+COMMIT HISTORY (30+ commits on main)
+================================================================================
+
+f84e493 Revert "Add scroll-driven exploded wireframe view on About page"
+d7c6950 Add scroll-driven exploded wireframe view on About page
+03ab026 Add Senator Vin Gopal legislative tech internship to experience timeline
+148a36e Remove scroll-driven grid tilt on landing page
+b7c8408 Add scroll-driven 3D effects: grid tilt, parallax layers, work card tilt
+9873ac1 Switch particles to grayscale palette, add neural network lines
+5c0ee2c Add 5-phase canvas particle entrance animation for tile grid
+2759a5f Fix tile entrance: clear inline styles before transition starts
+0316ff3 Add scattered chaos-to-order tile entrance animation
+87cbf21 Make all Outside the Lab tags expandable with personal details
+8c2dcfd Remove Beli sidebar link, add food note + anime ranking modal
+8662080 Add staggered entrance animations to About page
+e11f19e Restore emojis with grayscale filter for black-and-white look
+3fc9a14 Make name clickable to home, replace emojis with monospace dashes
+fe38ac4 Remove homepage links from Selected Work cards
+d4c3edf Strengthen spotlight ripple: brighter near cursor, darker far away
+2214419 Update tile back-face descriptions with personal details
+bca8cf2 Enhance spotlight ripple effect and personalize tile back-face labels
+0ed7b94 Update LinkedIn and email links across all pages
+3ded49a Add cache-busting query strings to CSS and JS links
+79e78df Swap semester labels, remove 76-107/76-108, rename to Relevant Coursework
+da726da Remove department badges and fix carousel wrap-around spinning
+3b8b707 Replace coursework grid with 3D rotating carousel
+4bcbcb9 Redesign coursework section with semester-grouped interactive cards
+a90af4a Add coursework section to About page with all CMU courses
+d653f5c Fix sine wave curves and replace checkerboard with concentric diamonds
+aa73897 Speed up cursor tracking and change FPGA to circuits
+6f0e44b Remove duplicate Resume link from sidebar
+115345d Build personal portfolio site with generative tile grid
+
+================================================================================
+FILES CREATED
+================================================================================
+
+index.html    — Landing page: sidebar + 4×4 generative SVG tile grid + canvas animation
+about.html    — About page: bio, timeline, interests, coursework carousel, work cards
+resume.html   — Resume page: embedded PDF viewer + download button
+style.css     — Complete design system (~1100 lines)
+grid.js       — All interaction logic (~660 lines)
+assets/
+  favicon.ico — Custom favicon
+  resume.pdf  — Resume PDF
+README.md     — Deployment guide
+
+================================================================================
+NOTABLE TECHNICAL CHALLENGES SOLVED
+================================================================================
+
+1. CSS specificity conflict: Inline JS-set transforms blocked CSS class transitions.
+   Fixed by clearing inline styles before adding transition classes.
+
+2. Carousel wrap-around: Going from item 9→1 caused full 320° rotation instead
+   of one step. Fixed by tracking cumulative angle instead of absolute index.
+
+3. Browser caching: Users not seeing updates. Added ?v=N cache-busting query
+   strings to all CSS/JS references.
+
+4. Branch management: Changes made on feature branch while site deploys from main.
+   Had to rebase, cherry-pick, and push directly to main multiple times.
+
+5. Canvas particle animation: Coordinating 5 phases with different physics models
+   (orbital, magnetic convergence, shockwaves) all driven by a single
+   requestAnimationFrame loop with elapsed time branching.
+
+================================================================================
+DESIGN PHILOSOPHY
+================================================================================
+
+- Pure black, white, and grays — no color anywhere
+- Architectural, precise, generative art aesthetic
+- Engineering notebook meets design portfolio
+- Every SVG pattern unique — no two tiles alike
+- Smooth transitions everywhere (0.3s ease default)
+- Spring/bounce cubic-bezier for interactive elements
+- Film grain noise overlay at 3% opacity
+- Monospace accents for labels, tags, and technical elements
