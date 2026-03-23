@@ -623,43 +623,4 @@
     window.addEventListener('scroll', updateWorkCardScroll, { passive: true });
     updateWorkCardScroll();
   }
-
-  // ==================== EXPLODED VIEW SCROLL ANIMATION ====================
-  var explodedSection = document.getElementById('explodedSection');
-  var explodedStage = document.getElementById('explodedStage');
-  if (explodedSection && explodedStage) {
-    var expLayers = explodedStage.querySelectorAll('.exploded-layer');
-    var expLayerCount = expLayers.length;
-
-    window.addEventListener('scroll', function () {
-      var rect = explodedSection.getBoundingClientRect();
-      var sectionH = explodedSection.offsetHeight;
-      var viewH = window.innerHeight;
-      var scrollInSection = -rect.top;
-      var scrollRange = sectionH - viewH;
-      if (scrollRange <= 0) return;
-      var t = Math.max(0, Math.min(scrollInSection / scrollRange, 1));
-
-      var maxSpread = 70;
-      var rotateX = 15 + t * 5;
-      var rotateZ = -12 + t * 4;
-
-      explodedStage.style.transform = 'translateY(-50%) rotateX(' + rotateX + 'deg) rotateZ(' + rotateZ + 'deg)';
-
-      for (var i = 0; i < expLayerCount; i++) {
-        var layerIdx = parseInt(expLayers[i].getAttribute('data-layer'));
-        var centerOffset = layerIdx - (expLayerCount - 1) / 2;
-        var spread = centerOffset * maxSpread * t;
-        var layerOpacity = 0.4 + 0.6 * (1 - Math.abs(centerOffset) / (expLayerCount / 2) * t * 0.3);
-        expLayers[i].style.transform = 'translateZ(' + spread + 'px)';
-        expLayers[i].style.opacity = layerOpacity;
-
-        if (t > 0.15) {
-          expLayers[i].classList.add('spread');
-        } else {
-          expLayers[i].classList.remove('spread');
-        }
-      }
-    }, { passive: true });
-  }
 })();
