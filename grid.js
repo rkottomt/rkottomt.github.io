@@ -623,4 +623,94 @@
     window.addEventListener('scroll', updateWorkCardScroll, { passive: true });
     updateWorkCardScroll();
   }
+
+  // ==================== MAC SE ZOOM SCROLL ====================
+  var macStage = document.getElementById('macZoomStage');
+  var macFixed = document.getElementById('macZoomFixed');
+  var macImage = document.getElementById('macImage');
+  var macContent = document.getElementById('macScreenContent');
+  var macInner = document.getElementById('macScreenInner');
+
+  if (macStage && macFixed && macImage) {
+    var MAC_START_SCALE = 0.35;
+    var MAC_END_SCALE = 4.5;
+    // Screen rect as % of the Mac image (measured from the Macintosh SE photo)
+    // top ~13%, bottom ~38% from bottom, left ~14%, right ~14%
+    var SCREEN_TOP = 0.115;
+    var SCREEN_BOTTOM = 0.375;
+    var SCREEN_LEFT = 0.135;
+    var SCREEN_RIGHT = 0.135;
+    var zoomDone = false;
+
+    function updateMacZoom() {
+      if (zoomDone) return;
+      var stageRect = macStage.getBoundingClientRect();
+      var spacerH = macStage.querySelector('.mac-zoom-spacer').offsetHeight;
+      var scrolled = -stageRect.top;
+      var t = Math.max(0, Math.min(scrolled / (spacerH - window.innerHeight), 1));
+
+      var scale = MAC_START_SCALE + (MAC_END_SCALE - MAC_START_SCALE) * t;
+
+      // As Mac scales up, the clip-path must shrink (the screen occupies more of the viewport)
+      // At t=0: clip to small screen area. At t=1: clip-path opens to full viewport.
+      var imgH = macImage.offsetHeight * scale;
+      var imgW = macImage.offsetWidth * scale;
+      var vw = window.innerWidth - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width')) || 0);
+      var vh = window.innerHeight;
+
+      // Screen edges in viewport coordinates
+      var imgTop = (vh - imgH) / 2;
+      var imgLeft = (vw - imgW) / 2;
+      var screenTop = imgTop + imgH * SCREEN_TOP;
+      var screenLeft = imgLeft + imgW * SCREEN_LEFT;
+      var screenBottom = imgTop + imgH * (1 - SCREEN_BOTTOM);
+      var screenRight = imgLeft + imgW * (1 - SCREEN_RIGHT);
+
+      // Convert to inset percentages
+      var clipTop = Math.max(0, (screenTop / vh) * 100);
+      var clipRight = Math.max(0, ((vw - screenRight) / vw) * 100);
+      var clipBottom = Math.max(0, ((vh - screenBottom) / vh) * 100);
+      var clipLeft = Math.max(0, (screenLeft / vw) * 100);
+
+      // Content opacity: dim at start, full at end
+      var contentOpacity = 0.4 + t * 0.6;
+
+      macImage.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+      macContent.style.clipPath = 'inset(' + clipTop + '% ' + clipRight + '% ' + clipBottom + '% ' + clipLeft + '%)';
+      macInner.style.opacity = contentOpacity;
+      macImage.style.opacity = 1 - t * t;
+
+      if (t >= 1) {
+        zoomDone = true;
+        macFixed.classList.add('done');
+        macContent.style.clipPath = 'none';
+        macInner.style.opacity = '1';
+        macImage.style.display = 'none';
+        macStage.querySelector('.mac-zoom-spacer').style.display = 'none';
+      }
+    }
+
+    // Reset on scroll back up
+    function checkMacReset() {
+      if (!zoomDone) return;
+      var stageRect = macStage.getBoundingClientRect();
+      if (stageRect.top > 0) {
+        zoomDone = false;
+        macFixed.classList.remove('done');
+        macImage.style.display = '';
+        macStage.querySelector('.mac-zoom-spacer').style.display = '';
+        updateMacZoom();
+      }
+    }
+
+    window.addEventListener('scroll', function () {
+      if (!zoomDone) {
+        updateMacZoom();
+      } else {
+        checkMacReset();
+      }
+    }, { passive: true });
+
+    updateMacZoom();
+  }
 })();
