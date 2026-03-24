@@ -5,279 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About — Rohit Kottomtharayil</title>
   <link rel="icon" href="assets/favicon.ico">
-  <link rel="stylesheet" href="style.css?v=4">
-  <style>
-    /* ── Mac Zoom Transition ── */
-    #mac-zoom-section {
-      position: relative;
-      height: 500vh;
-      background: #000;
-    }
-
-    #mac-sticky {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      width: 100%;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000;
-    }
-
-    #mac-image-wrap {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform-origin: center center;
-      will-change: transform;
-    }
-
-    #mac-img {
-      position: absolute;
-      height: 90vh;
-      width: auto;
-      max-width: none;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      display: block;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    #screen-content-wrap {
-      position: absolute;
-      overflow: hidden;
-      border-radius: 4px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-      background: #0a0a0a;
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04);
-    }
-
-    #screen-content-wrap.visible {
-      pointer-events: auto;
-    }
-
-    #screen-content-wrap::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.08) 2px,
-        rgba(0,0,0,0.08) 4px
-      );
-      pointer-events: none;
-      z-index: 100;
-    }
-
-    #screen-content-wrap::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 40%, rgba(80,160,80,0.06) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 101;
-    }
-
-    #screen-inner {
-      width: 100%;
-      height: 100%;
-      overflow-y: auto;
-      overflow-x: hidden;
-      color: #c8d8c0;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 11px;
-      line-height: 1.6;
-      padding: 18px 20px 40px;
-      box-sizing: border-box;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(140,200,140,0.2) transparent;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    #screen-inner::-webkit-scrollbar { width: 4px; }
-    #screen-inner::-webkit-scrollbar-track { background: transparent; }
-    #screen-inner::-webkit-scrollbar-thumb { background: rgba(140,200,140,0.2); border-radius: 2px; }
-
-    .sc-header {
-      border-bottom: 1px solid rgba(140,200,140,0.2);
-      padding-bottom: 10px;
-      margin-bottom: 16px;
-    }
-
-    .sc-prompt {
-      color: rgba(140,200,140,0.5);
-      font-size: 9px;
-      letter-spacing: 0.08em;
-      margin-bottom: 4px;
-    }
-
-    .sc-name {
-      font-size: 15px;
-      font-weight: bold;
-      color: #d4e8cc;
-      letter-spacing: 0.02em;
-    }
-
-    .sc-tagline {
-      font-size: 9px;
-      color: rgba(140,200,140,0.55);
-      margin-top: 2px;
-      letter-spacing: 0.06em;
-    }
-
-    .sc-section { margin-bottom: 16px; }
-
-    .sc-label {
-      font-size: 8px;
-      letter-spacing: 0.14em;
-      color: rgba(140,200,140,0.45);
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      border-left: 2px solid rgba(140,200,140,0.3);
-      padding-left: 5px;
-    }
-
-    .sc-bio {
-      font-size: 10px;
-      color: #a8c8a0;
-      line-height: 1.7;
-    }
-
-    .sc-now-item {
-      font-size: 10px;
-      color: #a8c8a0;
-      margin-bottom: 3px;
-      display: flex;
-      gap: 6px;
-    }
-
-    .sc-now-bullet {
-      color: rgba(140,200,140,0.4);
-      flex-shrink: 0;
-    }
-
-    .sc-timeline-item {
-      margin-bottom: 8px;
-      padding-left: 10px;
-      border-left: 1px solid rgba(140,200,140,0.15);
-    }
-
-    .sc-timeline-title {
-      font-size: 10px;
-      color: #c0d8b8;
-      font-weight: bold;
-    }
-
-    .sc-timeline-sub {
-      font-size: 9px;
-      color: rgba(140,200,140,0.45);
-      margin-top: 1px;
-    }
-
-    .sc-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-
-    .sc-tag {
-      font-size: 9px;
-      padding: 2px 7px;
-      border: 1px solid rgba(140,200,140,0.2);
-      border-radius: 2px;
-      color: rgba(140,200,140,0.6);
-      letter-spacing: 0.04em;
-    }
-
-    .sc-tag-clickable {
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .sc-tag-clickable:hover {
-      background: rgba(140,200,140,0.1);
-      color: #c8e0c0;
-    }
-
-    .sc-detail {
-      display: none;
-      margin-top: 6px;
-      font-size: 9px;
-      color: rgba(140,200,140,0.5);
-      padding: 5px 8px;
-      border-left: 1px solid rgba(140,200,140,0.2);
-      line-height: 1.6;
-    }
-
-    .sc-detail.open { display: block; }
-
-    .sc-work-item {
-      margin-bottom: 10px;
-      padding: 8px 10px;
-      border: 1px solid rgba(140,200,140,0.1);
-      border-radius: 3px;
-      background: rgba(140,200,140,0.02);
-    }
-
-    .sc-work-title {
-      font-size: 10px;
-      color: #c8d8c0;
-      font-weight: bold;
-      margin-bottom: 3px;
-    }
-
-    .sc-work-desc {
-      font-size: 9px;
-      color: rgba(140,200,140,0.5);
-      line-height: 1.6;
-    }
-
-    .sc-cursor-blink {
-      display: inline-block;
-      width: 6px;
-      height: 10px;
-      background: rgba(140,200,140,0.7);
-      animation: blink 1s step-end infinite;
-      margin-left: 2px;
-      vertical-align: text-bottom;
-    }
-
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-    #mac-scroll-hint {
-      position: absolute;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255,255,255,0.3);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      font-family: 'Courier New', monospace;
-      text-transform: lowercase;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      pointer-events: none;
-      transition: opacity 0.4s;
-    }
-
-    .hint-arrow {
-      width: 1px;
-      height: 24px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
-      animation: hint-pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes hint-pulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
-  </style>
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <div class="cursor-dot" id="cursorDot"></div>
@@ -289,104 +17,7 @@
     <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
   </svg>
 
-  <!-- ── MAC ZOOM SECTION ── -->
-  <div id="mac-zoom-section">
-    <div id="mac-sticky">
-      <div id="mac-image-wrap">
-        <img id="mac-img" src="assets/mac-dark.png" alt="Macintosh SE" draggable="false">
-      </div>
-
-      <div id="screen-content-wrap">
-        <div id="screen-inner">
-          <div class="sc-header">
-            <div class="sc-prompt">rohit@cmu:~$<span class="sc-cursor-blink"></span></div>
-            <div class="sc-name">Rohit Kottomtharayil</div>
-            <div class="sc-tagline">ECE @ Carnegie Mellon · Class of 2029</div>
-          </div>
-
-          <div class="sc-section">
-            <div class="sc-label">bio</div>
-            <div class="sc-bio">Hi — I'm an ECE student at CMU (Dean's List) with a deep interest in the hardware-software boundary. I grew up at the #1 STEM high school in the country. My work spans optics hardware, machine learning, and systems engineering. This summer I'm joining Nokia Bell Labs as an Optics Hardware Intern, on a prototype project with Google.<br><br>I'm drawn to low-latency systems, quant finance, and anything requiring careful reasoning under uncertainty.</div>
-          </div>
-
-          <div class="sc-section">
-            <div class="sc-label">now</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> Pittsburgh, PA</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> ECE @ CMU — Class of 2029</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> Incoming Nokia Bell Labs Intern</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> Exploring energy &amp; optics research</div>
-          </div>
-
-          <div class="sc-section">
-            <div class="sc-label">experience</div>
-            <div class="sc-timeline-item"><div class="sc-timeline-title">Optics Hardware Intern</div><div class="sc-timeline-sub">Nokia Bell Labs · Summer 2026</div></div>
-            <div class="sc-timeline-item"><div class="sc-timeline-title">Student Intern</div><div class="sc-timeline-sub">Pfizer Inc. · Sep 2024 – Jan 2025</div></div>
-            <div class="sc-timeline-item"><div class="sc-timeline-title">Legislative Technology Intern</div><div class="sc-timeline-sub">Office of Senator Vin Gopal · Jun–Aug 2024</div></div>
-            <div class="sc-timeline-item"><div class="sc-timeline-title">Research Intern</div><div class="sc-timeline-sub">IIT ECE Dept. · Feb 2024 – Jun 2025</div></div>
-            <div class="sc-timeline-item"><div class="sc-timeline-title">Founding Intern</div><div class="sc-timeline-sub">KronML · Dec 2023 – Oct 2024</div></div>
-            <div class="sc-timeline-item"><div class="sc-timeline-title">HS President / Founder</div><div class="sc-timeline-sub">Hack4Impact HTHS · 2023–2025</div></div>
-          </div>
-
-          <div class="sc-section">
-            <div class="sc-label">selected work</div>
-            <div class="sc-work-item"><div class="sc-work-title">Nokia Bell Labs × Google</div><div class="sc-work-desc">Optics hardware prototype development. Designing custom optical test workflows, presenting results to senior hardware engineers.</div></div>
-            <div class="sc-work-item"><div class="sc-work-title">Beehive Acoustic Anomaly Detection</div><div class="sc-work-desc">ML program with IIT ECE professor. Identifies behavioral anomalies in beehive acoustics, advancing climate change research.</div></div>
-            <div class="sc-work-item"><div class="sc-work-title">Urban Air Quality — Deep Learning</div><div class="sc-work-desc">LSTM model integrating meteorological, pollutant, and traffic data to predict AQI. Award-winning research at JSSF, NJAS, AJAS.</div></div>
-            <div class="sc-work-item"><div class="sc-work-title">Pfizer Software Access Classifier</div><div class="sc-work-desc">ML classification models integrated into Pfizer workflows to streamline access to critical software and hardware.</div></div>
-          </div>
-
-          <div class="sc-section">
-            <div class="sc-label">interests</div>
-            <div class="sc-tags">
-              <span class="sc-tag">optics hardware</span>
-              <span class="sc-tag">energy systems</span>
-              <span class="sc-tag">machine learning</span>
-              <span class="sc-tag">circuits</span>
-              <span class="sc-tag">quant finance</span>
-              <span class="sc-tag">embedded systems</span>
-            </div>
-          </div>
-
-          <div class="sc-section">
-            <div class="sc-label">outside the lab</div>
-            <div class="sc-tags">
-              <span class="sc-tag sc-tag-clickable" data-detail="sc-d-poker">poker</span>
-              <span class="sc-tag sc-tag-clickable" data-detail="sc-d-nba">nba</span>
-              <span class="sc-tag sc-tag-clickable" data-detail="sc-d-anime">anime</span>
-              <span class="sc-tag sc-tag-clickable" data-detail="sc-d-shoes">shoes</span>
-              <span class="sc-tag sc-tag-clickable" data-detail="sc-d-music">music</span>
-              <span class="sc-tag sc-tag-clickable" data-detail="sc-d-food">food</span>
-            </div>
-            <div class="sc-detail" id="sc-d-poker">Low stakes texas hold 'em. Nothing beats a Friday night home game.</div>
-            <div class="sc-detail" id="sc-d-nba">Timberwolves and Knicks. Favorite player: Anthony Edwards.</div>
-            <div class="sc-detail" id="sc-d-anime">One Piece › HxH › Samurai Champloo › Mob Psycho › Haikyuu › FMA:B...</div>
-            <div class="sc-detail" id="sc-d-shoes">Dunks, Jordans, Air Forces, 550s, Vomeros — and counting.</div>
-            <div class="sc-detail" id="sc-d-music">Travis Scott, Tyler, Pritam, Tame Impala, SZA, Frank Ocean. Currently: Tu Jaane Na / Nights.</div>
-            <div class="sc-detail" id="sc-d-food">Big food person — Beli @bigroko. Favorites: Pusadee's Garden, Semma.</div>
-          </div>
-
-          <div class="sc-section">
-            <div class="sc-label">coursework</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> 21-127 Concepts of Mathematics</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> 15-122 Principles of Imperative Computation</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> 42-101 Intro to Biomedical Engineering</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> 18-100 Intro to ECE</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> 21-254 Linear Algebra &amp; Vector Calculus</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> 33-141 Physics I for Engineering</div>
-            <div class="sc-now-item"><span class="sc-now-bullet">›</span> 80-244 Environmental Ethics</div>
-          </div>
-        </div>
-      </div>
-
-      <div id="mac-scroll-hint">
-        <span>scroll</span>
-        <div class="hint-arrow"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── NORMAL PAGE (shown after zoom completes) ── -->
-  <div class="page-wrapper" id="pageWrapper" style="display:none;">
+  <div class="page-wrapper" id="pageWrapper">
     <aside class="sidebar">
       <div class="sidebar-top">
         <a href="index.html" class="name nav-link-transition">Rohit<br>Kottomtharayil</a>
@@ -441,12 +72,30 @@
           <div class="anim-in" style="animation-delay:320ms">
             <div class="about-section-label">Experience</div>
             <div class="timeline">
-              <div class="timeline-item"><div class="timeline-title">Optics Hardware Intern</div><div class="timeline-sub">Nokia Bell Labs · Summer 2026</div></div>
-              <div class="timeline-item"><div class="timeline-title">Student Intern</div><div class="timeline-sub">Pfizer Inc. · Sep 2024 – Jan 2025</div></div>
-              <div class="timeline-item"><div class="timeline-title">Legislative Technology Intern</div><div class="timeline-sub">Office of Senator Vin Gopal · Jun 2024 – Aug 2024</div></div>
-              <div class="timeline-item"><div class="timeline-title">Research Intern</div><div class="timeline-sub">IIT ECE Dept. · Feb 2024 – Jun 2025</div></div>
-              <div class="timeline-item"><div class="timeline-title">Founding Intern</div><div class="timeline-sub">KronML · Dec 2023 – Oct 2024</div></div>
-              <div class="timeline-item"><div class="timeline-title">HS President / Founder</div><div class="timeline-sub">Hack4Impact HTHS · 2023 – 2025</div></div>
+              <div class="timeline-item">
+                <div class="timeline-title">Optics Hardware Intern</div>
+                <div class="timeline-sub">Nokia Bell Labs · Summer 2026</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-title">Student Intern</div>
+                <div class="timeline-sub">Pfizer Inc. · Sep 2024 – Jan 2025</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-title">Legislative Technology Intern</div>
+                <div class="timeline-sub">Office of Senator Vin Gopal · Jun 2024 – Aug 2024</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-title">Research Intern</div>
+                <div class="timeline-sub">IIT ECE Dept. · Feb 2024 – Jun 2025</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-title">Founding Intern</div>
+                <div class="timeline-sub">KronML · Dec 2023 – Oct 2024</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-title">HS President / Founder</div>
+                <div class="timeline-sub">Hack4Impact HTHS · 2023 – 2025</div>
+              </div>
             </div>
           </div>
 
@@ -457,6 +106,7 @@
               <span class="interest-tag">energy systems</span>
               <span class="interest-tag">environmental research</span>
               <span class="interest-tag">machine learning</span>
+              <span class="interest-tag">circuits</span>
               <span class="interest-tag">circuits</span>
               <span class="interest-tag">quant finance</span>
               <span class="interest-tag">embedded systems</span>
@@ -482,6 +132,7 @@
         </div>
       </div>
 
+      <!-- Anime Ranking Modal -->
       <div class="modal-overlay" id="animeModal">
         <div class="modal-box">
           <div class="modal-header">
@@ -490,25 +141,59 @@
           </div>
           <div class="modal-body">
             <ol class="anime-list">
-              <li>One Piece</li><li>Hunter x Hunter</li><li>Samurai Champloo</li>
-              <li>Mob Psycho 100</li><li>Haikyuu</li><li>Katanagatari</li>
-              <li>Fullmetal Alchemist: Brotherhood</li><li>Vinland Saga</li>
-              <li>JJBA</li><li>Dorohedoro</li><li>Steins;Gate</li>
-              <li>Attack On Titan</li><li>Violet Evergarden</li>
-              <li>Kuroko's Basketball</li><li>DanDaDan</li><li>Fire Force</li>
-              <li>The Great Pretender</li><li>Toradora</li><li>A Whisker Away</li>
-              <li>Beastars</li><li>Jujutsu Kaisen</li><li>Zom 100</li>
-              <li>One Punch Man</li><li>Your Name</li><li>Naruto</li>
-              <li>Solo Leveling</li><li>Gurren Lagann</li><li>Summertime Rendering</li>
-              <li>My Hero Academia</li><li>Cowboy Bebop</li><li>Death Parade</li>
-              <li>Terror in Resonance</li><li>100 Meters</li><li>Erased</li>
-              <li>Afro Samurai</li><li>Code Geass</li><li>Hell's Paradise</li>
-              <li>Blue Lock</li><li>Parasyte</li><li>Chainsaw Man</li>
-              <li>Re:Zero</li><li>The Promised Neverland</li><li>A Silent Voice</li>
-              <li>Demon Slayer</li><li>Black Clover</li><li>Death Note</li>
-              <li>5 Centimeters Per Second</li><li>Maboroshi</li>
-              <li>Cyberpunk: Edgerunners</li><li>Angel Beats</li>
-              <li>Assassination Classroom</li><li>FLCL</li><li>Seven Deadly Sins</li>
+              <li>One Piece</li>
+              <li>Hunter x Hunter</li>
+              <li>Samurai Champloo</li>
+              <li>Mob Psycho 100</li>
+              <li>Haikyuu</li>
+              <li>Katanagatari</li>
+              <li>Fullmetal Alchemist: Brotherhood</li>
+              <li>Vinland Saga</li>
+              <li>JJBA</li>
+              <li>Dorohedoro</li>
+              <li>Steins;Gate</li>
+              <li>Attack On Titan</li>
+              <li>Violet Evergarden</li>
+              <li>Kuroko's Basketball</li>
+              <li>DanDaDan</li>
+              <li>Fire Force</li>
+              <li>The Great Pretender</li>
+              <li>Toradora</li>
+              <li>A Whisker Away</li>
+              <li>Beastars</li>
+              <li>Jujutsu Kaisen</li>
+              <li>Zom 100</li>
+              <li>One Punch Man</li>
+              <li>Your Name</li>
+              <li>Naruto</li>
+              <li>Solo Leveling</li>
+              <li>Gurren Lagann</li>
+              <li>Summertime Rendering</li>
+              <li>My Hero Academia</li>
+              <li>Cowboy Bebop</li>
+              <li>Death Parade</li>
+              <li>Terror in Resonance</li>
+              <li>100 Meters</li>
+              <li>Erased</li>
+              <li>Afro Samurai</li>
+              <li>Code Geass</li>
+              <li>Hell's Paradise</li>
+              <li>Blue Lock</li>
+              <li>Parasyte</li>
+              <li>Chainsaw Man</li>
+              <li>Re:Zero</li>
+              <li>The Promised Neverland</li>
+              <li>A Silent Voice</li>
+              <li>Demon Slayer</li>
+              <li>Black Clover</li>
+              <li>Death Note</li>
+              <li>5 Centimeters Per Second</li>
+              <li>Maboroshi</li>
+              <li>Cyberpunk: Edgerunners</li>
+              <li>Angel Beats</li>
+              <li>Assassination Classroom</li>
+              <li>FLCL</li>
+              <li>Seven Deadly Sins</li>
             </ol>
           </div>
         </div>
@@ -517,113 +202,133 @@
       <div class="coursework-section anim-in" data-parallax="-0.02" style="animation-delay:560ms">
         <div class="section-title">Relevant Coursework</div>
         <div class="page-divider"></div>
+
         <div class="carousel-wrapper">
           <div class="carousel-scene">
             <div class="carousel-ring" id="courseCarousel">
-              <div class="carousel-card"><div class="carousel-card-inner"><span class="carousel-semester">Spring 2026</span><span class="carousel-code">21-127</span><span class="carousel-name">Concepts of Mathematics</span></div></div>
-              <div class="carousel-card"><div class="carousel-card-inner"><span class="carousel-semester">Spring 2026</span><span class="carousel-code">15-122</span><span class="carousel-name">Principles of Imperative Computation</span></div></div>
-              <div class="carousel-card"><div class="carousel-card-inner"><span class="carousel-semester">Spring 2026</span><span class="carousel-code">42-101</span><span class="carousel-name">Introduction to Biomedical Engineering</span></div></div>
-              <div class="carousel-card"><div class="carousel-card-inner"><span class="carousel-semester">Fall 2025</span><span class="carousel-code">18-100</span><span class="carousel-name">Intro to Electrical &amp; Computer Engineering</span></div></div>
-              <div class="carousel-card"><div class="carousel-card-inner"><span class="carousel-semester">Fall 2025</span><span class="carousel-code">21-254</span><span class="carousel-name">Linear Algebra &amp; Vector Calculus</span></div></div>
-              <div class="carousel-card"><div class="carousel-card-inner"><span class="carousel-semester">Fall 2025</span><span class="carousel-code">33-141</span><span class="carousel-name">Physics I for Engineering Students</span></div></div>
-              <div class="carousel-card"><div class="carousel-card-inner"><span class="carousel-semester">Fall 2025</span><span class="carousel-code">80-244</span><span class="carousel-name">Environmental Ethics</span></div></div>
+
+              <div class="carousel-card">
+                <div class="carousel-card-inner">
+                  <span class="carousel-semester">Spring 2026</span>
+                  <span class="carousel-code">21-127</span>
+                  <span class="carousel-name">Concepts of Mathematics</span>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="carousel-card-inner">
+                  <span class="carousel-semester">Spring 2026</span>
+                  <span class="carousel-code">15-122</span>
+                  <span class="carousel-name">Principles of Imperative Computation</span>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="carousel-card-inner">
+                  <span class="carousel-semester">Spring 2026</span>
+                  <span class="carousel-code">42-101</span>
+                  <span class="carousel-name">Introduction to Biomedical Engineering</span>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="carousel-card-inner">
+                  <span class="carousel-semester">Fall 2025</span>
+                  <span class="carousel-code">18-100</span>
+                  <span class="carousel-name">Intro to Electrical &amp; Computer Engineering</span>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="carousel-card-inner">
+                  <span class="carousel-semester">Fall 2025</span>
+                  <span class="carousel-code">21-254</span>
+                  <span class="carousel-name">Linear Algebra &amp; Vector Calculus</span>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="carousel-card-inner">
+                  <span class="carousel-semester">Fall 2025</span>
+                  <span class="carousel-code">33-141</span>
+                  <span class="carousel-name">Physics I for Engineering Students</span>
+                </div>
+              </div>
+
+              <div class="carousel-card">
+                <div class="carousel-card-inner">
+                  <span class="carousel-semester">Fall 2025</span>
+                  <span class="carousel-code">80-244</span>
+                  <span class="carousel-name">Environmental Ethics</span>
+                </div>
+              </div>
+
             </div>
           </div>
+
           <div class="carousel-controls">
-            <button class="carousel-btn" id="carouselPrev" aria-label="Previous course"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 19l-7-7 7-7"/></svg></button>
-            <div class="carousel-indicator" id="carouselIndicator"><span class="carousel-current" id="carouselCurrent">01</span><span class="carousel-divider">/</span><span class="carousel-total" id="carouselTotal">07</span></div>
-            <button class="carousel-btn" id="carouselNext" aria-label="Next course"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg></button>
+            <button class="carousel-btn" id="carouselPrev" aria-label="Previous course">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <div class="carousel-indicator" id="carouselIndicator">
+              <span class="carousel-current" id="carouselCurrent">01</span>
+              <span class="carousel-divider">/</span>
+              <span class="carousel-total" id="carouselTotal">09</span>
+            </div>
+            <button class="carousel-btn" id="carouselNext" aria-label="Next course">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
           </div>
         </div>
+
       </div>
 
       <div class="selected-work-section anim-in" data-parallax="-0.01" style="animation-delay:640ms">
         <div class="section-title">Selected Work</div>
         <div class="page-divider"></div>
         <div class="work-grid">
-          <div class="work-card"><div class="work-title">Nokia Bell Labs × Google</div><div class="work-desc">Collaborative prototype development in optics hardware. Designing custom optical test workflows and presenting experimental results to senior hardware engineers.</div><div class="work-tags"><span class="work-tag">Optics</span><span class="work-tag">Hardware</span><span class="work-tag">Prototyping</span></div></div>
-          <div class="work-card"><div class="work-title">Beehive Acoustic Anomaly Detection</div><div class="work-desc">ML program developed with an IIT ECE professor to identify behavioral anomalies in beehive acoustics, advancing climate change research on bee colony response.</div><div class="work-tags"><span class="work-tag">Python</span><span class="work-tag">ML</span><span class="work-tag">Research</span></div></div>
-          <div class="work-card"><div class="work-title">Pfizer Software Access Classifier</div><div class="work-desc">Built software access classification models integrated into Pfizer workflows to streamline access to critical software and hardware infrastructure.</div><div class="work-tags"><span class="work-tag">ML</span><span class="work-tag">Python</span><span class="work-tag">Enterprise</span></div></div>
-          <div class="work-card"><div class="work-title">Urban Air Quality — Deep Learning Research</div><div class="work-desc">Built an LSTM model integrating meteorological, pollutant, and traffic data to predict AQI. Award-winning research presented at JSSF, NJAS, and AJAS.</div><div class="work-tags"><span class="work-tag">LSTM</span><span class="work-tag">Python</span><span class="work-tag">Deep Learning</span><span class="work-tag">Research</span></div></div>
+          <div class="work-card">
+            <div class="work-title">Nokia Bell Labs × Google</div>
+            <div class="work-desc">Collaborative prototype development in optics hardware. Designing custom optical test workflows and presenting experimental results to senior hardware engineers.</div>
+            <div class="work-tags">
+              <span class="work-tag">Optics</span>
+              <span class="work-tag">Hardware</span>
+              <span class="work-tag">Prototyping</span>
+            </div>
+          </div>
+          <div class="work-card">
+            <div class="work-title">Beehive Acoustic Anomaly Detection</div>
+            <div class="work-desc">ML program developed with an IIT ECE professor to identify behavioral anomalies in beehive acoustics, advancing climate change research on bee colony response.</div>
+            <div class="work-tags">
+              <span class="work-tag">Python</span>
+              <span class="work-tag">ML</span>
+              <span class="work-tag">Research</span>
+            </div>
+          </div>
+          <div class="work-card">
+            <div class="work-title">Pfizer Software Access Classifier</div>
+            <div class="work-desc">Built software access classification models integrated into Pfizer workflows to streamline access to critical software and hardware infrastructure.</div>
+            <div class="work-tags">
+              <span class="work-tag">ML</span>
+              <span class="work-tag">Python</span>
+              <span class="work-tag">Enterprise</span>
+            </div>
+          </div>
+          <div class="work-card">
+            <div class="work-title">Urban Air Quality — Deep Learning Research</div>
+            <div class="work-desc">Built an LSTM model integrating meteorological, pollutant, and traffic data to predict AQI and evaluate countermeasure effectiveness across cities like Mumbai. Award-winning research presented at JSSF, NJAS, and AJAS.</div>
+            <div class="work-tags">
+              <span class="work-tag">LSTM</span>
+              <span class="work-tag">Python</span>
+              <span class="work-tag">Deep Learning</span>
+              <span class="work-tag">Research</span>
+            </div>
+          </div>
         </div>
       </div>
     </main>
   </div>
 
-  <script src="grid.js?v=4"></script>
-  <script>
-  (function() {
-    var section    = document.getElementById('mac-zoom-section');
-    var macImg     = document.getElementById('mac-img');
-    var imgWrap    = document.getElementById('mac-image-wrap');
-    var screenWrap = document.getElementById('screen-content-wrap');
-    var hint       = document.getElementById('mac-scroll-hint');
-
-    if (!section || !macImg) return;
-
-    var SCREEN = { x: 0.225, y: 0.135, w: 0.555, h: 0.375 };
-
-    function positionScreen() {
-      var r = macImg.getBoundingClientRect();
-      screenWrap.style.left     = (r.left + r.width * SCREEN.x) + 'px';
-      screenWrap.style.top      = (r.top + r.height * SCREEN.y) + 'px';
-      screenWrap.style.width    = (r.width * SCREEN.w) + 'px';
-      screenWrap.style.height   = (r.height * SCREEN.h) + 'px';
-      screenWrap.style.position = 'fixed';
-    }
-
-    function onScroll() {
-      var sectionTop = section.offsetTop;
-      var scrollRange = section.offsetHeight - window.innerHeight;
-      var scrolled = Math.max(0, Math.min(1, (window.scrollY - sectionTop) / scrollRange));
-
-      positionScreen();
-
-      var r = macImg.getBoundingClientRect();
-      var targetScaleX = window.innerWidth / (r.width * SCREEN.w);
-      var targetScaleY = window.innerHeight / (r.height * SCREEN.h);
-      var targetScale  = Math.max(targetScaleX, targetScaleY) * 1.05;
-
-      var eased = scrolled < 0.5
-        ? 4 * scrolled * scrolled * scrolled
-        : 1 - Math.pow(-2 * scrolled + 2, 3) / 2;
-
-      var scale = 1 + (targetScale - 1) * eased;
-      imgWrap.style.transform = 'scale(' + scale + ')';
-
-      var screenOpacity = Math.max(0, (scrolled - 0.3) / 0.4);
-      screenWrap.style.opacity = screenOpacity;
-
-      if (scrolled > 0.85) {
-        screenWrap.classList.add('visible');
-      } else {
-        screenWrap.classList.remove('visible');
-      }
-
-      if (hint) hint.style.opacity = scrolled > 0.04 ? '0' : '1';
-    }
-
-    document.querySelectorAll('.sc-tag-clickable').forEach(function(tag) {
-      tag.addEventListener('click', function() {
-        var detailId = this.getAttribute('data-detail');
-        var detail = document.getElementById(detailId);
-        if (!detail) return;
-        var isOpen = detail.classList.contains('open');
-        document.querySelectorAll('.sc-detail').forEach(function(d) { d.classList.remove('open'); });
-        if (!isOpen) detail.classList.add('open');
-      });
-    });
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', function() { positionScreen(); onScroll(); });
-
-    if (macImg.complete) {
-      positionScreen();
-      onScroll();
-    } else {
-      macImg.addEventListener('load', function() { positionScreen(); onScroll(); });
-    }
-  })();
-  </script>
+  <script src="grid.js?v=3"></script>
 </body>
 </html>
