@@ -716,6 +716,209 @@
     if (spine) gsap.set(spine, { scaleY: 1 });
   });
 
+  /* ==================== PROJECTS: detail modal + image zoom ==================== */
+  (function initProjectModals() {
+    var modal = document.getElementById('projectModal');
+    var titleEl = document.getElementById('projectModalTitle');
+    var galleryEl = document.getElementById('projectGallery');
+    var closeBtn = document.getElementById('projectModalClose');
+    var zoom = document.getElementById('zoomModal');
+    var zoomImg = document.getElementById('zoomModalImg');
+    var zoomCap = document.getElementById('zoomModalCaption');
+    var zoomClose = document.getElementById('zoomModalClose');
+    if (!modal || !galleryEl || !zoom) return;
+
+    var A = 'assets/projects/';
+    var PROJECTS = {
+      nokia: {
+        title: 'Nokia Bell Labs',
+        photos: [
+          { src: A + 'nokia-rf.jpg', caption: 'Repairing a broken RF waveform splitter pack on the optics bench at Nokia Bell Labs.' }
+        ]
+      },
+      beehive: {
+        title: 'Beehive Acoustic Anomaly Detection',
+        photos: [
+          { src: A + 'beehive-sensors.jpg', caption: 'Arduino sensor array built to capture beehive acoustics.' },
+          { src: A + 'beehive-farm.jpg', caption: 'The field-ready acoustic monitoring device, packed up before deployment at the farm.' }
+        ]
+      },
+      pfizer: {
+        title: 'Pfizer Software Access Classifier',
+        photos: [
+          { src: A + 'pfizer-nyc.jpg', caption: "On-site at Pfizer's New York City branch." },
+          { src: A + 'pfizer-interns.jpg', caption: 'With the Pfizer summer intern cohort.' }
+        ]
+      },
+      airquality: {
+        title: 'Urban Air Quality \u2014 Deep Learning',
+        photos: [
+          { src: A + 'airquality-fair.jpg', caption: 'Presenting the research at the Delaware Valley Science & Engineering Fair.' }
+        ],
+        poster: {
+          src: A + 'poster-full.png',
+          caption: 'AJAS 2025 poster \u2014 Optimizing Air Quality: A Deep Learning Approach. Click a figure to enlarge.',
+          hotspots: [
+            { left: 26.89, top: 24.66, w: 22.65, h: 14.28, src: A + 'fig-cloud-pressure.png', label: 'Fig 2 \u00b7 Cloud-top pressure', caption: 'Average cloud-top pressure, Jan\u2013Feb 2024 (NASA MERRA-2).' },
+            { left: 50.36, top: 41.47, w: 10.26, h: 14.67, src: A + 'fig-heatmap.png', label: 'Fig 3 \u00b7 Heatmap', caption: 'Feature-selection correlation heatmap.' },
+            { left: 61.54, top: 41.47, w: 11.01, h: 14.67, src: A + 'fig-pairplot.png', label: 'Fig 4 \u00b7 Pairplot', caption: 'Feature-selection pairplot.' },
+            { left: 27.18, top: 73.37, w: 22.10, h: 23.03, src: A + 'fig-lstm-regression.png', label: 'Fig 5 \u00b7 LSTM regression', caption: 'LSTM sample regression \u2014 Mumbai 2023.' },
+            { left: 50.28, top: 75.77, w: 22.10, h: 18.22, src: A + 'fig-rmse.png', label: 'Fig 6 \u00b7 Model RMSE', caption: 'Model RMSE comparison \u2014 LSTM vs. baselines (Mumbai 2019\u20132023).' }
+          ]
+        }
+      }
+    };
+
+    var projectOpen = false, zoomOpen = false, lastFocus = null;
+
+    function lockScroll(on) {
+      if (smoother) smoother.paused(on);
+      document.body.classList.toggle('modal-locked', on);
+    }
+
+    function figure(src, caption, cls) {
+      var fig = document.createElement('figure');
+      fig.className = cls || 'gallery-item';
+      var img = document.createElement('img');
+      img.src = src; img.alt = caption || ''; img.loading = 'lazy';
+      fig.appendChild(img);
+      if (caption) {
+        var cap = document.createElement('figcaption');
+        cap.textContent = caption;
+        fig.appendChild(cap);
+      }
+      fig.addEventListener('click', function () { openZoom(src, caption); });
+      return fig;
+    }
+
+    function buildPoster(poster) {
+      var wrap = document.createElement('div');
+      wrap.className = 'poster-block';
+
+      var stage = document.createElement('div');
+      stage.className = 'poster-figure';
+      var img = document.createElement('img');
+      img.src = poster.src; img.alt = 'AJAS 2025 research poster'; img.loading = 'lazy';
+      img.addEventListener('click', function () { openZoom(poster.src, poster.caption); });
+      stage.appendChild(img);
+
+      poster.hotspots.forEach(function (h) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'poster-hotspot';
+        b.style.left = h.left + '%';
+        b.style.top = h.top + '%';
+        b.style.width = h.w + '%';
+        b.style.height = h.h + '%';
+        b.setAttribute('aria-label', h.label);
+        b.innerHTML = '<span>' + h.label + '</span>';
+        b.addEventListener('click', function (e) { e.stopPropagation(); openZoom(h.src, h.caption); });
+        stage.appendChild(b);
+      });
+      wrap.appendChild(stage);
+
+      var cap = document.createElement('p');
+      cap.className = 'poster-caption';
+      cap.textContent = poster.caption;
+      wrap.appendChild(cap);
+
+      // Always-tappable figure strip (primary path on touch / no-hover).
+      var strip = document.createElement('div');
+      strip.className = 'poster-thumbs';
+      var label = document.createElement('span');
+      label.className = 'poster-thumbs-label';
+      label.textContent = 'Key figures';
+      strip.appendChild(label);
+      var row = document.createElement('div');
+      row.className = 'poster-thumbs-row';
+      poster.hotspots.forEach(function (h) {
+        var t = document.createElement('button');
+        t.type = 'button';
+        t.className = 'poster-thumb';
+        t.innerHTML = '<img src="' + h.src + '" alt="" loading="lazy"><span>' + h.label + '</span>';
+        t.addEventListener('click', function () { openZoom(h.src, h.caption); });
+        row.appendChild(t);
+      });
+      strip.appendChild(row);
+      wrap.appendChild(strip);
+      return wrap;
+    }
+
+    function openProject(key) {
+      var data = PROJECTS[key];
+      if (!data) return;
+      lastFocus = document.activeElement;
+      titleEl.textContent = data.title;
+      galleryEl.innerHTML = '';
+      galleryEl.scrollTop = 0;
+
+      var photos = document.createElement('div');
+      photos.className = 'gallery-photos';
+      (data.photos || []).forEach(function (p) { photos.appendChild(figure(p.src, p.caption)); });
+      galleryEl.appendChild(photos);
+
+      if (data.poster) galleryEl.appendChild(buildPoster(data.poster));
+
+      modal.hidden = false;
+      requestAnimationFrame(function () { modal.classList.add('is-open'); });
+      projectOpen = true;
+      lockScroll(true);
+      if (closeBtn) closeBtn.focus();
+    }
+
+    function closeProject() {
+      if (!projectOpen) return;
+      modal.classList.remove('is-open');
+      projectOpen = false;
+      if (!zoomOpen) lockScroll(false);
+      var done = function () { if (!projectOpen) modal.hidden = true; modal.removeEventListener('transitionend', done); };
+      modal.addEventListener('transitionend', done);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    function openZoom(src, caption) {
+      zoomImg.src = src;
+      zoomImg.alt = caption || '';
+      zoomCap.textContent = caption || '';
+      zoom.hidden = false;
+      requestAnimationFrame(function () { zoom.classList.add('is-open'); });
+      zoomOpen = true;
+      lockScroll(true);
+      if (zoomClose) zoomClose.focus();
+    }
+
+    function closeZoom() {
+      if (!zoomOpen) return;
+      zoom.classList.remove('is-open');
+      zoomOpen = false;
+      if (!projectOpen) lockScroll(false);
+      var done = function () { if (!zoomOpen) { zoom.hidden = true; zoomImg.src = ''; } zoom.removeEventListener('transitionend', done); };
+      zoom.addEventListener('transitionend', done);
+    }
+
+    var cards = document.querySelectorAll('.project-card[data-project]');
+    cards.forEach(function (card) {
+      var key = card.getAttribute('data-project');
+      card.addEventListener('click', function () { openProject(key); });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          openProject(key);
+        }
+      });
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeProject);
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeProject(); });
+    if (zoomClose) zoomClose.addEventListener('click', closeZoom);
+    zoom.addEventListener('click', function (e) { if (e.target === zoom) closeZoom(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (zoomOpen) closeZoom();
+      else if (projectOpen) closeProject();
+    });
+  })();
+
   /* ==================== STARTUP: hero ==================== */
   initMesh();
   initName();
