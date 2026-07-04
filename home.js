@@ -16,6 +16,7 @@
 
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText, ScrollToPlugin);
   if (window.ScrambleTextPlugin) gsap.registerPlugin(ScrambleTextPlugin);
+  ScrollTrigger.config({ ignoreMobileResize: true });
   var hasScramble = !!window.ScrambleTextPlugin;
 
   // Arm CSS so reveal targets start hidden (reduced-motion CSS keeps them shown).
@@ -213,7 +214,7 @@
       w = Math.max(1, r.width); h = Math.max(1, r.height);
       svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
 
-      var gap = w < 700 ? 88 : 132;
+      var gap = w < 700 ? 150 : 132;
       var cols = Math.max(2, Math.round(w / gap) + 1);
       var rows = Math.max(2, Math.round(h / gap) + 1);
       var gx = w / (cols - 1), gy = h / (rows - 1);
@@ -299,7 +300,7 @@
     }
 
     build();
-    if (!prefersReduced) raf = requestAnimationFrame(tick);
+    if (hoverCapable && !prefersReduced) raf = requestAnimationFrame(tick);
 
     var rt;
     window.addEventListener('resize', function () {

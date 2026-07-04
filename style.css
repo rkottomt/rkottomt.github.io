@@ -32,7 +32,11 @@ body {
   font-family: var(--font-body);
   line-height: 1.6;
   overflow-x: hidden;
-  cursor: none;
+}
+
+/* Custom cursor only for fine-pointer/hover devices; touch keeps normal behavior */
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
 }
 
 ::-webkit-scrollbar { width: 4px; }
@@ -51,6 +55,7 @@ a:hover {
 
 /* ===================== CUSTOM CURSOR ===================== */
 .cursor-dot {
+  display: none; /* enabled only on fine-pointer/hover devices below */
   position: fixed;
   top: 0;
   left: 0;
@@ -63,6 +68,10 @@ a:hover {
   transition: width 0.2s ease, height 0.2s ease, background 0.2s ease, margin 0.2s ease;
   margin-left: -4px;
   margin-top: -4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cursor-dot { display: block; }
 }
 
 .cursor-dot.expanded {

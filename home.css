@@ -6,6 +6,8 @@
 
 html {
   scroll-behavior: auto; /* ScrollSmoother/ScrollToPlugin own scrolling */
+  -webkit-text-size-adjust: 100%; /* stop iOS auto-inflating text */
+  text-size-adjust: 100%;
 }
 
 body {
@@ -29,6 +31,9 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 22px 40px;
+  padding-top: calc(22px + env(safe-area-inset-top));
+  padding-left: calc(40px + env(safe-area-inset-left));
+  padding-right: calc(40px + env(safe-area-inset-right));
   mix-blend-mode: difference;
   pointer-events: none;
 }
@@ -152,6 +157,7 @@ body {
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100svh; /* stable on iOS Safari (excludes the toolbar) */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -242,6 +248,7 @@ body {
 /* ===================== ABOUT ME (full screen) ===================== */
 .about-intro {
   min-height: 100vh;
+  min-height: 100svh; /* stable on iOS Safari */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,17 +294,39 @@ body {
   margin-top: 40px;
 }
 
+/* Lead line: bigger, tighter, sets the editorial tone */
+.about-copy p.about-lead {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 3.6vw, 3rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  max-width: 22ch;
+  margin-bottom: 48px;
+}
+
+/* Supporting prose: stepped down + capped measure so it reads, not slabs */
 .about-copy p {
   font-family: var(--font-heading);
   font-weight: 500;
-  font-size: clamp(1.3rem, 2.6vw, 2.3rem);
-  line-height: 1.4;
+  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  line-height: 1.55;
   letter-spacing: -0.01em;
-  color: var(--text-primary);
-  margin-bottom: 36px;
+  color: var(--text-secondary);
+  max-width: 62ch;
+  margin-bottom: 28px;
 }
 
 .about-copy p:last-child { margin-bottom: 0; }
+
+/* Keyword highlight: brighter text with a subtle navy underline swipe */
+.about-copy .hl {
+  color: var(--text-primary);
+  background: linear-gradient(transparent 68%, rgba(42, 74, 156, 0.38) 0);
+  background-repeat: no-repeat;
+  padding: 0 0.04em;
+}
 
 /* SplitText line masks */
 .about-copy .split-line {
@@ -513,6 +542,7 @@ body {
 /* ===================== COURSEWORK ===================== */
 .coursework-pin {
   min-height: 100vh;
+  min-height: 100svh; /* stable on iOS Safari */
   display: flex;
   flex-direction: column;
   justify-content: center;
