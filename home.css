@@ -245,6 +245,47 @@ body {
   50% { transform: translateY(6px); opacity: 1; }
 }
 
+/* Hero background-style switcher (mesh vs waves) */
+.hero-toggle {
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hero-toggle button {
+  background: transparent;
+  border: none;
+  padding: 4px 2px;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--text-secondary);
+  opacity: 0.55;
+  cursor: pointer;
+  transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+.hero-toggle button:hover { opacity: 0.9; }
+
+.hero-toggle button.is-active {
+  color: var(--text-primary);
+  opacity: 1;
+}
+
+.hero-toggle button + button { border-left: 1px solid var(--border); padding-left: 8px; }
+
+@media (max-width: 768px) {
+  .hero-toggle { left: 22px; bottom: 24px; }
+}
+
 /* ===================== ABOUT ME (full screen) ===================== */
 .about-intro {
   min-height: 100vh;

@@ -336,24 +336,183 @@
       raf = requestAnimationFrame(tick);
     }
 
+    function onMove(e) {
+      var r = hero.getBoundingClientRect();
+      pointer.x = e.clientX - r.left;
+      pointer.y = e.clientY - r.top;
+      pointer.active = true;
+    }
+    function onLeave() { pointer.active = false; }
     if (hoverCapable && !prefersReduced) {
-      hero.addEventListener('mousemove', function (e) {
-        var r = hero.getBoundingClientRect();
-        pointer.x = e.clientX - r.left;
-        pointer.y = e.clientY - r.top;
-        pointer.active = true;
-      });
-      hero.addEventListener('mouseleave', function () { pointer.active = false; });
+      hero.addEventListener('mousemove', onMove);
+      hero.addEventListener('mouseleave', onLeave);
     }
 
     build();
     if (hoverCapable && !prefersReduced) raf = requestAnimationFrame(tick);
 
     var rt;
-    window.addEventListener('resize', function () {
+    function onResize() {
       clearTimeout(rt);
       rt = setTimeout(build, 250);
-    });
+    }
+    window.addEventListener('resize', onResize);
+
+    return {
+      destroy: function () {
+        if (raf) cancelAnimationFrame(raf);
+        raf = null;
+        clearTimeout(rt);
+        hero.removeEventListener('mousemove', onMove);
+        hero.removeEventListener('mouseleave', onLeave);
+        window.removeEventListener('resize', onResize);
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+      }
+    };
+  }
+
+  /* ==================== HERO: stacked flowing wave ribbons ====================
+     Horizontal contour lines built as smoothed <path>s. A traveling sine keeps
+     them rippling; the cursor pushes nearby samples vertically so the ribbons
+     part and bow around the pointer. Same lifecycle/gating as initMesh. */
+  function initFlowLines() {
+    var svg = document.getElementById('heroMesh');
+    var hero = document.getElementById('hero');
+    if (!svg || !hero) return { destroy: function () {} };
+    var NS = 'http://www.w3.org/2000/svg';
+    var lines = [], w = 0, h = 0, raf = null;
+    var pointer = { x: -9999, y: -9999, active: false };
+    var hoverCapable = window.matchMedia('(hover: hover)').matches;
+
+    function build() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      lines = [];
+      var r = hero.getBoundingClientRect();
+      w = Math.max(1, r.width); h = Math.max(1, r.height);
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+
+      var rowGap = w < 700 ? 60 : 46;
+      var rows = Math.max(3, Math.round(h / rowGap) + 2);
+      var step = w < 700 ? 34 : 24;
+      var cols = Math.max(4, Math.round(w / step) + 1);
+      var gy = h / (rows - 1);
+      var gx = w / (cols - 1);
+
+      for (var ri = 0; ri < rows; ri++) {
+        var baseY = ri * gy;
+        var samples = [];
+        for (var ci = 0; ci < cols; ci++) {
+          samples.push({ x: ci * gx, baseY: baseY, y: baseY });
+        }
+        var path = document.createElementNS(NS, 'path');
+        path.setAttribute('stroke', 'currentColor');
+        path.setAttribute('stroke-width', '1.4');
+        path.setAttribute('fill', 'none');
+        // Amplitude/phase vary per row so lines don't move in lockstep.
+        lines.push({
+          el: path,
+          samples: samples,
+          amp: 10 + (ri % 3) * 5,
+          freq: 0.6 + (ri % 4) * 0.12,
+          phase: ri * 0.5,
+          speed: 0.5 + (ri % 3) * 0.12
+        });
+        svg.appendChild(path);
+      }
+
+      render(0);
+
+      if (!prefersReduced) {
+        // Self-draw on load using the static curve length, then start drifting.
+        lines.forEach(function (l) {
+          var len = l.el.getTotalLength() || w;
+          l.el.style.strokeDasharray = len;
+          l.el.style.strokeDashoffset = len;
+        });
+        gsap.to(lines.map(function (l) { return l.el; }), {
+          strokeDashoffset: 0, duration: 1.3, ease: 'power2.out',
+          stagger: { each: 0.05, from: 'edges' },
+          onComplete: function () {
+            lines.forEach(function (l) { l.el.style.strokeDasharray = 'none'; });
+          }
+        });
+      }
+    }
+
+    function pathString(samples) {
+      // Smooth curve through points via quadratic beziers to midpoints.
+      if (!samples.length) return '';
+      var d = 'M ' + samples[0].x.toFixed(1) + ' ' + samples[0].y.toFixed(1);
+      for (var i = 1; i < samples.length - 1; i++) {
+        var mx = (samples[i].x + samples[i + 1].x) / 2;
+        var my = (samples[i].y + samples[i + 1].y) / 2;
+        d += ' Q ' + samples[i].x.toFixed(1) + ' ' + samples[i].y.toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1);
+      }
+      var last = samples[samples.length - 1];
+      d += ' L ' + last.x.toFixed(1) + ' ' + last.y.toFixed(1);
+      return d;
+    }
+
+    function render(t) {
+      var radius = 200, strength = 60;
+      for (var i = 0; i < lines.length; i++) {
+        var l = lines[i];
+        for (var j = 0; j < l.samples.length; j++) {
+          var s = l.samples[j];
+          var y = s.baseY + Math.sin(t * l.speed + s.x * 0.006 * l.freq + l.phase) * l.amp;
+          if (pointer.active) {
+            var dx = s.x - pointer.x, dy = y - pointer.y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < radius && dist > 0.001) {
+              var f = 1 - dist / radius;
+              y += (dy / dist) * (f * f * strength);
+            }
+          }
+          s.y = y;
+        }
+        l.el.setAttribute('d', pathString(l.samples));
+      }
+    }
+
+    var t0 = performance.now();
+    function tick(now) {
+      render((now - t0) / 1000);
+      raf = requestAnimationFrame(tick);
+    }
+
+    function onMove(e) {
+      var r = hero.getBoundingClientRect();
+      pointer.x = e.clientX - r.left;
+      pointer.y = e.clientY - r.top;
+      pointer.active = true;
+    }
+    function onLeave() { pointer.active = false; }
+    if (hoverCapable && !prefersReduced) {
+      hero.addEventListener('mousemove', onMove);
+      hero.addEventListener('mouseleave', onLeave);
+    }
+
+    build();
+    if (hoverCapable && !prefersReduced) raf = requestAnimationFrame(tick);
+
+    var rt;
+    function onResize() {
+      clearTimeout(rt);
+      rt = setTimeout(build, 250);
+    }
+    window.addEventListener('resize', onResize);
+
+    return {
+      destroy: function () {
+        if (raf) cancelAnimationFrame(raf);
+        raf = null;
+        clearTimeout(rt);
+        hero.removeEventListener('mousemove', onMove);
+        hero.removeEventListener('mouseleave', onLeave);
+        window.removeEventListener('resize', onResize);
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+      }
+    };
   }
 
   /* ==================== HERO: scramble name + idle letter motion ==================== */
@@ -919,8 +1078,42 @@
     });
   })();
 
+  /* ==================== HERO VISUAL: switch between mesh and waves ==================== */
+  function initHeroVisual() {
+    var MODES = { mesh: initMesh, waves: initFlowLines };
+    var toggle = document.getElementById('heroToggle');
+    var current = null, currentMode = null;
+
+    var saved = null;
+    try { saved = localStorage.getItem('heroVisual'); } catch (e) { saved = null; }
+    if (!MODES[saved]) saved = 'mesh';
+
+    function activate(mode) {
+      if (!MODES[mode] || mode === currentMode) return;
+      if (current && current.destroy) current.destroy();
+      current = MODES[mode]();
+      currentMode = mode;
+      try { localStorage.setItem('heroVisual', mode); } catch (e) { /* ignore */ }
+      if (toggle) {
+        toggle.querySelectorAll('button[data-visual]').forEach(function (b) {
+          var on = b.getAttribute('data-visual') === mode;
+          b.classList.toggle('is-active', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      }
+    }
+
+    if (toggle) {
+      toggle.querySelectorAll('button[data-visual]').forEach(function (b) {
+        b.addEventListener('click', function () { activate(b.getAttribute('data-visual')); });
+      });
+    }
+
+    activate(saved);
+  }
+
   /* ==================== STARTUP: hero ==================== */
-  initMesh();
+  initHeroVisual();
   initName();
 
   /* ==================== INCOMING HASH (e.g. from resume.html#about) ==================== */

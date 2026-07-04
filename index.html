@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css?v=7">
-  <link rel="stylesheet" href="home.css?v=11">
+  <link rel="stylesheet" href="home.css?v=12">
 </head>
 <body>
   <div class="cursor-dot" id="cursorDot"></div>
@@ -56,6 +56,10 @@
         <div class="hero-scroll-hint" id="heroScrollHint">
           <span>scroll</span>
           <span class="hero-scroll-arrow">&darr;</span>
+        </div>
+        <div class="hero-toggle" id="heroToggle" role="group" aria-label="Background style">
+          <button type="button" data-visual="mesh" class="is-active" aria-pressed="true">Mesh</button>
+          <button type="button" data-visual="waves" aria-pressed="false">Waves</button>
         </div>
       </section>
 
@@ -424,6 +428,6 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollToPlugin.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
-  <script src="home.js?v=10"></script>
+  <script src="home.js?v=11"></script>
 </body>
 </html>
