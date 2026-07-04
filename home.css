@@ -1,0 +1,755 @@
+/* ============================================================
+   home.css — one-page redesign for index.html
+   Reuses design tokens from style.css (:root vars, cursor, noise,
+   carousel, section-head). This file styles the new landing flow.
+   ============================================================ */
+
+html {
+  scroll-behavior: auto; /* ScrollSmoother/ScrollToPlugin own scrolling */
+}
+
+body {
+  overscroll-behavior-y: none;
+}
+
+/* ScrollSmoother structure. Kept simple; the plugin manages transforms. */
+#smooth-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* ===================== TOP NAV ===================== */
+.site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 40px;
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+.site-nav > * { pointer-events: auto; }
+
+.nav-brand {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.nav-link {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #fff;
+  position: relative;
+  padding: 4px 0;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.nav-link.active { opacity: 1; }
+
+.nav-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-icon {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.nav-icon:hover {
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ===================== SHARED SECTION SCAFFOLD ===================== */
+.hero,
+.about-intro,
+.about,
+.experience,
+.coursework,
+.projects {
+  position: relative;
+  width: 100%;
+}
+
+.about,
+.experience {
+  padding: 140px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* section-head / section-index come from style.css; center + enlarge here */
+.section-head {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  margin-bottom: 52px;
+}
+
+.section-head .section-index {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  opacity: 0.75;
+}
+
+.section-head .section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+/* ===================== HERO ===================== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 40px 80px;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Full-screen generative line mesh (built + animated in home.js) */
+.hero-mesh {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  color: rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+}
+
+.hero-mesh line,
+.hero-mesh path {
+  vector-effect: non-scaling-stroke;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 7.2vw, 6rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.hero-name-text {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: -0.02em;
+}
+
+/* Idle char motion is applied to these by home.js */
+.hero-name-text .char {
+  display: inline-block;
+  will-change: transform;
+}
+
+.hero-sub {
+  font-family: var(--font-mono);
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-top: 28px;
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.hero-scroll-arrow {
+  animation: scrollBob 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollBob {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+/* ===================== ABOUT ME (full screen) ===================== */
+.about-intro {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 40px;
+}
+
+/* One line: "About Me" + tagline. GSAP owns the horizontal transforms
+   during the scrubbed reveal, so no CSS transform for centering here. */
+.about-intro-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(1.4rem, 4vw, 3.2rem);
+  width: max-content;
+  max-width: 100%;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.about-intro-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 10vw, 9rem);
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.about-intro-desc {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 10vw, 9rem);
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ===================== ABOUT ===================== */
+.about-copy {
+  margin-top: 40px;
+}
+
+.about-copy p {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(1.3rem, 2.6vw, 2.3rem);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin-bottom: 36px;
+}
+
+.about-copy p:last-child { margin-bottom: 0; }
+
+/* SplitText line masks */
+.about-copy .split-line {
+  overflow: hidden;
+}
+
+/* ===================== ABOUT: INTERESTS (minor, click to learn more) ===================== */
+.about-interests {
+  margin-top: 48px;
+}
+
+.interests-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.interest-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.interest-chip {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 15px;
+  cursor: none;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.interest-chip:hover {
+  color: var(--text-primary);
+  border-color: var(--accent);
+  background: rgba(42, 74, 156, 0.12);
+}
+
+.interest-chip.active {
+  color: var(--text-primary);
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.interest-detail {
+  margin-top: 16px;
+  max-width: 640px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.interest-detail a {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--accent);
+}
+
+/* Anime ranking modal (outside #smooth-wrapper) */
+.interest-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 15000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(3, 5, 12, 0.72);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.interest-modal[hidden] { display: none; }
+
+.interest-modal.is-open { opacity: 1; }
+
+.interest-modal-box {
+  width: min(520px, 100%);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.interest-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.interest-modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.interest-modal-close {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: none;
+  transition: color 0.2s ease;
+}
+
+.interest-modal-close:hover { color: var(--text-primary); }
+
+.anime-list {
+  margin: 0;
+  padding: 18px 22px 22px 44px;
+  overflow-y: auto;
+  columns: 2;
+  column-gap: 28px;
+}
+
+.anime-list li {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  break-inside: avoid;
+}
+
+@media (max-width: 768px) {
+  .anime-list { columns: 1; }
+}
+
+/* ===================== EXPERIENCE TIMELINE ===================== */
+/* Distinct from the pure-black About block: a full-bleed surface band. */
+.experience {
+  max-width: none;
+  margin: 0;
+  padding: 120px 40px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.experience > * {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.experience .timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding-left: 40px;
+  border-left: none;
+  margin-top: 56px;
+}
+
+.timeline-spine {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 1px;
+  height: 100%;
+  background: var(--text-secondary);
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+.experience .timeline-item {
+  position: relative;
+  padding-left: 8px;
+}
+
+.experience .timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -45px;
+  top: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--text-secondary);
+}
+
+.experience .timeline-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.experience .timeline-sub {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+/* ===================== COURSEWORK ===================== */
+.coursework-pin {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 48px;
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Larger carousel (overrides style.css base sizing) */
+.coursework .carousel-scene {
+  height: 380px;
+}
+
+.coursework .carousel-ring,
+.coursework .carousel-card {
+  width: 360px;
+  height: 300px;
+}
+
+.coursework .carousel-card-inner {
+  padding: 36px 34px;
+  gap: 16px;
+}
+
+.coursework .carousel-code {
+  font-size: 2.6rem;
+}
+
+.coursework .carousel-name {
+  font-size: 1rem;
+}
+
+/* ===================== PROJECTS (3D tilt gallery) ===================== */
+.projects {
+  padding: 140px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.projects-head {
+  margin-bottom: 56px;
+}
+
+.projects-stage {
+  perspective: 1400px;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.project-card {
+  position: relative;
+  min-height: 320px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 44px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 55%);
+  transition: opacity 0.3s ease;
+}
+
+.project-card:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 50px rgba(255, 255, 255, 0.04);
+}
+
+.project-card:hover::after { opacity: 1; }
+
+.project-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--text-secondary);
+}
+
+.project-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.project-desc {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  flex-grow: 1;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.project-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+
+/* ===================== FOOTER ===================== */
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 48px 40px;
+  border-top: 1px solid var(--border);
+}
+
+.footer-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+}
+
+.footer-links a:hover { color: var(--text-primary); }
+
+/* ===================== REVEAL HELPERS ===================== */
+/* home.js adds .js-armed to <body> only when it will animate, so targets
+   start hidden without risking a permanently blank page if JS fails. */
+.js-armed .reveal-line,
+.js-armed .about-intro-title,
+.js-armed .about-intro-desc,
+.js-armed .timeline-item {
+  opacity: 0;
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 900px) {
+  .site-nav { padding: 18px 22px; }
+  .nav-links { gap: 18px; }
+  .about,
+  .experience { padding: 100px 24px; }
+  .coursework-pin { padding: 80px 24px; }
+  .projects { padding: 100px 24px; }
+}
+
+@media (max-width: 768px) {
+  /* No pinned/horizontal scrolling on small screens: everything stacks. */
+  .nav-links {
+    position: static;
+    transform: none;
+    gap: 14px;
+  }
+  .nav-brand { display: none; }
+
+  .hero-name { white-space: normal; }
+
+  /* Stack "About Me" and its description; no same-line slide on small screens */
+  .about-intro-line {
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    white-space: normal;
+  }
+  .about-intro-title { white-space: normal; }
+  .about-intro-desc {
+    white-space: normal;
+    font-size: clamp(1.5rem, 6vw, 2.4rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  .coursework-pin {
+    min-height: auto;
+    padding: 80px 24px;
+  }
+
+  /* Smaller ring so bigger cards still fit small screens */
+  .coursework .carousel-scene { height: 300px; }
+  .coursework .carousel-ring,
+  .coursework .carousel-card { width: 260px; height: 230px; }
+  .coursework .carousel-code { font-size: 2rem; }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .project-card {
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-armed .reveal-line,
+  .js-armed .about-intro-title,
+  .js-armed .about-intro-desc,
+  .js-armed .timeline-item {
+    opacity: 1;
+  }
+
+  .hero-scroll-arrow { animation: none; }
+}

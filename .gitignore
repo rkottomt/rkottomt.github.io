@@ -1,0 +1,4 @@
+# Cursor / agent tooling (not part of the deployed site)
+.agents/
+.cursor/
+skills-lock.json
