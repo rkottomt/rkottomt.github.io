@@ -43,7 +43,7 @@
       requestAnimationFrame(loop);
     })();
 
-    var hoverEls = document.querySelectorAll('a, button, .project-card, .carousel-card');
+    var hoverEls = document.querySelectorAll('a, button, .project-card, .carousel-card, .timeline-trigger');
     hoverEls.forEach(function (el) {
       el.addEventListener('mouseenter', function () { cursorDot.classList.add('expanded'); });
       el.addEventListener('mouseleave', function () { cursorDot.classList.remove('expanded'); });
@@ -106,6 +106,53 @@
         activeChip = chip;
         detail.innerHTML = DETAILS[key] || '';
         detail.hidden = false;
+      });
+    });
+  })();
+
+  /* ==================== EXPERIENCE: click to expand blurb ==================== */
+  (function initExperience() {
+    var items = document.querySelectorAll('.timeline-item');
+    if (!items.length) return;
+
+    var activeItem = null;
+
+    function collapseItem(item) {
+      var trigger = item.querySelector('.timeline-trigger');
+      var detail = item.querySelector('.timeline-detail');
+      item.classList.remove('is-open');
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      if (detail) {
+        var done = function () {
+          if (!item.classList.contains('is-open')) detail.hidden = true;
+          detail.removeEventListener('transitionend', done);
+        };
+        detail.addEventListener('transitionend', done);
+      }
+    }
+
+    function expandItem(item) {
+      var trigger = item.querySelector('.timeline-trigger');
+      var detail = item.querySelector('.timeline-detail');
+      if (detail) detail.hidden = false;
+      if (detail) void detail.offsetHeight;
+      item.classList.add('is-open');
+      if (trigger) trigger.setAttribute('aria-expanded', 'true');
+    }
+
+    items.forEach(function (item) {
+      var trigger = item.querySelector('.timeline-trigger');
+      if (!trigger) return;
+
+      trigger.addEventListener('click', function () {
+        if (activeItem === item) {
+          collapseItem(item);
+          activeItem = null;
+          return;
+        }
+        if (activeItem) collapseItem(activeItem);
+        expandItem(item);
+        activeItem = item;
       });
     });
   })();

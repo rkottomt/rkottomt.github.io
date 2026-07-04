@@ -512,6 +512,77 @@ body {
   padding-left: 8px;
 }
 
+.experience .timeline-item.is-open::before {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.timeline-trigger {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: none;
+  transition: opacity 0.25s ease;
+}
+
+.timeline-trigger:hover .timeline-title {
+  color: var(--hover-accent);
+}
+
+.timeline-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.timeline-chevron {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  margin-top: 10px;
+  border-right: 1.5px solid var(--text-secondary);
+  border-bottom: 1.5px solid var(--text-secondary);
+  transform: rotate(45deg);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease;
+}
+
+.timeline-item.is-open .timeline-chevron {
+  transform: rotate(-135deg);
+  margin-top: 14px;
+  border-color: var(--text-primary);
+}
+
+.timeline-detail {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.35s ease,
+              margin-top 0.35s ease;
+}
+
+.timeline-item.is-open .timeline-detail {
+  max-height: 520px;
+  opacity: 1;
+  margin-top: 14px;
+}
+
+.timeline-detail p {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  max-width: 62ch;
+  padding-right: 24px;
+}
+
 .experience .timeline-item::before {
   content: '';
   position: absolute;
@@ -529,10 +600,11 @@ body {
   font-size: clamp(1.1rem, 2vw, 1.6rem);
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  transition: color 0.25s ease;
 }
 
 .experience .timeline-sub {
+  display: block;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.04em;
@@ -771,6 +843,9 @@ body {
   .project-card {
     min-height: 0;
   }
+
+  .timeline-trigger { cursor: pointer; }
+  .timeline-detail p { padding-right: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
