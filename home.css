@@ -151,19 +151,19 @@ body {
   margin-left: -50vw;
   pointer-events: none;
 }
-/* A — soft aurora: a few large static navy/blue radial pools for depth */
+/* A — soft aurora: large static navy/blue radial pools for depth */
 .bg-aurora::before {
   background:
-    radial-gradient(55% 50% at 12% 18%, rgba(42, 74, 156, 0.20), transparent 62%),
-    radial-gradient(50% 48% at 88% 26%, rgba(30, 52, 120, 0.16), transparent 60%),
-    radial-gradient(65% 55% at 50% 108%, rgba(24, 40, 96, 0.20), transparent 66%);
+    radial-gradient(58% 52% at 12% 16%, rgba(58, 98, 205, 0.42), transparent 60%),
+    radial-gradient(52% 50% at 88% 24%, rgba(42, 72, 160, 0.36), transparent 60%),
+    radial-gradient(68% 58% at 50% 110%, rgba(34, 56, 128, 0.42), transparent 66%);
 }
-/* B — faint technical dot grid, edge-faded so it stays non-distracting */
+/* B — technical dot grid, edge-faded so it stays non-distracting */
 .bg-dotgrid::before {
-  background-image: radial-gradient(rgba(120, 150, 220, 0.10) 1px, transparent 1.6px);
-  background-size: 26px 26px;
-  -webkit-mask-image: radial-gradient(ellipse 78% 78% at 50% 45%, #000 55%, transparent 100%);
-  mask-image: radial-gradient(ellipse 78% 78% at 50% 45%, #000 55%, transparent 100%);
+  background-image: radial-gradient(rgba(150, 180, 245, 0.22) 1.4px, transparent 1.9px);
+  background-size: 24px 24px;
+  -webkit-mask-image: radial-gradient(ellipse 92% 90% at 50% 45%, #000 70%, transparent 100%);
+  mask-image: radial-gradient(ellipse 92% 90% at 50% 45%, #000 70%, transparent 100%);
 }
 
 .about,
