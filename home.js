@@ -293,13 +293,16 @@
      to fit the viewport (so it's never clipped), and the fit target guarantees "About Me" is
      fully off-screen at the centered stop. Function-based values + invalidateOnRefresh keep it
      correct across resizes. */
-  function buildAboutIntroDesktop() {
+  function buildAboutIntroDesktop(splitStore) {
     var line = document.getElementById('aboutIntroLine');
     var title = document.getElementById('aboutIntroTitle');
     var desc = document.getElementById('aboutIntroDesc');
     if (!line || !title || !desc) return;
 
-    gsap.set([title, desc], { opacity: 1 });
+    // "About Me" is visible and centered at rest; the tagline stays fully hidden
+    // until the horizontal scrub begins (so none of the sentence peeks out).
+    gsap.set(title, { opacity: 1 });
+    gsap.set(desc, { opacity: 0 });
 
     var metrics = { T: 0, D: 0, G: 0 };
     // Size the tagline (bold, title-size base) down to fit the viewport, then record widths.
@@ -319,6 +322,18 @@
     }
     measure();
 
+    // Char-by-char reveal for "About Me" as the section rises into view.
+    if (window.SplitText) {
+      var titleSplit = new SplitText(title, { type: 'chars' });
+      if (splitStore) splitStore.push(titleSplit);
+      gsap.set(titleSplit.chars, { opacity: 0, yPercent: 120, rotationX: -50, transformOrigin: '50% 100%', transformPerspective: 500 });
+      gsap.to(titleSplit.chars, {
+        opacity: 1, yPercent: 0, rotationX: 0,
+        duration: 0.75, ease: 'back.out(1.6)', stagger: 0.07,
+        scrollTrigger: { trigger: '#about-intro', start: 'top 55%', once: true }
+      });
+    }
+
     function startX() { return (metrics.G + metrics.D) / 2; } // "About Me" centered
     function endX() { return -(metrics.T + metrics.G) / 2; }  // tagline centered
 
@@ -336,6 +351,8 @@
       }
     });
     tl.fromTo(line, { x: startX }, { x: endX, ease: 'none' }, 0)
+      // Tagline fades in only as the horizontal scrub starts, then the line slides.
+      .fromTo(desc, { opacity: 0 }, { opacity: 1, ease: 'power1.out', duration: 0.2 }, 0.03)
       // Short hold so the scroll ends with the tagline sitting centered.
       .to({}, { duration: 0.35 });
   }
@@ -534,7 +551,7 @@
     });
 
     buildReveals(splitStore);
-    buildAboutIntroDesktop();
+    buildAboutIntroDesktop(splitStore);
     buildHeaderAnims(splitStore);
 
     // ----- Coursework carousel spin (pinned, scrubbed) -----
@@ -570,6 +587,7 @@
       var descEl = document.getElementById('aboutIntroDesc');
       if (descEl) descEl.style.fontSize = '';
       gsap.set('#aboutIntroLine', { clearProps: 'transform' });
+      gsap.set(['#aboutIntroTitle', '#aboutIntroDesc'], { clearProps: 'opacity,transform' });
     };
   });
 
