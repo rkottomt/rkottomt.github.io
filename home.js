@@ -293,6 +293,79 @@
      to fit the viewport (so it's never clipped), and the fit target guarantees "About Me" is
      fully off-screen at the centered stop. Function-based values + invalidateOnRefresh keep it
      correct across resizes. */
+  // Text Pressure (reactbits.dev/text-animations/text-pressure), weight axis only:
+  // each letter's variable-font weight tracks how close the cursor is. Runs only
+  // while the pointer is inside the section, then eases back to base and stops.
+  var titlePressure = null;
+  function initTitlePressure(area, titleEl, chars) {
+    var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!hoverCapable || !area || !titleEl || !chars || !chars.length) return null;
+
+    // Resting weight sits mid-range so letters can bulge heavier toward the
+    // cursor (up to WGHT_MAX) and thin out away from it (down to WGHT_MIN).
+    var WGHT_MIN = 300, WGHT_MAX = 700, BASE = 500;
+    var cursor = { x: -1e5, y: -1e5 };
+    var mouse = { x: -1e5, y: -1e5 };
+    var state = chars.map(function () { return BASE; });
+    var active = false, raf = null;
+
+    chars.forEach(function (ch) {
+      ch.style.display = 'inline-block';
+      ch.style.fontVariationSettings = "'wght' " + BASE;
+      ch.style.willChange = 'font-variation-settings';
+    });
+
+    function onMove(e) { cursor.x = e.clientX; cursor.y = e.clientY; }
+    function onEnter(e) {
+      cursor.x = mouse.x = e.clientX;
+      cursor.y = mouse.y = e.clientY;
+      active = true;
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+    function onLeave() { active = false; } // frame() eases to BASE, then stops
+
+    function frame() {
+      mouse.x += (cursor.x - mouse.x) / 6;
+      mouse.y += (cursor.y - mouse.y) / 6;
+      var maxDist = Math.max(1, titleEl.getBoundingClientRect().width / 2);
+      var settled = true;
+      for (var i = 0; i < chars.length; i++) {
+        var r = chars[i].getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var target = BASE;
+        if (active) {
+          var dx = mouse.x - cx, dy = mouse.y - cy;
+          var t = Math.min(1, Math.sqrt(dx * dx + dy * dy) / maxDist);
+          target = WGHT_MAX - (WGHT_MAX - WGHT_MIN) * t;
+        }
+        state[i] += (target - state[i]) * 0.2;
+        if (Math.abs(target - state[i]) > 0.6) settled = false;
+        chars[i].style.fontVariationSettings = "'wght' " + Math.round(state[i]);
+      }
+      if (!active && settled) {
+        for (var j = 0; j < chars.length; j++) chars[j].style.fontVariationSettings = "'wght' " + BASE;
+        raf = null;
+        return;
+      }
+      raf = requestAnimationFrame(frame);
+    }
+
+    window.addEventListener('mousemove', onMove);
+    area.addEventListener('mouseenter', onEnter);
+    area.addEventListener('mouseleave', onLeave);
+
+    return {
+      destroy: function () {
+        if (raf) cancelAnimationFrame(raf);
+        raf = null;
+        window.removeEventListener('mousemove', onMove);
+        area.removeEventListener('mouseenter', onEnter);
+        area.removeEventListener('mouseleave', onLeave);
+        chars.forEach(function (ch) { ch.style.fontVariationSettings = ''; ch.style.willChange = ''; });
+      }
+    };
+  }
+
   function buildAboutIntroDesktop(splitStore) {
     var line = document.getElementById('aboutIntroLine');
     var title = document.getElementById('aboutIntroTitle');
@@ -332,6 +405,8 @@
         duration: 0.75, ease: 'back.out(1.6)', stagger: 0.07,
         scrollTrigger: { trigger: '#about-intro', start: 'top 55%', once: true }
       });
+      // Cursor-proximity weight "pressure" on the "About Me" letters.
+      titlePressure = initTitlePressure(document.getElementById('about-intro'), title, titleSplit.chars);
     }
 
     function startX() { return (metrics.G + metrics.D) / 2; } // "About Me" centered
@@ -585,6 +660,7 @@
       if (smoother) { smoother.kill(); smoother = null; }
       if (carousel) carousel.style.transition = '';
       if (tilt) tilt.destroy();
+      if (titlePressure) { titlePressure.destroy(); titlePressure = null; }
       splitStore.forEach(function (s) { if (s && s.revert) s.revert(); });
       // Reset the About Me line so the mobile/reduced layout starts clean.
       var descEl = document.getElementById('aboutIntroDesc');
