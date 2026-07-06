@@ -223,7 +223,7 @@
       });
     });
 
-    ['about', 'coursework', 'projects'].forEach(function (id) {
+    ['about', 'experience', 'coursework', 'projects'].forEach(function (id) {
       var navLink = document.querySelector('.nav-link[data-target="' + id + '"]');
       var section = document.getElementById(id);
       if (!navLink || !section) return;

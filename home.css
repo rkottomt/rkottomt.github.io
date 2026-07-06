@@ -1113,9 +1113,18 @@ body.modal-locked { overflow: hidden; }
   .nav-links {
     position: static;
     transform: none;
-    gap: 14px;
+    gap: 12px;
   }
   .nav-brand { display: none; }
+
+  /* Tighten the bar so 4 links + 3 icons fit narrow phones. */
+  .site-nav {
+    padding-left: calc(16px + env(safe-area-inset-left));
+    padding-right: calc(16px + env(safe-area-inset-right));
+  }
+  .nav-link { font-size: 0.62rem; letter-spacing: 0.08em; }
+  .nav-actions { gap: 8px; }
+  .nav-icon { width: 30px; height: 30px; }
 
   .hero-name { white-space: normal; }
 
