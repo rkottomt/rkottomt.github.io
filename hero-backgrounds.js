@@ -87,6 +87,8 @@ function oglEffect(container, cfg) {
   if (!prefersReduced) raf = requestAnimationFrame(frame);
 
   return {
+    pause() { if (raf) { cancelAnimationFrame(raf); raf = null; } },
+    resume() { if (!raf && !prefersReduced) raf = requestAnimationFrame(frame); },
     destroy() {
       if (raf) cancelAnimationFrame(raf);
       ro.disconnect();
@@ -637,6 +639,8 @@ function createWaves(container) {
   if (!prefersReduced) raf = requestAnimationFrame(tick);
 
   return {
+    pause() { if (raf) { cancelAnimationFrame(raf); raf = null; } },
+    resume() { if (!raf && !prefersReduced) raf = requestAnimationFrame(tick); },
     destroy() {
       if (raf) cancelAnimationFrame(raf);
       window.removeEventListener('resize', onResize);
@@ -765,6 +769,8 @@ function createDotGrid(container) {
   if (!prefersReduced) raf = requestAnimationFrame(loop);
 
   return {
+    pause() { if (raf) { cancelAnimationFrame(raf); raf = null; } },
+    resume() { if (!raf && !prefersReduced) raf = requestAnimationFrame(loop); },
     destroy() {
       if (raf) cancelAnimationFrame(raf);
       window.removeEventListener('resize', onResize);
@@ -802,6 +808,16 @@ async function main() {
 
   let instance = null, currentKey = null;
 
+  // Only animate while the hero is on-screen and the tab is visible; otherwise
+  // pause the rAF loop so a scrolled-past background doesn't burn GPU/CPU.
+  let heroOnScreen = true;
+  function applyRunState() {
+    if (!instance) return;
+    const shouldRun = heroOnScreen && !document.hidden;
+    if (shouldRun) { if (instance.resume) instance.resume(); }
+    else if (instance.pause) instance.pause();
+  }
+
   function mount(key) {
     if (instance) { try { instance.destroy(); } catch (e) { /* ignore */ } instance = null; }
     while (container.firstChild) container.removeChild(container.firstChild);
@@ -811,6 +827,7 @@ async function main() {
     } catch (e) {
       console.error('hero background failed:', key, e);
     }
+    applyRunState();
   }
   function randomKey(exclude) {
     let k;
@@ -825,6 +842,16 @@ async function main() {
 
   const shuffleBtn = document.getElementById('heroShuffle');
   if (shuffleBtn) shuffleBtn.addEventListener('click', () => mount(randomKey(currentKey)));
+
+  const hero = document.getElementById('hero') || container;
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(function (entries) {
+      heroOnScreen = entries[entries.length - 1].isIntersecting;
+      applyRunState();
+    }, { rootMargin: '200px 0px' });
+    io.observe(hero);
+  }
+  document.addEventListener('visibilitychange', applyRunState);
 }
 
 main();

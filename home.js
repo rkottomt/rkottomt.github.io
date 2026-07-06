@@ -542,12 +542,15 @@
   mm.add('(min-width: 769px) and (prefers-reduced-motion: no-preference)', function () {
     var splitStore = [];
 
+    // normalizeScroll is only needed for touch (iOS address-bar/scroll quirks);
+    // on desktop it intercepts the wheel and adds jank, so gate it to touch.
+    var isTouch = window.matchMedia('(hover: none)').matches;
     smoother = ScrollSmoother.create({
       wrapper: '#smooth-wrapper',
       content: '#smooth-content',
-      smooth: 1.2,
-      effects: true,
-      normalizeScroll: true
+      smooth: 1,
+      effects: false,
+      normalizeScroll: isTouch
     });
 
     buildReveals(splitStore);
