@@ -11,7 +11,7 @@
   --surface: #0b1022;
   --border: #1b2540;
   --text-primary: #ffffff;
-  --text-secondary: #8791a8;
+  --text-secondary: #9aa6bd;
   --hover-accent: #ffffff;
   --accent: #2a4a9c;
   --glow: rgba(40,70,160,0.06);
@@ -51,6 +51,39 @@ a {
 
 a:hover {
   color: var(--hover-accent);
+}
+
+/* Consistent keyboard focus ring across nav links, buttons, timeline triggers,
+   interest chips, carousel/shuffle/modal controls (which otherwise rely on the
+   browser default). Mouse clicks don't trigger :focus-visible, so this is
+   keyboard-only and doesn't affect the pointer experience. */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Skip link: hidden until focused, then slides into the top-left. */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 12px;
+  z-index: 12000;
+  padding: 10px 16px;
+  background: #05070f;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 12px;
+  color: #fff;
 }
 
 /* ===================== CUSTOM CURSOR ===================== */

@@ -3,15 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Rohit Kottomtharayil</title>
+  <title>Rohit Kottomtharayil — ECE @ Carnegie Mellon</title>
+  <meta name="description" content="ECE student at Carnegie Mellon working across optics hardware, machine learning, and systems. Nokia Bell Labs, Pfizer, and research experience.">
+  <meta name="theme-color" content="#05070f">
+  <link rel="canonical" href="https://rkottomt.github.io/">
   <link rel="icon" href="assets/favicon.ico">
+
+  <!-- Open Graph / social sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rkottomt.github.io/">
+  <meta property="og:title" content="Rohit Kottomtharayil — ECE @ Carnegie Mellon">
+  <meta property="og:description" content="ECE student at Carnegie Mellon working across optics hardware, machine learning, and systems. Nokia Bell Labs, Pfizer, and research experience.">
+  <meta property="og:image" content="https://rkottomt.github.io/assets/og-cover.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Rohit Kottomtharayil — ECE @ Carnegie Mellon">
+  <meta name="twitter:description" content="ECE student at Carnegie Mellon working across optics hardware, machine learning, and systems.">
+  <meta name="twitter:image" content="https://rkottomt.github.io/assets/og-cover.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
-  <link rel="stylesheet" href="style.css?v=9">
-  <link rel="stylesheet" href="home.css?v=19">
+  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="home.css?v=20">
 </head>
 <body>
+  <a class="skip-link" href="#about" data-target="about">Skip to content</a>
+
   <div class="cursor-dot" id="cursorDot"></div>
 
   <div class="noise-overlay" aria-hidden="true"></div>
@@ -27,6 +43,7 @@
       <a href="#experience" class="nav-link" data-target="experience">Experience</a>
       <a href="#coursework" class="nav-link" data-target="coursework">Coursework</a>
       <a href="#projects" class="nav-link" data-target="projects">Projects</a>
+      <a href="#contact" class="nav-link" data-target="contact">Contact</a>
     </div>
     <div class="nav-actions">
       <a href="https://www.linkedin.com/in/rohit-kottomtharayil/" class="nav-icon" target="_blank" rel="noopener" aria-label="LinkedIn">
@@ -45,17 +62,17 @@
     <div id="smooth-content">
 
       <!-- ===================== HERO =====================
-           Full-screen generative background chosen at random each load from
-           seven effects (Waves, DotGrid, Galaxy, FaultyTerminal, LineWaves,
-           FloatingLines, Dither) ported to vanilla JS/OGL in
-           hero-backgrounds.js and recolored to the site palette. The shuffle
-           button swaps effects live. Effects are ported (not copied) from the
+           Full-screen generative background defaults to Waves on load. The
+           shuffle button swaps live between six effects (Waves, DotGrid,
+           Galaxy, FaultyTerminal, LineWaves, Dither) ported to vanilla JS/OGL
+           in hero-backgrounds.js and recolored to the site palette. `?bg=<key>`
+           can force a specific effect. Effects are ported (not copied) from the
            MIT-licensed ReactBits component library (reactbits.dev). -->
       <section id="hero" class="hero">
         <div class="hero-bg" id="heroBg" aria-hidden="true"></div>
         <div class="hero-content">
           <h1 class="hero-name" id="heroName"><span class="hero-name-text" id="heroNameText">Rohit Kottomtharayil</span></h1>
-          <div class="hero-sub" id="heroSub">ECE @ Carnegie Mellon</div>
+          <div class="hero-sub" id="heroSub">ECE @ Carnegie Mellon · Optics · ML · Systems</div>
         </div>
         <div class="hero-scroll-hint" id="heroScrollHint">
           <span>scroll</span>
@@ -68,7 +85,7 @@
       <section id="about-intro" class="about-intro">
         <div class="about-intro-line" id="aboutIntroLine">
           <h2 class="about-intro-title" id="aboutIntroTitle">About Me</h2>
-          <span class="about-intro-desc" id="aboutIntroDesc">Sophomore Student studying ECE at Carnegie Mellon University</span>
+          <span class="about-intro-desc" id="aboutIntroDesc">Sophomore studying Electrical &amp; Computer Engineering at Carnegie Mellon</span>
         </div>
       </section>
 
@@ -364,6 +381,23 @@
         </div>
       </section>
 
+      <!-- ===================== CONTACT (closing CTA) ===================== -->
+      <section id="contact" class="contact">
+        <div class="section-head">
+          <span class="section-index">05</span>
+          <span class="section-title">Contact</span>
+        </div>
+        <div class="contact-inner">
+          <h3 class="contact-heading">Let&rsquo;s build something.</h3>
+          <p class="contact-line">Open to internships and collaborations at the edge of hardware and software.</p>
+          <div class="contact-actions">
+            <a class="contact-cta contact-cta-primary" href="mailto:rkottomt@andrew.cmu.edu">Email me</a>
+            <a class="contact-cta" href="https://www.linkedin.com/in/rohit-kottomtharayil/" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="contact-cta" href="resume.html">Résumé</a>
+          </div>
+        </div>
+      </section>
+
       <!-- ===================== FOOTER ===================== -->
       <footer class="site-footer">
         <div class="footer-name">Rohit Kottomtharayil</div>
@@ -429,7 +463,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollToPlugin.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
-  <script src="home.js?v=16"></script>
+  <script src="home.js?v=17"></script>
   <script type="module" src="hero-backgrounds.js?v=4"></script>
 </body>
 </html>

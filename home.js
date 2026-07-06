@@ -208,7 +208,7 @@
 
   /* ==================== NAV: smooth-scroll + active state ==================== */
   (function initNav() {
-    var links = document.querySelectorAll('.site-nav [data-target]');
+    var links = document.querySelectorAll('.site-nav [data-target], .skip-link[data-target]');
     links.forEach(function (link) {
       link.addEventListener('click', function (e) {
         var id = link.getAttribute('data-target');
@@ -223,7 +223,7 @@
       });
     });
 
-    ['about', 'experience', 'coursework', 'projects'].forEach(function (id) {
+    ['about', 'experience', 'coursework', 'projects', 'contact'].forEach(function (id) {
       var navLink = document.querySelector('.nav-link[data-target="' + id + '"]');
       var section = document.getElementById(id);
       if (!navLink || !section) return;
