@@ -630,8 +630,9 @@ body.modal-locked { overflow: hidden; }
 .gallery-item img {
   display: block;
   width: 100%;
-  height: 260px;
-  object-fit: cover;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
   transition: transform 0.5s ease;
 }
 .gallery-item:hover img { transform: scale(1.04); }
