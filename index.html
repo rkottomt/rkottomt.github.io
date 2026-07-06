@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css?v=7">
-  <link rel="stylesheet" href="home.css?v=12">
+  <link rel="stylesheet" href="home.css?v=13">
 </head>
 <body>
   <div class="cursor-dot" id="cursorDot"></div>
@@ -43,12 +43,14 @@
     <div id="smooth-content">
 
       <!-- ===================== HERO =====================
-           Full-screen interactive generative line mesh. The mesh grid is
-           built and animated in home.js. Technique (self-drawing strokes +
-           cursor-reactive warp) is inspired by Antoine Wodniack's portfolio
-           hero (wodniack.dev); the geometry here is original. -->
+           Full-screen generative background chosen at random each load from
+           seven effects (Waves, DotGrid, Galaxy, FaultyTerminal, LineWaves,
+           FloatingLines, Dither) ported to vanilla JS/OGL in
+           hero-backgrounds.js and recolored to the site palette. The shuffle
+           button swaps effects live. Effects are ported (not copied) from the
+           MIT-licensed ReactBits component library (reactbits.dev). -->
       <section id="hero" class="hero">
-        <svg class="hero-mesh" id="heroMesh" aria-hidden="true" preserveAspectRatio="none"></svg>
+        <div class="hero-bg" id="heroBg" aria-hidden="true"></div>
         <div class="hero-content">
           <h1 class="hero-name" id="heroName"><span class="hero-name-text" id="heroNameText">Rohit Kottomtharayil</span></h1>
           <div class="hero-sub" id="heroSub">ECE @ Carnegie Mellon</div>
@@ -57,10 +59,7 @@
           <span>scroll</span>
           <span class="hero-scroll-arrow">&darr;</span>
         </div>
-        <div class="hero-toggle" id="heroToggle" role="group" aria-label="Background style">
-          <button type="button" data-visual="mesh" class="is-active" aria-pressed="true">Mesh</button>
-          <button type="button" data-visual="waves" aria-pressed="false">Waves</button>
-        </div>
+        <button type="button" class="hero-shuffle" id="heroShuffle" aria-label="Shuffle background">Shuffle &#8635;</button>
       </section>
 
       <!-- ===================== ABOUT ME (full screen) ===================== -->
@@ -428,6 +427,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollToPlugin.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
-  <script src="home.js?v=11"></script>
+  <script src="home.js?v=12"></script>
+  <script type="module" src="hero-backgrounds.js?v=1"></script>
 </body>
 </html>

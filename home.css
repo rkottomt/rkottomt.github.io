@@ -167,25 +167,37 @@ body {
   overflow: hidden;
 }
 
-/* Full-screen generative line mesh (built + animated in home.js) */
-.hero-mesh {
+/* Full-screen generative background (mounted + animated in hero-backgrounds.js) */
+.hero-bg {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   z-index: 0;
-  color: rgba(255, 255, 255, 0.2);
   pointer-events: none;
 }
 
-.hero-mesh line,
-.hero-mesh path {
-  vector-effect: non-scaling-stroke;
+#heroBg canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .hero-content {
   position: relative;
   z-index: 1;
+}
+
+/* Radial scrim keeps the name/sub legible over busy backgrounds. */
+.hero-content::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 160%;
+  height: 240%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.28) 42%, rgba(0, 0, 0, 0) 72%);
 }
 
 .hero-name {
@@ -245,45 +257,36 @@ body {
   50% { transform: translateY(6px); opacity: 1; }
 }
 
-/* Hero background-style switcher (mesh vs waves) */
-.hero-toggle {
+/* Hero background shuffle control */
+.hero-shuffle {
   position: absolute;
   bottom: 30px;
   left: 40px;
   z-index: 2;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 14px;
   font-family: var(--font-mono);
   font-size: 0.6rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-}
-
-.hero-toggle button {
-  background: transparent;
-  border: none;
-  padding: 4px 2px;
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
   color: var(--text-secondary);
-  opacity: 0.55;
   cursor: pointer;
-  transition: color 0.25s ease, opacity 0.25s ease;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 
-.hero-toggle button:hover { opacity: 0.9; }
-
-.hero-toggle button.is-active {
+.hero-shuffle:hover {
   color: var(--text-primary);
-  opacity: 1;
+  border-color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
 }
-
-.hero-toggle button + button { border-left: 1px solid var(--border); padding-left: 8px; }
 
 @media (max-width: 768px) {
-  .hero-toggle { left: 22px; bottom: 24px; }
+  .hero-shuffle { left: 22px; bottom: 24px; }
 }
 
 /* ===================== ABOUT ME (full screen) ===================== */
