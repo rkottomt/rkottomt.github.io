@@ -794,7 +794,6 @@ async function main() {
     galaxy: createGalaxy,
     faultyTerminal: createFaultyTerminal,
     lineWaves: createLineWaves,
-    floatingLines: createFloatingLines,
     dither: createDither
   };
 
