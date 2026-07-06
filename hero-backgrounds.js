@@ -821,6 +821,7 @@ async function main() {
     if (instance) { try { instance.destroy(); } catch (e) { /* ignore */ } instance = null; }
     while (container.firstChild) container.removeChild(container.firstChild);
     currentKey = key;
+    container.dataset.bg = key;
     try {
       instance = REGISTRY[key](container);
     } catch (e) {
@@ -834,10 +835,12 @@ async function main() {
     return k;
   }
 
-  // Optional deep-link: ?bg=galaxy forces a specific background (else random).
+  // Default to "waves" on every launch; ?bg=<key> can force a specific one.
+  // The shuffle button still swaps to a random background on demand.
+  const DEFAULT_KEY = 'waves';
   let forced = null;
   try { forced = new URLSearchParams(window.location.search).get('bg'); } catch (e) { forced = null; }
-  mount(forced && keys.indexOf(forced) !== -1 ? forced : randomKey());
+  mount(forced && keys.indexOf(forced) !== -1 ? forced : (keys.indexOf(DEFAULT_KEY) !== -1 ? DEFAULT_KEY : randomKey()));
 
   const shuffleBtn = document.getElementById('heroShuffle');
   if (shuffleBtn) shuffleBtn.addEventListener('click', () => mount(randomKey(currentKey)));
