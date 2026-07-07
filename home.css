@@ -14,68 +14,6 @@ body {
   overscroll-behavior-y: none;
 }
 
-/* Non-GSAP scroll guard while the intro overlay is on screen. */
-html.is-intro-active {
-  overflow: hidden;
-}
-
-/* ===================== FIRST-LOAD INTRO OVERLAY ===================== */
-.preloader {
-  position: fixed;
-  inset: 0;
-  z-index: 10001; /* above the fixed nav (1000) and cursor dot (10000) */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg, #05070f);
-  will-change: opacity;
-}
-
-.preloader-logo {
-  width: clamp(70px, 12vw, 120px);
-  height: auto;
-  color: var(--text-primary, #fff);
-  overflow: visible;
-}
-
-.preloader-stroke {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-}
-
-/* Thin frame that draws around the viewport during the intro. */
-.preloader-frame-bar {
-  position: absolute;
-  background: var(--text-primary, #fff);
-}
-
-.preloader-frame-bar--top,
-.preloader-frame-bar--bottom {
-  left: 0;
-  width: 100%;
-  height: 2px;
-  transform: scaleX(0);
-}
-
-.preloader-frame-bar--top { top: 0; transform-origin: 0 50%; }
-.preloader-frame-bar--bottom { bottom: 0; transform-origin: 100% 50%; }
-
-.preloader-frame-bar--left,
-.preloader-frame-bar--right {
-  top: 0;
-  width: 2px;
-  height: 100%;
-  transform: scaleY(0);
-}
-
-.preloader-frame-bar--left { left: 0; transform-origin: 50% 0; }
-.preloader-frame-bar--right { right: 0; transform-origin: 50% 100%; }
-
-/* Reduced motion: never show or block behind the intro. */
-@media (prefers-reduced-motion: reduce) {
-  .preloader { display: none; }
-}
-
 /* ScrollSmoother structure. Kept simple; the plugin manages transforms. */
 #smooth-wrapper {
   position: relative;
@@ -1312,24 +1250,32 @@ body.modal-locked { overflow: hidden; }
   color: var(--text-primary);
 }
 
-/* Subtle marquee ribbon under the CTA (transform-based, cheap). */
+/* Seamless marquee: two identical tracks inside one inner wrapper; -50%
+   translate lands exactly on the duplicate with no loop seam. */
 .contact-marquee {
   margin-top: 80px;
   overflow: hidden;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   padding: 16px 0;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+.contact-marquee-inner {
+  display: flex;
+  width: max-content;
+  animation: contact-marquee 28s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .contact-marquee-track {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 30px;
+  flex-shrink: 0;
+  padding-right: 30px;
   white-space: nowrap;
-  will-change: transform;
-  animation: contact-marquee 22s linear infinite;
 }
 
 .contact-marquee-track span {
@@ -1343,13 +1289,13 @@ body.modal-locked { overflow: hidden; }
 .contact-marquee-star { color: var(--hover-accent, #7aa2ff); }
 
 @keyframes contact-marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .contact-badge-dot { animation: none; }
-  .contact-marquee-track { animation: none; }
+  .contact-marquee-inner { animation: none; }
   .ce-char-inner { transition: none; }
 }
 

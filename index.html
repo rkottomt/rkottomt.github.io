@@ -23,28 +23,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css?v=10">
-  <link rel="stylesheet" href="home.css?v=22">
+  <link rel="stylesheet" href="home.css?v=23">
 </head>
 <body>
-  <!-- ===================== FIRST-LOAD INTRO =====================
-       Full-screen overlay: an "RK" line-monogram draws in (stroke-dashoffset),
-       drains away while a thin frame draws around the viewport, then hands off
-       to the hero name-scramble. Adapted from Antoine Wodniack's open-source
-       intro (wodniack.dev), rebuilt in vanilla JS/GSAP. Removed on completion
-       and disabled entirely under prefers-reduced-motion. -->
-  <div id="preloader" class="preloader" aria-hidden="true">
-    <div class="preloader-frame" aria-hidden="true">
-      <span class="preloader-frame-bar preloader-frame-bar--top"></span>
-      <span class="preloader-frame-bar preloader-frame-bar--right"></span>
-      <span class="preloader-frame-bar preloader-frame-bar--bottom"></span>
-      <span class="preloader-frame-bar preloader-frame-bar--left"></span>
-    </div>
-    <svg class="preloader-logo" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path class="preloader-stroke" pathLength="1" d="M12 72 L12 8 L34 8 Q48 8 48 24 Q48 40 34 40 L12 40 M30 40 L50 72" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-      <path class="preloader-stroke" pathLength="1" d="M70 8 L70 72 M104 10 L74 41 L106 72" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
-
   <a class="skip-link" href="#about" data-target="about">Skip to content</a>
 
   <div class="cursor-dot" id="cursorDot"></div>
@@ -422,15 +403,19 @@
           </div>
         </div>
         <div class="contact-marquee" aria-hidden="true">
-          <div class="contact-marquee-track">
-            <span>Let&rsquo;s build something</span><span class="contact-marquee-star">&#9733;</span>
-            <span>Optics</span><span class="contact-marquee-star">&#9733;</span>
-            <span>Machine Learning</span><span class="contact-marquee-star">&#9733;</span>
-            <span>Systems</span><span class="contact-marquee-star">&#9733;</span>
-            <span>Let&rsquo;s build something</span><span class="contact-marquee-star">&#9733;</span>
-            <span>Optics</span><span class="contact-marquee-star">&#9733;</span>
-            <span>Machine Learning</span><span class="contact-marquee-star">&#9733;</span>
-            <span>Systems</span><span class="contact-marquee-star">&#9733;</span>
+          <div class="contact-marquee-inner">
+            <div class="contact-marquee-track">
+              <span>Let&rsquo;s build something</span><span class="contact-marquee-star">&#9733;</span>
+              <span>Optics</span><span class="contact-marquee-star">&#9733;</span>
+              <span>Machine Learning</span><span class="contact-marquee-star">&#9733;</span>
+              <span>Systems</span><span class="contact-marquee-star">&#9733;</span>
+            </div>
+            <div class="contact-marquee-track" aria-hidden="true">
+              <span>Let&rsquo;s build something</span><span class="contact-marquee-star">&#9733;</span>
+              <span>Optics</span><span class="contact-marquee-star">&#9733;</span>
+              <span>Machine Learning</span><span class="contact-marquee-star">&#9733;</span>
+              <span>Systems</span><span class="contact-marquee-star">&#9733;</span>
+            </div>
           </div>
         </div>
       </section>
@@ -500,7 +485,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollToPlugin.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
-  <script src="home.js?v=19"></script>
+  <script src="home.js?v=20"></script>
   <script type="module" src="hero-backgrounds.js?v=4"></script>
 </body>
 </html>

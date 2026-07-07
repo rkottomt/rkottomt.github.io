@@ -298,57 +298,6 @@
       .add(startIdle);
   }
 
-  /* ==================== FIRST-LOAD INTRO ====================
-     Draws the RK monogram, drains it while a thin frame draws around the
-     viewport, hands off to the hero scramble, then lifts the overlay and
-     unblocks scrolling. Adapted (vanilla GSAP) from wodniack.dev's intro. */
-  function runIntro(onHandoff) {
-    var pre = document.getElementById('preloader');
-    if (!pre) { if (onHandoff) onHandoff(); return; }
-
-    var strokes = pre.querySelectorAll('.preloader-stroke');
-    var frameBars = pre.querySelectorAll('.preloader-frame-bar');
-    var handedOff = false;
-    function handoff() { if (handedOff) return; handedOff = true; if (onHandoff) onHandoff(); }
-
-    document.documentElement.classList.add('is-intro-active');
-    if (smoother) smoother.paused(true);
-
-    function finish() {
-      document.documentElement.classList.remove('is-intro-active');
-      if (smoother) { smoother.paused(false); smoother.scrollTo(0); }
-      if (pre && pre.parentNode) pre.parentNode.removeChild(pre);
-      ScrollTrigger.refresh();
-    }
-
-    var tl = gsap.timeline({ onComplete: finish });
-
-    // Draw the two letter strokes.
-    tl.to(strokes, {
-      strokeDashoffset: 0, duration: 1.15, ease: 'power2.inOut', stagger: 0.28
-    }, 0.2);
-
-    // Draw the viewport frame in.
-    tl.to(frameBars, {
-      scaleX: 1, scaleY: 1, duration: 0.9, ease: 'power3.inOut', stagger: 0.06
-    }, 0.95);
-
-    // Drain the monogram away.
-    tl.to('.preloader-logo', { scale: 0.92, opacity: 0, duration: 0.6, ease: 'power2.in' }, 1.95);
-
-    // Hand off to the hero scramble just before the curtain lifts.
-    tl.call(handoff, null, 2.25);
-
-    // Lift the overlay.
-    tl.set(pre, { pointerEvents: 'none' }, 2.5);
-    tl.to(pre, { opacity: 0, duration: 0.7, ease: 'power2.inOut' }, 2.5);
-
-    // Safety net: if the timeline is interrupted, still hand off.
-    gsap.delayedCall(4.5, handoff);
-
-    return tl;
-  }
-
   /* ==================== ABOUT ME: "About Me" -> big tagline centered ====================
      "About Me" starts centered; on scroll the line slides left so "About Me" exits off the
      left edge and the full tagline ends centered at a large bold size. The tagline is sized
@@ -1028,26 +977,11 @@
     });
   })();
 
-  /* ==================== STARTUP: intro + hero ====================
-     The hero background is handled by the hero-backgrounds.js module. Here we
-     prime the name, then either play the first-load intro (which hands off to
-     the hero scramble) or, under reduced motion / when arriving via a section
-     hash, skip straight to the hero. */
+  /* ==================== STARTUP: hero ====================
+     The hero background is handled by the hero-backgrounds.js module.
+     Prime hidden sub/hint, then run the name scramble + idle motion. */
   initName();
-
-  (function bootIntro() {
-    var pre = document.getElementById('preloader');
-    var hash = window.location.hash;
-    var hasHashTarget = !!(hash && hash.length > 1 && document.getElementById(hash.slice(1)));
-
-    if (prefersReduced || !hasScramble || hasHashTarget) {
-      if (pre && pre.parentNode) pre.parentNode.removeChild(pre);
-      document.documentElement.classList.remove('is-intro-active');
-      playHeroIntro();
-      return;
-    }
-    runIntro(playHeroIntro);
-  })();
+  playHeroIntro();
 
   /* ==================== INCOMING HASH (e.g. from resume.html#about) ==================== */
   (function initHashScroll() {
