@@ -242,17 +242,28 @@
   })();
 
   /* ==================== HERO: scramble name + idle letter motion ==================== */
+  // Prime the hero sub/hint to their hidden pre-intro state (or reveal them
+  // outright under reduced motion). The actual scramble + reveal is triggered
+  // by the intro handoff (or immediately when there's no intro).
   function initName() {
+    if (prefersReduced) {
+      gsap.set(['.hero-sub', '.hero-scroll-hint'], { opacity: 1 });
+      return;
+    }
+    gsap.set(['.hero-sub', '.hero-scroll-hint'], { opacity: 0, y: 16 });
+  }
+
+  // Scramble the name in, reveal the sub/hint, then start the idle letter motion.
+  function playHeroIntro() {
     var el = document.getElementById('heroNameText');
     if (!el) return;
-    var finalText = el.textContent;
 
     if (prefersReduced) {
       gsap.set(['.hero-sub', '.hero-scroll-hint'], { opacity: 1 });
       return;
     }
 
-    gsap.set(['.hero-sub', '.hero-scroll-hint'], { opacity: 0, y: 16 });
+    var finalText = el.textContent;
 
     function startIdle() {
       if (!window.SplitText) return;
@@ -274,7 +285,7 @@
       for (var i = 0; i < 3; i++) gsap.delayedCall(i * 0.4, pulse);
     }
 
-    var tl = gsap.timeline({ delay: 0.2 });
+    var tl = gsap.timeline();
     if (hasScramble) {
       tl.to(el, {
         duration: 3.0,
@@ -285,6 +296,57 @@
     tl.to('.hero-sub', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, hasScramble ? '-=0.5' : 0)
       .to('.hero-scroll-hint', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
       .add(startIdle);
+  }
+
+  /* ==================== FIRST-LOAD INTRO ====================
+     Draws the RK monogram, drains it while a thin frame draws around the
+     viewport, hands off to the hero scramble, then lifts the overlay and
+     unblocks scrolling. Adapted (vanilla GSAP) from wodniack.dev's intro. */
+  function runIntro(onHandoff) {
+    var pre = document.getElementById('preloader');
+    if (!pre) { if (onHandoff) onHandoff(); return; }
+
+    var strokes = pre.querySelectorAll('.preloader-stroke');
+    var frameBars = pre.querySelectorAll('.preloader-frame-bar');
+    var handedOff = false;
+    function handoff() { if (handedOff) return; handedOff = true; if (onHandoff) onHandoff(); }
+
+    document.documentElement.classList.add('is-intro-active');
+    if (smoother) smoother.paused(true);
+
+    function finish() {
+      document.documentElement.classList.remove('is-intro-active');
+      if (smoother) { smoother.paused(false); smoother.scrollTo(0); }
+      if (pre && pre.parentNode) pre.parentNode.removeChild(pre);
+      ScrollTrigger.refresh();
+    }
+
+    var tl = gsap.timeline({ onComplete: finish });
+
+    // Draw the two letter strokes.
+    tl.to(strokes, {
+      strokeDashoffset: 0, duration: 1.15, ease: 'power2.inOut', stagger: 0.28
+    }, 0.2);
+
+    // Draw the viewport frame in.
+    tl.to(frameBars, {
+      scaleX: 1, scaleY: 1, duration: 0.9, ease: 'power3.inOut', stagger: 0.06
+    }, 0.95);
+
+    // Drain the monogram away.
+    tl.to('.preloader-logo', { scale: 0.92, opacity: 0, duration: 0.6, ease: 'power2.in' }, 1.95);
+
+    // Hand off to the hero scramble just before the curtain lifts.
+    tl.call(handoff, null, 2.25);
+
+    // Lift the overlay.
+    tl.set(pre, { pointerEvents: 'none' }, 2.5);
+    tl.to(pre, { opacity: 0, duration: 0.7, ease: 'power2.inOut' }, 2.5);
+
+    // Safety net: if the timeline is interrupted, still hand off.
+    gsap.delayedCall(4.5, handoff);
+
+    return tl;
   }
 
   /* ==================== ABOUT ME: "About Me" -> big tagline centered ====================
@@ -508,6 +570,47 @@
     applyHeaderAnim('#experience', 'flip', splitStore);
     applyHeaderAnim('#coursework', 'wave', splitStore);
     applyHeaderAnim('#projects', 'scramble', splitStore);
+    applyHeaderAnim('#contact', 'mask-rise', splitStore);
+  }
+
+  /* ==================== CONTACT: heading reveal + email hover roll ==================== */
+  function initContact(splitStore) {
+    // Oversized heading rises in per-character on scroll (mask-rise pattern).
+    var heading = document.getElementById('contactHeading');
+    if (heading && window.SplitText) {
+      var split = new SplitText(heading, { type: 'chars' });
+      splitStore.push(split);
+      heading.style.display = 'inline-block';
+      heading.style.overflow = 'hidden';
+      gsap.set(split.chars, { yPercent: 115 });
+      gsap.to(split.chars, {
+        yPercent: 0, duration: 0.85, ease: 'power4.out', stagger: 0.03,
+        scrollTrigger: { trigger: '#contact', start: 'top 80%' }
+      });
+    }
+
+    // Email centerpiece: wrap each character so it can roll up to a duplicate
+    // on hover (CSS drives the motion). Hover-capable pointers only; touch and
+    // reduced-motion keep the plain, selectable email text.
+    var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    var emailText = document.querySelector('#contactEmail .contact-email-text');
+    if (hoverCapable && emailText && !emailText.dataset.rollBuilt) {
+      var text = emailText.textContent;
+      emailText.textContent = '';
+      for (var i = 0; i < text.length; i++) {
+        var ch = text.charAt(i);
+        var outer = document.createElement('span');
+        outer.className = 'ce-char';
+        var inner = document.createElement('span');
+        inner.className = 'ce-char-inner';
+        inner.setAttribute('data-ch', ch);
+        inner.textContent = ch;
+        inner.style.transitionDelay = (i * 0.012) + 's';
+        outer.appendChild(inner);
+        emailText.appendChild(outer);
+      }
+      emailText.dataset.rollBuilt = '1';
+    }
   }
 
   /* ==================== SHARED REVEALS (desktop + mobile) ==================== */
@@ -631,6 +734,7 @@
     buildReveals(splitStore);
     buildAboutIntroDesktop(splitStore);
     buildHeaderAnims(splitStore);
+    initContact(splitStore);
 
     // ----- Coursework carousel spin (pinned, scrubbed) -----
     if (carousel && courseTotal) {
@@ -667,6 +771,10 @@
       if (descEl) descEl.style.fontSize = '';
       gsap.set('#aboutIntroLine', { clearProps: 'transform' });
       gsap.set(['#aboutIntroTitle', '#aboutIntroDesc'], { clearProps: 'opacity,transform' });
+      // SplitText.revert() restores the heading text but not the inline styles
+      // we set for the mask-rise, so clear them explicitly.
+      var contactHeading = document.getElementById('contactHeading');
+      if (contactHeading) { contactHeading.style.display = ''; contactHeading.style.overflow = ''; }
     };
   });
 
@@ -676,6 +784,7 @@
     buildReveals(splitStore);
     buildAboutIntroStacked();
     buildHeaderAnims(splitStore);
+    initContact(splitStore);
 
     // Project cards fade in stacked (no tilt on touch)
     revealProjects();
@@ -684,6 +793,8 @@
 
     return function cleanup() {
       splitStore.forEach(function (s) { if (s && s.revert) s.revert(); });
+      var contactHeading = document.getElementById('contactHeading');
+      if (contactHeading) { contactHeading.style.display = ''; contactHeading.style.overflow = ''; }
     };
   });
 
@@ -901,11 +1012,26 @@
     });
   })();
 
-  /* ==================== STARTUP: hero ====================
-     The hero background is now handled by the hero-backgrounds.js module
-     (random ReactBits-style effect per load + shuffle button). Only the
-     animated name is initialized here. */
+  /* ==================== STARTUP: intro + hero ====================
+     The hero background is handled by the hero-backgrounds.js module. Here we
+     prime the name, then either play the first-load intro (which hands off to
+     the hero scramble) or, under reduced motion / when arriving via a section
+     hash, skip straight to the hero. */
   initName();
+
+  (function bootIntro() {
+    var pre = document.getElementById('preloader');
+    var hash = window.location.hash;
+    var hasHashTarget = !!(hash && hash.length > 1 && document.getElementById(hash.slice(1)));
+
+    if (prefersReduced || !hasScramble || hasHashTarget) {
+      if (pre && pre.parentNode) pre.parentNode.removeChild(pre);
+      document.documentElement.classList.remove('is-intro-active');
+      playHeroIntro();
+      return;
+    }
+    runIntro(playHeroIntro);
+  })();
 
   /* ==================== INCOMING HASH (e.g. from resume.html#about) ==================== */
   (function initHashScroll() {

@@ -14,6 +14,68 @@ body {
   overscroll-behavior-y: none;
 }
 
+/* Non-GSAP scroll guard while the intro overlay is on screen. */
+html.is-intro-active {
+  overflow: hidden;
+}
+
+/* ===================== FIRST-LOAD INTRO OVERLAY ===================== */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 10001; /* above the fixed nav (1000) and cursor dot (10000) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg, #05070f);
+  will-change: opacity;
+}
+
+.preloader-logo {
+  width: clamp(70px, 12vw, 120px);
+  height: auto;
+  color: var(--text-primary, #fff);
+  overflow: visible;
+}
+
+.preloader-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+/* Thin frame that draws around the viewport during the intro. */
+.preloader-frame-bar {
+  position: absolute;
+  background: var(--text-primary, #fff);
+}
+
+.preloader-frame-bar--top,
+.preloader-frame-bar--bottom {
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+}
+
+.preloader-frame-bar--top { top: 0; transform-origin: 0 50%; }
+.preloader-frame-bar--bottom { bottom: 0; transform-origin: 100% 50%; }
+
+.preloader-frame-bar--left,
+.preloader-frame-bar--right {
+  top: 0;
+  width: 2px;
+  height: 100%;
+  transform: scaleY(0);
+}
+
+.preloader-frame-bar--left { left: 0; transform-origin: 50% 0; }
+.preloader-frame-bar--right { right: 0; transform-origin: 50% 100%; }
+
+/* Reduced motion: never show or block behind the intro. */
+@media (prefers-reduced-motion: reduce) {
+  .preloader { display: none; }
+}
+
 /* ScrollSmoother structure. Kept simple; the plugin manages transforms. */
 #smooth-wrapper {
   position: relative;
@@ -1086,55 +1148,144 @@ body.modal-locked { overflow: hidden; }
 .contact {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 140px 40px 120px;
+  padding: 150px 40px 110px;
   text-align: center;
 }
 
-.contact .section-head { margin-bottom: 40px; }
+.contact .section-head { margin-bottom: 44px; }
 
 .contact-inner {
-  max-width: 720px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
-.contact-heading {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  font-size: clamp(2rem, 6vw, 4rem);
-  color: var(--text-primary);
-}
-
-.contact-line {
-  margin-top: 18px;
-  font-family: var(--font-body);
-  font-size: 1.05rem;
-  line-height: 1.6;
+/* Availability badge with a soft pulsing dot. */
+.contact-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--text-secondary);
 }
 
+.contact-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5);
+  animation: contact-pulse 2.4s ease-out infinite;
+}
+
+@keyframes contact-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5); }
+  70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+.contact-heading {
+  margin-top: 26px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  font-size: clamp(2.4rem, 8vw, 5.5rem);
+  color: var(--text-primary);
+}
+
+/* Oversized interactive email centerpiece. */
+.contact-email {
+  display: inline-block;
+  margin-top: 30px;
+  font-family: var(--font-mono);
+  font-size: clamp(1.05rem, 3.6vw, 2.35rem);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.contact-email-text {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Per-letter roll: JS wraps each char; on hover the inner shifts up to reveal
+   a duplicate underneath (rendered via ::after). Hover-capable pointers only. */
+.ce-char {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 1.1;
+}
+
+.ce-char-inner {
+  display: inline-block;
+  position: relative;
+  transition: transform 0.42s cubic-bezier(0.6, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.ce-char-inner::after {
+  content: attr(data-ch);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  color: var(--hover-accent, #7aa2ff);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact-email:hover .ce-char-inner,
+  .contact-email:focus-visible .ce-char-inner {
+    transform: translateY(-100%);
+  }
+}
+
 .contact-actions {
-  margin-top: 36px;
+  margin-top: 40px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 14px;
 }
 
+/* Pill buttons with a fill sweep from the bottom on hover. */
 .contact-cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   font-family: var(--font-mono);
   font-size: 0.82rem;
   letter-spacing: 0.04em;
-  padding: 14px 26px;
+  padding: 14px 28px;
   border: 1px solid var(--border);
   border-radius: 999px;
   color: var(--text-primary);
-  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.contact-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--text-primary);
+  transform: translateY(101%);
+  transition: transform 0.35s cubic-bezier(0.6, 0, 0.2, 1);
 }
 
 .contact-cta:hover {
+  color: #05070f;
   border-color: var(--text-primary);
+}
+
+.contact-cta:hover::before {
+  transform: translateY(0);
 }
 
 .contact-cta-primary {
@@ -1143,9 +1294,53 @@ body.modal-locked { overflow: hidden; }
   border-color: var(--text-primary);
 }
 
+.contact-cta-primary::before {
+  background: #05070f;
+}
+
 .contact-cta-primary:hover {
-  background: transparent;
   color: var(--text-primary);
+}
+
+/* Subtle marquee ribbon under the CTA (transform-based, cheap). */
+.contact-marquee {
+  margin-top: 80px;
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+.contact-marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 30px;
+  white-space: nowrap;
+  will-change: transform;
+  animation: contact-marquee 22s linear infinite;
+}
+
+.contact-marquee-track span {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+}
+
+.contact-marquee-star { color: var(--hover-accent, #7aa2ff); }
+
+@keyframes contact-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-badge-dot { animation: none; }
+  .contact-marquee-track { animation: none; }
+  .ce-char-inner { transition: none; }
 }
 
 .site-footer {
