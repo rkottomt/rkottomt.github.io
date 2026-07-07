@@ -2,71 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Résumé — Rohit Kottomtharayil</title>
   <meta name="description" content="Résumé of Rohit Kottomtharayil — ECE student at Carnegie Mellon (optics hardware, machine learning, systems).">
   <meta name="theme-color" content="#05070f">
+  <link rel="canonical" href="https://rkottomt.github.io/resume.html">
   <link rel="icon" href="assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="home.css?v=23">
+  <link rel="stylesheet" href="resume.css?v=1">
 </head>
-<body>
+<body class="resume-page">
+  <a class="skip-link" href="#resume-main">Skip to résumé</a>
+
   <div class="cursor-dot" id="cursorDot"></div>
-
   <div class="noise-overlay" aria-hidden="true"></div>
+  <div class="site-aurora" aria-hidden="true"></div>
 
-  <div class="page-wrapper" id="pageWrapper">
-    <aside class="sidebar">
-      <div class="sidebar-top">
-        <a href="index.html" class="name nav-link-transition">Rohit<br>Kottomtharayil</a>
-        <div class="subtitle">ECE @ CMU</div>
-        <div class="divider"></div>
-        <div class="social-links">
-          <a href="https://github.com/rkottomt" target="_blank" rel="noopener">
-            <span class="link-text">GitHub</span>
-            <span class="arrow">&rarr;</span>
-          </a>
-          <a href="https://www.linkedin.com/in/rohit-kottomtharayil/" target="_blank" rel="noopener">
-            <span class="link-text">LinkedIn</span>
-            <span class="arrow">&rarr;</span>
-          </a>
-          <a href="mailto:rkottomt@andrew.cmu.edu">
-            <span class="link-text">Email</span>
-            <span class="arrow">&rarr;</span>
-          </a>
+  <nav class="site-nav" id="siteNav" aria-label="Site">
+    <a href="index.html" class="nav-brand">RK</a>
+    <div class="nav-links">
+      <a href="index.html#about" class="nav-link">About</a>
+      <a href="index.html#experience" class="nav-link">Experience</a>
+      <a href="index.html#coursework" class="nav-link">Coursework</a>
+      <a href="index.html#projects" class="nav-link">Projects</a>
+      <a href="index.html#contact" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="https://www.linkedin.com/in/rohit-kottomtharayil/" class="nav-icon" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+      </a>
+      <a href="mailto:rkottomt@andrew.cmu.edu" class="nav-icon" aria-label="Email">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>
+      </a>
+      <a href="resume.html" class="nav-icon is-active" aria-current="page" aria-label="Résumé">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H7a1.5 1.5 0 0 0-1.5 1.5v15A1.5 1.5 0 0 0 7 21h10a1.5 1.5 0 0 0 1.5-1.5V7.5L14 3z"/><path d="M13.75 3.25v4h4"/><path d="M8.5 12.5h7M8.5 15.5h7M8.5 9.5h2.5"/></svg>
+      </a>
+    </div>
+  </nav>
+
+  <main id="resume-main" class="resume-main">
+    <header class="section-head">
+      <span class="section-index">—</span>
+      <h1 class="section-title">Résumé</h1>
+    </header>
+
+    <p class="resume-lead">ECE @ Carnegie Mellon · Optics · ML · Systems</p>
+
+    <div class="resume-toolbar">
+      <a href="assets/resume.pdf?v=3" class="resume-btn resume-btn-primary" download>Download PDF</a>
+      <a href="index.html" class="resume-btn">Back to site</a>
+      <a href="index.html#contact" class="resume-btn">Contact</a>
+    </div>
+
+    <div class="resume-viewer">
+      <iframe src="assets/resume.pdf?v=3" title="Rohit Kottomtharayil — Résumé PDF">
+        <div class="resume-fallback">
+          <p>Your browser can&rsquo;t display embedded PDFs.</p>
+          <a href="assets/resume.pdf?v=3" class="resume-btn resume-btn-primary" download>Download PDF</a>
         </div>
-      </div>
-      <div class="sidebar-bottom">
-        <div class="nav-links">
-          <a href="index.html" class="nav-link-transition">Home</a>
-          <a href="index.html#about" class="nav-link-transition">About</a>
-          <a href="index.html#coursework" class="nav-link-transition">Coursework</a>
-          <a href="index.html#projects" class="nav-link-transition">Projects</a>
-          <a href="resume.html" class="nav-link-transition active">Resume</a>
-        </div>
-      </div>
-    </aside>
+      </iframe>
+    </div>
+  </main>
 
-    <main class="page-content">
-      <div class="resume-header">
-        <h1 class="page-heading">Résumé</h1>
-        <a href="assets/resume.pdf?v=2" target="_blank" class="download-btn">
-          Download PDF <span>&rarr;</span>
-        </a>
-      </div>
-      <div class="page-divider"></div>
+  <footer class="site-footer">
+    <div class="footer-name">Rohit Kottomtharayil</div>
+    <div class="footer-links">
+      <a href="https://github.com/rkottomt" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/rohit-kottomtharayil/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="mailto:rkottomt@andrew.cmu.edu">Email</a>
+      <a href="index.html">Home</a>
+    </div>
+  </footer>
 
-      <div class="resume-viewer">
-        <iframe src="assets/resume.pdf?v=2" title="Rohit Kottomtharayil Resume">
-          <div class="resume-fallback">
-            <p>Your browser does not support embedded PDFs.</p>
-            <a href="assets/resume.pdf?v=2" class="download-btn" target="_blank">Download PDF &rarr;</a>
-          </div>
-        </iframe>
-      </div>
-    </main>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="grid.js?v=3"></script>
+  <script src="resume.js?v=1"></script>
 </body>
 </html>
