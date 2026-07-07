@@ -359,13 +359,19 @@
   // each letter's variable-font weight tracks how close the cursor is. Runs only
   // while the pointer is inside the section, then eases back to base and stops.
   var titlePressure = null;
-  function initTitlePressure(area, titleEl, chars) {
+  var contactPressure = null;
+  function initTitlePressure(area, titleEl, chars, opts) {
+    opts = opts || {};
     var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     if (!hoverCapable || !area || !titleEl || !chars || !chars.length) return null;
 
     // Resting weight sits mid-range so letters can bulge heavier toward the
     // cursor (up to WGHT_MAX) and thin out away from it (down to WGHT_MIN).
-    var WGHT_MIN = 300, WGHT_MAX = 700, BASE = 500;
+    var WGHT_MIN = opts.min != null ? opts.min : 300;
+    var WGHT_MAX = opts.max != null ? opts.max : 700;
+    var BASE = opts.base != null ? opts.base : 500;
+    var distFactor = opts.distFactor != null ? opts.distFactor : 0.5;
+    var lerp = opts.lerp != null ? opts.lerp : 0.2;
     var cursor = { x: -1e5, y: -1e5 };
     var mouse = { x: -1e5, y: -1e5 };
     var state = chars.map(function () { return BASE; });
@@ -389,7 +395,7 @@
     function frame() {
       mouse.x += (cursor.x - mouse.x) / 6;
       mouse.y += (cursor.y - mouse.y) / 6;
-      var maxDist = Math.max(1, titleEl.getBoundingClientRect().width / 2);
+      var maxDist = Math.max(1, titleEl.getBoundingClientRect().width * distFactor);
       var settled = true;
       for (var i = 0; i < chars.length; i++) {
         var r = chars[i].getBoundingClientRect();
@@ -400,7 +406,7 @@
           var t = Math.min(1, Math.sqrt(dx * dx + dy * dy) / maxDist);
           target = WGHT_MAX - (WGHT_MAX - WGHT_MIN) * t;
         }
-        state[i] += (target - state[i]) * 0.2;
+        state[i] += (target - state[i]) * lerp;
         if (Math.abs(target - state[i]) > 0.6) settled = false;
         chars[i].style.fontVariationSettings = "'wght' " + Math.round(state[i]);
       }
@@ -587,6 +593,14 @@
         yPercent: 0, duration: 0.85, ease: 'power4.out', stagger: 0.03,
         scrollTrigger: { trigger: '#contact', start: 'top 80%' }
       });
+      // Dramatic cursor-proximity weight on the CTA heading (thinner at rest,
+      // much bolder as the cursor sweeps across).
+      contactPressure = initTitlePressure(
+        document.getElementById('contact'),
+        heading,
+        split.chars,
+        { min: 200, max: 700, base: 280, distFactor: 0.22, lerp: 0.38 }
+      );
     }
 
     // Email centerpiece: wrap each character so it can roll up to a duplicate
@@ -765,6 +779,7 @@
       if (carousel) carousel.style.transition = '';
       if (tilt) tilt.destroy();
       if (titlePressure) { titlePressure.destroy(); titlePressure = null; }
+      if (contactPressure) { contactPressure.destroy(); contactPressure = null; }
       splitStore.forEach(function (s) { if (s && s.revert) s.revert(); });
       // Reset the About Me line so the mobile/reduced layout starts clean.
       var descEl = document.getElementById('aboutIntroDesc');
@@ -793,6 +808,7 @@
 
     return function cleanup() {
       splitStore.forEach(function (s) { if (s && s.revert) s.revert(); });
+      if (contactPressure) { contactPressure.destroy(); contactPressure = null; }
       var contactHeading = document.getElementById('contactHeading');
       if (contactHeading) { contactHeading.style.display = ''; contactHeading.style.overflow = ''; }
     };

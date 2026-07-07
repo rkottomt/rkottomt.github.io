@@ -1146,10 +1146,20 @@ body.modal-locked { overflow: hidden; }
 /* ===================== FOOTER ===================== */
 /* ===================== CONTACT (closing CTA) ===================== */
 .contact {
-  max-width: 1100px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
   padding: 150px 40px 110px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   text-align: center;
+}
+
+.contact > .section-head,
+.contact > .contact-inner {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .contact .section-head { margin-bottom: 44px; }
@@ -1192,7 +1202,7 @@ body.modal-locked { overflow: hidden; }
 .contact-heading {
   margin-top: 26px;
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 400; /* variable 'wght' axis driven by Text Pressure */
   letter-spacing: -0.03em;
   line-height: 1.02;
   font-size: clamp(2.4rem, 8vw, 5.5rem);
