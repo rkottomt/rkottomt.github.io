@@ -838,10 +838,15 @@
           }
         },
         photos: [
-          { src: A + 'das-fiber-install.jpg', caption: 'Fiber already in the ground\u2014the sensing medium for DAS deployments. Photo: Stealth Communications / Wikimedia Commons (CC BY-SA).' },
-          { src: A + 'das-fiber-bundle.jpg', caption: 'A multi-fiber cable cross-section: one strand becomes thousands of distributed vibration sensors. Photo: Christophe Merlet / Wikimedia Commons (CC BY-SA).' },
-          { src: A + 'das-waterfall.svg', caption: 'Waterfall geometry: horizontal bands are stationary noise; a diagonal streak is a moving vehicle\u2014slope encodes apparent speed along the fiber.' },
-          { src: A + 'das-platforms.svg', caption: 'Hardware downscaling arc from lab GPU to field-ready Arm network processor, with detection parity held at every step.' }
+          { src: A + 'das-principle.png', caption: 'Distributed Acoustic Sensing: a Silixa iDAS unit sends laser pulses through the fiber; acoustic fields modulate backscattered light returned for processing.' }
+        ],
+        hardwarePhotos: [
+          { src: A + 'das-hw-rtx.jpg', caption: 'RTX Pro 6000 workstation \u2014 lab development and early GPU-heavy pipeline iteration.' },
+          { src: A + 'das-hw-thor.jpg', caption: 'Jetson Thor \u2014 reference edge platform (~18.8 s/file, ~50% real-time headroom, ~25 W).' },
+          { src: A + 'das-hw-dgx-spark.jpg', caption: 'NVIDIA DGX Spark \u2014 team benchmarking and batch regression runs.' },
+          { src: A + 'das-hw-orin.jpg', caption: 'Jetson AGX Orin \u2014 generational edge baseline and CPU/GPU decoupling checks.' },
+          { src: A + 'das-hw-vm.jpg', caption: '6-vCPU VM (2 workers) \u2014 minimum credible general-purpose compute; proved GPU unnecessary.' },
+          { src: A + 'das-hw-marvell.jpg', caption: 'Marvell CN10624 (OCTEON 10-class Arm board) \u2014 field-oriented target with 48/48 detection parity.' }
         ]
       },
       beehive: {
@@ -890,6 +895,39 @@
       },
       pfizer: {
         title: 'Pfizer Software Access Classifier',
+        story: {
+          sections: [
+            {
+              heading: 'The problem',
+              body: 'Employees request access to software and hardware through internal ticketing\u2014free-text messages describing what they need, why they need it, and how urgently. Reviewers must decide whether each request is appropriate for the requester\u2019s role and project context. At enterprise scale that queue is slow, inconsistent, and hard to staff uniformly. The goal of our summer project was a model that could read a request message and recommend whether access should be granted, denied, or escalated for human review\u2014not to replace judgment, but to give reviewers a consistent first pass.'
+            },
+            {
+              heading: 'Approach',
+              body: 'We framed the task as supervised text classification on historical tickets paired with reviewer outcomes. After exploratory analysis we found the usual enterprise skew: far more legitimate requests than clear rejects, so class imbalance had to be handled explicitly in training and evaluation. We used a stratified train\u2013validation split, held out recent tickets to approximate production drift, and built a lightweight evaluation harness that tracked precision and recall separately for grant vs. deny recommendations\u2014because a false approval and a false rejection carry very different risk.'
+            },
+            {
+              heading: 'Model design (anti-keyword)',
+              body: 'A hard constraint from day one: no keyword-based auto-accept or auto-reject rules. Allowlists and blocklists are trivially gameable\u2014add the right product name or business justification and the ticket bypasses scrutiny. Instead we used TF-IDF character and word n-grams feeding a calibrated linear classifier, with features derived from the full message rather than brittle phrase gates. We later compared against a small fine-tuned text encoder; both learned distributed patterns of role-appropriate need vs. weak or mismatched justification. High-confidence predictions could pre-sort the queue, but binding grants still flowed through human review. We biased thresholds toward precision on auto-approvals: when the model was unsure, it routed to a person rather than guessing.'
+            },
+            {
+              heading: 'Sensitive data constraints',
+              body: 'Request text sits next to employee identity, org structure, and system inventories\u2014data we could not treat casually. All development stayed on VPN-connected, approved workstations inside the corporate boundary. No external LLM or cloud APIs touched raw ticket content; no copying datasets to personal machines; minimal logging of message bodies during experimentation. Aggregated metrics and anonymized examples went through security review before they left the project sandbox. Model artifacts and notebooks lived in internal stores with access scoped to the team. Those limits shaped what we could iterate on quickly, but they were non-negotiable.'
+            },
+            {
+              heading: 'Team & delivery',
+              body: 'Three interns\u2014me (Rohit), Om, and Kriti\u2014built the pipeline under Lenny Grinberg\u2019s guidance. We split labeling review, feature experiments, and the evaluation harness; paired on code review so no single person owned the whole path from raw text to recommended action. At the end of the summer we presented the final model, its failure modes, and deployment recommendations to Pfizer executives: where automation helped, where humans had to stay in the loop, and why keyword shortcuts were the wrong tradeoff for access control.'
+            }
+          ],
+          specsTitle: 'Stack & data handling',
+          specs: [
+            'Python, pandas, scikit-learn; optional small transformer baseline for comparison',
+            'TF-IDF n-gram features + calibrated linear classifier (no keyword allow/block lists)',
+            'Stratified train\u2013validation split with class-imbalance-aware evaluation',
+            'On-prem / VPN-only development; no external APIs on raw request text',
+            'Security-reviewed handling; minimal content logging; internal artifact storage',
+            'Human-in-the-loop routing for low-confidence and high-risk grant decisions'
+          ]
+        },
         photos: [
           { src: A + 'pfizer-nyc.jpg', caption: "On-site at Pfizer's New York City branch." },
           { src: A + 'pfizer-interns.jpg', caption: 'With the Pfizer summer intern cohort.' }
@@ -897,6 +935,43 @@
       },
       airquality: {
         title: 'Urban Air Quality \u2014 Deep Learning',
+        story: {
+          sections: [
+            {
+              heading: 'The problem',
+              body: 'Over 91% of the global population lives where air quality exceeds WHO limits. Fine particulate matter (PM2.5) drives much of the health burden\u2014respiratory disease, cardiovascular stress, premature mortality\u2014alongside criteria gases such as NO\u2082, SO\u2082, O\u2083, and CO. The Air Quality Index standardizes pollutant concentrations into a single score, but that score treats chemistry in isolation: it does not fold in meteorology (temperature, humidity, wind), traffic flow, or urban activity patterns that jointly set how pollution accumulates and disperses. There was also no practical way to quantify whether a proposed countermeasure\u2014transit promotion, dust controls, industrial caps\u2014would actually move the needle before committing resources.'
+            },
+            {
+              heading: 'Integrated dataset',
+              body: 'The model pulls from three families of sources. Pollutant and AQI history came from the U.S. EPA (criteria gases, particulates, toxics). Traffic context used the U.S. DOT Open Data Catalog\u2014active work zones, site analytics, peak-hour counts, and high-density corridors\u2014with equivalent ministry or vendor feeds for cities outside the U.S. Meteorology came from NASA Giovanni MERRA-2 reanalysis. I wrote a pipeline that queries Giovanni by time window and coordinates, converts the returned heatmaps into tabular features, and lands everything in aligned CSV frames ready for training.'
+            },
+            {
+              heading: 'Features & LSTM',
+              body: 'Before training, an Extra Trees Regressor ranked feature importance and surfaced the top ten drivers\u2014among them average wind speed, average relative humidity, maximum sustained wind speed, and average visibility (see the correlation heatmap and pairplot on the poster). The predictor is a single-layer LSTM with 100 units: it ingests a sequence of past observations and regresses the AQI at the next timestep. Training ran 500 epochs with batch size 32 (eight optimizer steps per epoch, ~4 ms each), completing a full fit in about 32 seconds\u2014fast enough to iterate on countermeasure what-if scenarios without waiting on heavier classical regressors.'
+            },
+            {
+              heading: 'Countermeasure evaluation',
+              body: 'Once the forward model was accurate, I used it to score historical relief actions by perturbing the parameters each policy would touch\u2014traffic peak hours, traffic concentration, criteria-gas levels, visibility\u2014and measuring the percent change in predicted AQI. Mumbai was the demonstration city: coastal meteorology, persistently poor air, and a string of interventions over the past five years made it a strong test case. Construction dust controls (2016) showed the largest modeled drop (\u221225.9%); promoting public transport (2019) and industrial emission controls (2019) landed near \u22129% and \u221211%; green initiatives (2022) were modest (\u22122.1%); a 2023 electric-vehicle push registered a slight increase (+8.3%), flagging that not every policy moves AQI in the expected direction under local conditions.'
+            },
+            {
+              heading: 'Results',
+              body: 'On Mumbai 2019\u20132023 holdout data the LSTM reached a test RMSE of 0.266\u2014substantially below the conventional regression baselines plotted in Fig. 6. Sample traces for 2023 track observed AQI closely (Fig. 5). Forward forecasts for 2025 skew heavily toward unhealthy categories (80.2% unhealthy, 17.7% unhealthy for sensitive groups), underscoring why preemptive countermeasure selection matters. The runtime budget stays under one minute end-to-end, so analysts can explore parameter tweaks interactively rather than batching overnight jobs.'
+            },
+            {
+              heading: 'Recognition',
+              body: 'The work advanced from proposal to poster with guidance from Mr. Craig Queenan and Dr. Dina Ellsworth. I presented at the Jersey Shore Science Fair, Delaware Valley Science & Engineering Fair, New Jersey Academy of Science (NJAS), and American Junior Academy of Science (AJAS), earning recognition at each. The longer-term goal is automated countermeasure recommendations\u2014for a high-traffic corridor like Chicago, the model would suggest which intervention and what deployment window best match the forecast meteorological, traffic, and pollutant state.'
+            }
+          ],
+          specsTitle: 'Model & data parameters',
+          specs: [
+            'Pollutants: PM2.5, NO\u2082, SO\u2082, O\u2083, CO, lead + EPA AQI',
+            'Meteorology (MERRA-2): temperature, humidity, wind speed, visibility, cloud-top pressure',
+            'Traffic: peak hours, corridor concentration, work-zone activity',
+            'Feature selection: Extra Trees Regressor \u2192 top 10 influential features',
+            'LSTM: 100 units, 500 epochs, batch 32; ~32 s training; test RMSE 0.266 (Mumbai 2019\u20132023)',
+            'Countermeasure demo city: Mumbai (2016\u20132023 interventions)'
+          ]
+        },
         photos: [
           { src: A + 'airquality-fair.jpg', caption: 'Presenting the research at the Delaware Valley Science & Engineering Fair.' }
         ],
@@ -923,7 +998,7 @@
 
     function figure(src, caption, cls) {
       var fig = document.createElement('figure');
-      var isDiagram = /\.svg$/i.test(src);
+      var isDiagram = /\.svg$/i.test(src) || /das-principle\.png$/i.test(src);
       fig.className = (cls || 'gallery-item') + (isDiagram ? ' gallery-item--diagram' : '');
       var img = document.createElement('img');
       img.src = src; img.alt = caption || ''; img.loading = 'lazy';
@@ -1068,6 +1143,17 @@
       photos.className = 'gallery-photos';
       (data.photos || []).forEach(function (p) { photos.appendChild(figure(p.src, p.caption)); });
       galleryEl.appendChild(photos);
+
+      if (data.hardwarePhotos && data.hardwarePhotos.length) {
+        var hHw = document.createElement('h4');
+        hHw.className = 'gallery-hardware-heading';
+        hHw.textContent = 'Profiling platforms';
+        galleryEl.appendChild(hHw);
+        var hw = document.createElement('div');
+        hw.className = 'gallery-photos gallery-photos--hardware';
+        data.hardwarePhotos.forEach(function (p) { hw.appendChild(figure(p.src, p.caption)); });
+        galleryEl.appendChild(hw);
+      }
 
       if (data.poster) galleryEl.appendChild(buildPoster(data.poster));
 

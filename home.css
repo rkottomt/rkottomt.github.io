@@ -658,6 +658,17 @@ body.modal-locked { overflow: hidden; }
   background: #0d1117;
   padding: 12px;
 }
+.gallery-hardware-heading {
+  margin: 32px 0 16px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+}
+.gallery-photos--hardware {
+  margin-top: 0;
+}
 .gallery-item figcaption {
   padding: 12px 14px;
   font-family: var(--font-body);
