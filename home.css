@@ -677,30 +677,54 @@ body.modal-locked { overflow: hidden; }
   color: var(--text-secondary);
 }
 
-/* Modal story blocks (G34L technical write-up) */
+/* Modal story blocks */
 .project-story {
-  margin-bottom: 28px;
-  padding-bottom: 28px;
+  margin-bottom: 32px;
+  padding-bottom: 32px;
   border-bottom: 1px solid var(--border);
+}
+
+.project-story-lead {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--text-primary) 90%, var(--text-secondary));
+  margin: 0 0 28px;
+  padding: 16px 18px 16px 20px;
+  border-left: 3px solid var(--hover-accent, #7aa2ff);
+  background: color-mix(in srgb, var(--hover-accent, #7aa2ff) 6%, transparent);
+}
+
+.project-story-heading {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  color: var(--text-primary);
+  margin: 28px 0 12px;
+}
+
+.project-story-heading:first-child { margin-top: 0; }
+
+.project-story-lead + .project-story-heading { margin-top: 0; }
+
+.project-story p:not(.project-story-lead) {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--text-primary) 72%, var(--text-secondary));
+  margin: 0 0 14px;
 }
 
 .project-story h4 {
   font-family: var(--font-heading);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--text-primary);
-  margin: 22px 0 10px;
-}
-
-.project-story h4:first-child { margin-top: 0; }
-
-.project-story p {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  line-height: 1.65;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--text-secondary);
-  margin: 0 0 12px;
+  margin: 28px 0 12px;
 }
 
 .project-specs {
@@ -1128,11 +1152,12 @@ body.modal-locked { overflow: hidden; }
 .project-cover {
   display: block;
   width: 100%;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  object-position: center;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: var(--surface);
+  background: #0a0c10;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
