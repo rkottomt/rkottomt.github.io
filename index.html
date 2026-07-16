@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css?v=10">
-  <link rel="stylesheet" href="home.css?v=24">
+  <link rel="stylesheet" href="home.css?v=25">
 </head>
 <body>
   <a class="skip-link" href="#about" data-target="about">Skip to content</a>
@@ -344,25 +344,44 @@
             </div>
           </article>
 
-          <article class="project-row project-row--reverse" data-project="beehive" role="button" tabindex="0" aria-label="Beehive Acoustic Anomaly Detection — view project">
-            <img class="project-cover" src="assets/projects/beehive-sensors.jpg" alt="Arduino sensor array for beehive acoustic monitoring" loading="lazy" width="1200" height="800">
+          <article class="project-row project-row--reverse" data-project="das" role="button" tabindex="0" aria-label="Fiber DAS Vehicle Detection — view project">
+            <img class="project-cover" src="assets/projects/das-cover.jpg" alt="Crew installing fiber optic cable underground" loading="lazy" width="1200" height="800">
             <div class="project-copy">
               <span class="project-num">02</span>
+              <h3 class="project-title">Fiber DAS Vehicle Detection</h3>
+              <p class="project-desc">Distributed Acoustic Sensing turns buried fiber into a continuous line of vibration sensors. I helped build a real-time vehicle detector&mdash;from optical phase to directional counts&mdash;and profiled it down from a lab GPU workstation to infrastructure-grade Arm hardware at the cable head.</p>
+              <div class="project-tags">
+                <span class="project-tag">DAS</span>
+                <span class="project-tag">DSP</span>
+                <span class="project-tag">Real-Time Systems</span>
+                <span class="project-tag">Edge Compute</span>
+                <span class="project-tag">Nokia</span>
+              </div>
+              <span class="project-view" aria-hidden="true">View project &rarr;</span>
+            </div>
+          </article>
+
+          <article class="project-row" data-project="beehive" role="button" tabindex="0" aria-label="Beehive Acoustic Anomaly Detection — view project">
+            <img class="project-cover" src="assets/projects/beehive-cover.jpg" alt="Field visit in beekeeper gear before hive deployment" loading="lazy" width="1200" height="800">
+            <div class="project-copy">
+              <span class="project-num">03</span>
               <h3 class="project-title">Beehive Acoustic Anomaly Detection</h3>
-              <p class="project-desc">ML program developed with an IIT ECE professor to identify behavioral anomalies in beehive acoustics, advancing climate change research on bee colony response.</p>
+              <p class="project-desc">Collaborated with an IIT ECE professor to replicate his hive-monitoring study on <em>Apis mellifera</em> in the United States&mdash;building an Arduino-based sensor node, deploying it with a local NJ beekeeper, and comparing acoustic and environmental data across climates.</p>
               <div class="project-tags">
                 <span class="project-tag">Python</span>
                 <span class="project-tag">ML</span>
+                <span class="project-tag">IoT</span>
+                <span class="project-tag">Arduino</span>
                 <span class="project-tag">Research</span>
               </div>
               <span class="project-view" aria-hidden="true">View project &rarr;</span>
             </div>
           </article>
 
-          <article class="project-row" data-project="pfizer" role="button" tabindex="0" aria-label="Pfizer Software Access Classifier — view project">
+          <article class="project-row project-row--reverse" data-project="pfizer" role="button" tabindex="0" aria-label="Pfizer Software Access Classifier — view project">
             <img class="project-cover" src="assets/projects/pfizer-nyc.jpg" alt="Pfizer New York City office" loading="lazy" width="1200" height="800">
             <div class="project-copy">
-              <span class="project-num">03</span>
+              <span class="project-num">04</span>
               <h3 class="project-title">Pfizer Software Access Classifier</h3>
               <p class="project-desc">Built software access classification models integrated into Pfizer workflows to streamline access to critical software and hardware infrastructure.</p>
               <div class="project-tags">
@@ -374,10 +393,10 @@
             </div>
           </article>
 
-          <article class="project-row project-row--reverse" data-project="airquality" role="button" tabindex="0" aria-label="Urban Air Quality — view project">
+          <article class="project-row" data-project="airquality" role="button" tabindex="0" aria-label="Urban Air Quality — view project">
             <img class="project-cover" src="assets/projects/airquality-fair.jpg" alt="Presenting urban air quality research at a science fair" loading="lazy" width="1200" height="800">
             <div class="project-copy">
-              <span class="project-num">04</span>
+              <span class="project-num">05</span>
               <h3 class="project-title">Urban Air Quality — Deep Learning</h3>
               <p class="project-desc">An LSTM model integrating meteorological, pollutant, and traffic data to predict AQI and evaluate countermeasure effectiveness across cities like Mumbai. Presented at JSSF, NJAS, and AJAS.</p>
               <div class="project-tags">
@@ -496,7 +515,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollToPlugin.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
-  <script src="home.js?v=21"></script>
+  <script src="home.js?v=23"></script>
   <script type="module" src="hero-backgrounds.js?v=4"></script>
 </body>
 </html>

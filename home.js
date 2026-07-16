@@ -785,11 +785,107 @@
           { src: A + 'g34l-setup.jpg', caption: 'Full bench setup: PSU, electronic load, DMMs, and temperature instrumentation ready for characterization.' }
         ]
       },
+      das: {
+        title: 'Fiber DAS Vehicle Detection',
+        story: {
+          sections: [
+            {
+              heading: 'The problem',
+              body: 'Most infrastructure already has fiber in the ground. Distributed Acoustic Sensing (DAS) turns that cable into a continuous line of vibration sensors\u2014laser pulses scatter back from every point, and mechanical disturbances modulate the returning optical signal. The research team\u2019s goal was on-site, real-time vehicle detection at the cable head: process the stream as it arrives, flag moving vehicles with enough confidence to act on, and do it without a rack of servers or a data-center power budget in a roadside cabinet.'
+            },
+            {
+              heading: 'The signal',
+              body: 'Each acquisition produces a strain-rate matrix: roughly fourteen thousand spatial channels sampled at about 238 Hz, forming a grid on the order of fourteen thousand channels by nine thousand time samples per window\u2014about thirty-eight seconds of sensing over roughly seventy kilometers with points spaced about five meters apart. Raw optical phase is unwrapped and differentiated to strain-rate, then bandpass filtered (2\u201340 Hz) to isolate vehicle energy. On a waterfall plot, stationary sources appear as horizontal bands; a moving vehicle leaves a diagonal streak whose slope encodes apparent speed along the fiber.'
+            },
+            {
+              heading: 'The detector',
+              body: 'We explored three architectures before settling on one that could run in real time on CPU. A full-fiber envelope detector worked in the lab but wanted GPU-scale FFTs. A classical CV pipeline (Sobel, Hough, DBSCAN) was fragile and lacked physics-grounded confidence. The active system uses slant-stack moveout search: find energy seeds in the road-adjacent region, cut local patches, and scan a fan of apparent velocities\u2014where the trial slope matches a real vehicle, energy stacks coherently. A physics gate then confirms stripe contrast, vehicle-like speed (8\u201345 m/s), and spatial persistence. A small CNN was trained but rarely fired confidently; the decision stayed with the physics gate.'
+            },
+            {
+              heading: 'Real-time contract',
+              body: 'Real time meant a concrete budget: each window covers about thirty-eight seconds of stream time and processing must finish before the next window needs the same compute. A rolling buffer lives in shared memory; each core owns a channel slab, runs bandpass and slant-stack seeding, applies the physics gate with correct global indexing, and returns fused detections. A tripwire gate at a configured channel projects vehicle tracks into directional counts. Scheduling adapts to recent compute times rather than a naive fixed timer.'
+            },
+            {
+              heading: 'Hardware downscaling',
+              body: 'We did not start at the edge. Development began on an RTX Pro 6000 workstation for fast iteration, then stepped down platform by platform measuring real-time margin and detection parity at every stage. Jetson Thor became the reference edge node (~18.8 s per file, ~50% headroom, ~25 W). DGX Spark and Jetson Orin supported batch validation. A deliberately minimal 6-vCPU VM proved GPU was unnecessary at two workers (~29.9 s, 48/48 parity). The field-oriented target was Marvell\u2019s CN10624\u2014a 24-core Arm Neoverse-N2 network processor\u2014where I rebuilt Python from standalone binaries (no compiler on board) and validated the full chain over serial console. On Neoverse-N2 the bottleneck flipped from preprocessing to slant-stack, a reminder that platform optimization is not one-size-fits-all.'
+            },
+            {
+              heading: 'Results',
+              body: 'On a twelve-file batch against hand-checked ground truth, the pipeline produced forty-eight raw candidates and sixteen high-confidence vehicles after the physics gate. The confirmed set was stable across every platform profiled\u201448/48 detection parity between Jetson, VM, and CN10624 runs. Faster or slower was acceptable; different answers were not.'
+            }
+          ],
+          specsTitle: 'Key parameters',
+          specs: [
+            'Strain-rate grid: ~14k channels \u00d7 ~9k samples/window @ ~238 Hz',
+            'Sensing span: ~70 km fiber, ~5 m channel spacing',
+            'DSP: 4th-order Butterworth bandpass 2\u201340 Hz',
+            'Real-time budget: 38 s per processing window',
+            'Jetson Thor: ~18.8 s/file, ~25 W, ~50% headroom',
+            'VM (2 workers): ~29.9 s/file, ~11 GB RSS, 48/48 parity',
+            'Marvell CN10624 (2 workers): ~27.6 s/file, ~27% headroom, 48/48 parity'
+          ],
+          loadTable: {
+            title: 'Hardware profiling arc',
+            headers: ['Stage', 'Platform', 'Role'],
+            rows: [
+              ['Lab development', 'RTX Pro 6000', 'Fast iteration, early GPU-heavy pipelines'],
+              ['Primary edge target', 'Jetson Thor', '~50% headroom, ~25 W'],
+              ['Team benchmarking', 'DGX Spark', 'Batch validation / regression'],
+              ['Edge baseline', 'Jetson Orin', 'Generational comparison'],
+              ['Minimum compute', '6-vCPU VM (2 workers)', 'Proved GPU unnecessary'],
+              ['Field selection', 'Marvell CN10624', '48/48 parity, infrastructure-grade']
+            ]
+          }
+        },
+        photos: [
+          { src: A + 'das-fiber-install.jpg', caption: 'Fiber already in the ground\u2014the sensing medium for DAS deployments. Photo: Stealth Communications / Wikimedia Commons (CC BY-SA).' },
+          { src: A + 'das-fiber-bundle.jpg', caption: 'A multi-fiber cable cross-section: one strand becomes thousands of distributed vibration sensors. Photo: Christophe Merlet / Wikimedia Commons (CC BY-SA).' },
+          { src: A + 'das-waterfall.svg', caption: 'Waterfall geometry: horizontal bands are stationary noise; a diagonal streak is a moving vehicle\u2014slope encodes apparent speed along the fiber.' },
+          { src: A + 'das-platforms.svg', caption: 'Hardware downscaling arc from lab GPU to field-ready Arm network processor, with detection parity held at every step.' }
+        ]
+      },
       beehive: {
         title: 'Beehive Acoustic Anomaly Detection',
+        story: {
+          sections: [
+            {
+              heading: 'Collaboration goal',
+              body: 'An ECE professor at IIT had an ongoing program to monitor honeybee colonies through in-hive sensing. My role was to replicate and extend that work for Apis mellifera\u2014the Western honey bee common in the United States\u2014and compare how different environmental conditions shape colony behavior. The cross-site goal was straightforward: pair acoustic signatures with temperature, humidity, light, and hive mass on both sides of the ocean and see whether the same anomalies appear under different climates.'
+            },
+            {
+              heading: 'Lab visit, then remote',
+              body: 'I visited his lab in person at the start of summer to study the reference setup: where sensors sit relative to the brood nest, how audio is sampled without drowning in fan noise, and how his team labels events in the recordings. After returning home, we continued the collaboration remotely\u2014me building and deploying the US node while he provided baselines and feedback on the data streams.'
+            },
+            {
+              heading: 'Why listen to the hive',
+              body: 'A healthy colony sounds like a low, continuous hum: thousands of wing beats, fanning, and thoracic vibrations stacking into a dense buzz roughly between 100 and 1000 Hz, often strongest around 200\u2013500 Hz. Researchers use those sounds as a non-invasive vital sign. Queenlessness tends to make the hive noisier at lower frequencies; pre-swarm agitation shows up as rising amplitude and a shift toward 300\u2013600 Hz as workers prepare to leave; a weakening colony can slowly lose acoustic energy altogether. Audio alone is ambiguous\u2014the same frequency band can mean different things\u2014which is why we paired the microphone with environmental and mechanical sensors.'
+            },
+            {
+              heading: 'Hardware build',
+              body: 'I built a battery-powered field logger on perfboard around an Arduino for acquisition and an ESP8266 NodeMCU for Wi-Fi upload. Power came from Li-ion cells through a TP4056 charger module, an LDO, and a step-down converter to feed the mixed 3.3 V / 5 V rails. A DHT22 tracked temperature and humidity, a TSL2561 measured ambient light, and a DGZZI water-level sensor monitored the hive\u2019s feeder reservoir. Hive mass trends came from a 10 kg load cell with an HX711 front-end to boost the microvolt-level signal. A DEVMO electret microphone captured in-hive audio. The stack was deliberately modular so I could swap boards during bring-up without rewiring the whole hive.'
+            },
+            {
+              heading: 'Field deployment',
+              body: 'Once the prototype ran reliably on the bench, I presented it to the NJ Beekeepers Association to find a host apiary. Several members were interested; I ended up working with Lew Goldberg, whose hives were only about five minutes from home. That proximity mattered\u2014beekeeping is hands-on, and I needed to iterate on mounting, cable routing, and power without long travel every time something needed adjustment.'
+            },
+            {
+              heading: 'Data pipeline',
+              body: 'In the field the node logged continuously and pushed files to an FTP server I hosted at home, giving me a steady stream of synchronized environmental readings and audio segments to compare against the professor\u2019s India-side dataset. The long-running capture is what made cross-climate comparison possible: you need weeks of baseline hum before a queen event or weather swing stands out in the features we used for anomaly detection.'
+            }
+          ],
+          specsTitle: 'Sensor node BOM',
+          specs: [
+            'Power: Li-ion cells, TP4056 charging module, LDO on perfboard, step-down converter',
+            'MCU / connectivity: Arduino (acquisition), ESP8266 NodeMCU v1 (Wi-Fi upload)',
+            'Environment: DHT22 (temperature + relative humidity), TSL2561 (ambient light), DGZZI water-level sensor',
+            'Mechanics: 10 kg load cell + HX711 amplifier (hive mass trend)',
+            'Audio: DEVMO electret microphone module',
+            'Field: battery-powered standalone enclosure, FTP upload to home server'
+          ]
+        },
         photos: [
-          { src: A + 'beehive-sensors.jpg', caption: 'Arduino sensor array built to capture beehive acoustics.' },
-          { src: A + 'beehive-farm.jpg', caption: 'The field-ready acoustic monitoring device, packed up before deployment at the farm.' }
+          { src: A + 'beehive-farm.jpg', caption: 'Field visit in beekeeper gear before deploying the monitoring node at Lew Goldberg\u2019s apiary.' },
+          { src: A + 'beehive-sensors.jpg', caption: 'Perfboard sensor stack: load-cell front-end, environmental sensors, microphone, and power/charging path.' }
         ]
       },
       pfizer: {
@@ -827,7 +923,8 @@
 
     function figure(src, caption, cls) {
       var fig = document.createElement('figure');
-      fig.className = cls || 'gallery-item';
+      var isDiagram = /\.svg$/i.test(src);
+      fig.className = (cls || 'gallery-item') + (isDiagram ? ' gallery-item--diagram' : '');
       var img = document.createElement('img');
       img.src = src; img.alt = caption || ''; img.loading = 'lazy';
       fig.appendChild(img);
@@ -909,7 +1006,7 @@
 
       if (story.specs && story.specs.length) {
         var hSpecs = document.createElement('h4');
-        hSpecs.textContent = 'Instrumentation & setup';
+        hSpecs.textContent = story.specsTitle || 'Instrumentation & setup';
         wrap.appendChild(hSpecs);
         var ul = document.createElement('ul');
         ul.className = 'project-specs';
@@ -923,7 +1020,7 @@
 
       if (story.loadTable) {
         var hTable = document.createElement('h4');
-        hTable.textContent = 'Load schedule';
+        hTable.textContent = story.loadTable.title || 'Load schedule';
         wrap.appendChild(hTable);
         var tableWrap = document.createElement('div');
         tableWrap.className = 'project-table-wrap';

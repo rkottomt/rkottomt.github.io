@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" aria-label="Hardware downscaling arc from lab GPU to field Arm processor">
+  <rect width="720" height="380" fill="#0d1117" rx="12"/>
+  <text x="360" y="32" fill="#e6edf3" font-family="sans-serif" font-size="15" font-weight="600" text-anchor="middle">Hardware profiling arc</text>
+  <text x="360" y="52" fill="#8b949e" font-family="monospace" font-size="10" text-anchor="middle">same detections at every stage  48/48 parity</text>
+
+  <g font-family="monospace" font-size="11">
+    <rect x="40" y="72" width="640" height="44" fill="#161b22" stroke="#30363d" rx="6"/>
+    <text x="56" y="98" fill="#8b949e">Lab</text>
+    <text x="120" y="98" fill="#e6edf3" font-weight="600">RTX Pro 6000</text>
+    <text x="400" y="98" fill="#8b949e">Fast iteration, GPU-heavy prototypes</text>
+
+    <rect x="40" y="126" width="640" height="44" fill="#161b22" stroke="#30363d" rx="6"/>
+    <text x="56" y="152" fill="#8b949e">Edge</text>
+    <text x="120" y="152" fill="#e6edf3" font-weight="600">Jetson Thor</text>
+    <text x="400" y="152" fill="#7ee787">~18.8 s / 38 s · ~50% headroom · ~25 W</text>
+
+    <rect x="40" y="180" width="640" height="44" fill="#161b22" stroke="#30363d" rx="6"/>
+    <text x="56" y="206" fill="#8b949e">Bench</text>
+    <text x="120" y="206" fill="#e6edf3" font-weight="600">DGX Spark / Jetson Orin</text>
+    <text x="400" y="206" fill="#8b949e">Batch validation &amp; regression</text>
+
+    <rect x="40" y="234" width="640" height="44" fill="#161b22" stroke="#30363d" rx="6"/>
+    <text x="56" y="260" fill="#8b949e">Floor</text>
+    <text x="120" y="260" fill="#e6edf3" font-weight="600">6-vCPU VM (2 workers)</text>
+    <text x="400" y="260" fill="#7ee787">~29.9 s · ~21% headroom · GPU not required</text>
+
+    <rect x="40" y="288" width="640" height="44" fill="#1c2128" stroke="#7aa2ff" stroke-width="1.5" rx="6"/>
+    <text x="56" y="314" fill="#7aa2ff">Field</text>
+    <text x="120" y="314" fill="#e6edf3" font-weight="600">Marvell CN10624</text>
+    <text x="400" y="314" fill="#7ee787">~27.6 s · ~27% headroom · 24-core Arm N2</text>
+  </g>
+
+  <path d="M 360 116 L 360 126 M 360 170 L 360 180 M 360 224 L 360 234 M 360 278 L 360 288" stroke="#484f58" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="360" y="362" fill="#8b949e" font-family="monospace" font-size="10" text-anchor="middle">deployment suitability increases “</text>
+</svg>
