@@ -614,14 +614,29 @@
   }
 
   /* ==================== PROJECTS: staggered row reveal ==================== */
+  function showProjectRowsIfInView() {
+    var projects = document.getElementById('projects');
+    var rows = document.querySelectorAll('.project-row');
+    if (!projects || !rows.length) return;
+    var rect = projects.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.78) {
+      gsap.set(rows, { opacity: 1, y: 0 });
+    }
+  }
+
   function revealProjects() {
     var rows = document.querySelectorAll('.project-row');
     if (!rows.length) return;
     gsap.set(rows, { opacity: 0, y: 40 });
     gsap.to(rows, {
       opacity: 1, y: 0, duration: 0.75, ease: 'power3.out', stagger: 0.14,
-      scrollTrigger: { trigger: '#projects', start: 'top 72%' }
+      scrollTrigger: {
+        trigger: '#projects',
+        start: 'top 72%',
+        once: true
+      }
     });
+    showProjectRowsIfInView();
   }
 
   /* ==================== RESPONSIVE / MOTION BRANCHES ==================== */
@@ -669,6 +684,7 @@
     revealProjects();
 
     ScrollTrigger.refresh();
+    showProjectRowsIfInView();
 
     return function cleanup() {
       if (smoother) { smoother.kill(); smoother = null; }
@@ -700,6 +716,7 @@
     revealProjects();
 
     ScrollTrigger.refresh();
+    showProjectRowsIfInView();
 
     return function cleanup() {
       splitStore.forEach(function (s) { if (s && s.revert) s.revert(); });
@@ -1346,8 +1363,10 @@
     window.addEventListener('load', function () {
       gsap.delayedCall(0.35, function () {
         ScrollTrigger.refresh();
+        showProjectRowsIfInView();
         if (smoother) smoother.scrollTo(target, false, 'top top');
         else gsap.set(window, { scrollTo: { y: target } });
+        gsap.delayedCall(0.5, showProjectRowsIfInView);
       });
     });
   })();
