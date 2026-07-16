@@ -538,7 +538,7 @@ body {
 }
 
 /* ===================== PROJECT DETAIL MODAL + IMAGE ZOOM ===================== */
-.project-row { cursor: pointer; }
+.project-row { cursor: none; }
 
 .project-view {
   display: inline-block;
@@ -599,7 +599,7 @@ body.modal-locked { overflow: hidden; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 26px;
+  padding: 16px 22px;
   border-bottom: 1px solid var(--border);
   flex: none;
 }
@@ -623,14 +623,14 @@ body.modal-locked { overflow: hidden; }
 .zoom-modal-close:hover { color: var(--text-primary); }
 
 .project-gallery {
-  padding: 26px;
+  padding: 20px 22px 22px;
   overflow-y: auto;
 }
 
 .gallery-photos {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
 }
 .gallery-item {
   margin: 0;
@@ -679,8 +679,8 @@ body.modal-locked { overflow: hidden; }
 
 /* Modal story blocks */
 .project-story {
-  margin-bottom: 32px;
-  padding-bottom: 32px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -689,8 +689,8 @@ body.modal-locked { overflow: hidden; }
   font-size: 0.95rem;
   line-height: 1.7;
   color: color-mix(in srgb, var(--text-primary) 90%, var(--text-secondary));
-  margin: 0 0 28px;
-  padding: 16px 18px 16px 20px;
+  margin: 0 0 20px;
+  padding: 12px 16px 12px 18px;
   border-left: 3px solid var(--hover-accent);
   background: color-mix(in srgb, var(--hover-accent) 6%, transparent);
 }
@@ -702,7 +702,7 @@ body.modal-locked { overflow: hidden; }
   letter-spacing: 0.01em;
   line-height: 1.35;
   color: var(--text-primary);
-  margin: 28px 0 12px;
+  margin: 22px 0 10px;
 }
 
 .project-story-heading:first-child { margin-top: 0; }
@@ -1123,23 +1123,25 @@ body.modal-locked { overflow: hidden; }
 }
 
 .projects-head {
-  margin-bottom: 56px;
+  margin-bottom: 40px;
 }
 
 .project-list {
   display: flex;
   flex-direction: column;
-  gap: 56px;
+  gap: 36px;
 }
 
 .project-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
-  padding: 8px;
-  border-radius: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+  padding: 0;
+  border-radius: 10px;
   transition: background 0.3s ease;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .project-row:hover {
@@ -1152,10 +1154,10 @@ body.modal-locked { overflow: hidden; }
 .project-cover {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 200px;
   object-fit: contain;
   object-position: center;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--cover-bg);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -1163,14 +1165,14 @@ body.modal-locked { overflow: hidden; }
 
 .project-row:hover .project-cover {
   border-color: var(--cover-hover-border);
-  box-shadow: 0 24px 60px var(--shadow);
+  box-shadow: 0 12px 32px var(--shadow);
 }
 
 .project-copy {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 8px 4px;
+  gap: 10px;
+  padding: 0;
 }
 
 .project-num {
@@ -1534,7 +1536,11 @@ body.modal-locked { overflow: hidden; }
 
   .project-row {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 18px;
+  }
+
+  .project-cover {
+    height: 180px;
   }
 
   .project-row--reverse .project-cover,
