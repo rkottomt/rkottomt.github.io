@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css?v=10">
-  <link rel="stylesheet" href="home.css?v=23">
+  <link rel="stylesheet" href="home.css?v=24">
 </head>
 <body>
   <a class="skip-link" href="#about" data-target="about">Skip to content</a>
@@ -326,23 +326,28 @@
             <span class="section-title">Selected Work</span>
           </div>
         </div>
-        <div class="projects-stage" id="projectsStage">
-          <div class="projects-grid" id="projectsGrid">
 
-            <article class="project-card" data-depth="1.4" data-project="nokia" role="button" tabindex="0" aria-label="Nokia Bell Labs — view photos">
-              <div class="project-num">01</div>
-              <h3 class="project-title">Nokia Bell Labs</h3>
-              <p class="project-desc">Collaborative prototype development in optics hardware. Designing custom optical test workflows and presenting experimental results to senior hardware engineers.</p>
+        <div class="project-list" id="projectList">
+
+          <article class="project-row" data-project="g34l" role="button" tabindex="0" aria-label="G34L Midplane Voltage Drop — view project">
+            <img class="project-cover" src="assets/projects/g34l-cover.jpg" alt="Nokia G34L midplane PCB on the test bench" loading="lazy" width="1200" height="800">
+            <div class="project-copy">
+              <span class="project-num">01</span>
+              <h3 class="project-title">G34L Midplane Voltage Drop</h3>
+              <p class="project-desc">Characterize IR drop and thermal rise across a Nokia G34L midplane under staged DC loading to determine whether a bus bar is required for power integrity.</p>
               <div class="project-tags">
-                <span class="project-tag">Optics</span>
-                <span class="project-tag">Hardware</span>
-                <span class="project-tag">Prototyping</span>
+                <span class="project-tag">Power Electronics</span>
+                <span class="project-tag">Characterization</span>
+                <span class="project-tag">Thermal</span>
               </div>
-              <span class="project-view" aria-hidden="true">View</span>
-            </article>
+              <span class="project-view" aria-hidden="true">View project &rarr;</span>
+            </div>
+          </article>
 
-            <article class="project-card" data-depth="0.7" data-project="beehive" role="button" tabindex="0" aria-label="Beehive Acoustic Anomaly Detection — view photos">
-              <div class="project-num">02</div>
+          <article class="project-row project-row--reverse" data-project="beehive" role="button" tabindex="0" aria-label="Beehive Acoustic Anomaly Detection — view project">
+            <img class="project-cover" src="assets/projects/beehive-sensors.jpg" alt="Arduino sensor array for beehive acoustic monitoring" loading="lazy" width="1200" height="800">
+            <div class="project-copy">
+              <span class="project-num">02</span>
               <h3 class="project-title">Beehive Acoustic Anomaly Detection</h3>
               <p class="project-desc">ML program developed with an IIT ECE professor to identify behavioral anomalies in beehive acoustics, advancing climate change research on bee colony response.</p>
               <div class="project-tags">
@@ -350,11 +355,14 @@
                 <span class="project-tag">ML</span>
                 <span class="project-tag">Research</span>
               </div>
-              <span class="project-view" aria-hidden="true">View</span>
-            </article>
+              <span class="project-view" aria-hidden="true">View project &rarr;</span>
+            </div>
+          </article>
 
-            <article class="project-card" data-depth="0.9" data-project="pfizer" role="button" tabindex="0" aria-label="Pfizer Software Access Classifier — view photos">
-              <div class="project-num">03</div>
+          <article class="project-row" data-project="pfizer" role="button" tabindex="0" aria-label="Pfizer Software Access Classifier — view project">
+            <img class="project-cover" src="assets/projects/pfizer-nyc.jpg" alt="Pfizer New York City office" loading="lazy" width="1200" height="800">
+            <div class="project-copy">
+              <span class="project-num">03</span>
               <h3 class="project-title">Pfizer Software Access Classifier</h3>
               <p class="project-desc">Built software access classification models integrated into Pfizer workflows to streamline access to critical software and hardware infrastructure.</p>
               <div class="project-tags">
@@ -362,11 +370,14 @@
                 <span class="project-tag">Python</span>
                 <span class="project-tag">Enterprise</span>
               </div>
-              <span class="project-view" aria-hidden="true">View</span>
-            </article>
+              <span class="project-view" aria-hidden="true">View project &rarr;</span>
+            </div>
+          </article>
 
-            <article class="project-card" data-depth="1.6" data-project="airquality" role="button" tabindex="0" aria-label="Urban Air Quality — view poster and figures">
-              <div class="project-num">04</div>
+          <article class="project-row project-row--reverse" data-project="airquality" role="button" tabindex="0" aria-label="Urban Air Quality — view project">
+            <img class="project-cover" src="assets/projects/airquality-fair.jpg" alt="Presenting urban air quality research at a science fair" loading="lazy" width="1200" height="800">
+            <div class="project-copy">
+              <span class="project-num">04</span>
               <h3 class="project-title">Urban Air Quality — Deep Learning</h3>
               <p class="project-desc">An LSTM model integrating meteorological, pollutant, and traffic data to predict AQI and evaluate countermeasure effectiveness across cities like Mumbai. Presented at JSSF, NJAS, and AJAS.</p>
               <div class="project-tags">
@@ -374,10 +385,10 @@
                 <span class="project-tag">Python</span>
                 <span class="project-tag">Deep Learning</span>
               </div>
-              <span class="project-view" aria-hidden="true">View</span>
-            </article>
+              <span class="project-view" aria-hidden="true">View project &rarr;</span>
+            </div>
+          </article>
 
-          </div>
         </div>
       </section>
 
@@ -485,7 +496,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollToPlugin.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
-  <script src="home.js?v=20"></script>
+  <script src="home.js?v=21"></script>
   <script type="module" src="hero-backgrounds.js?v=4"></script>
 </body>
 </html>

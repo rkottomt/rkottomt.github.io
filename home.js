@@ -43,7 +43,7 @@
       requestAnimationFrame(loop);
     })();
 
-    var hoverEls = document.querySelectorAll('a, button, .project-card, .carousel-card, .timeline-trigger');
+    var hoverEls = document.querySelectorAll('a, button, .project-row, .carousel-card, .timeline-trigger');
     hoverEls.forEach(function (el) {
       el.addEventListener('mouseenter', function () { cursorDot.classList.add('expanded'); });
       el.addEventListener('mouseleave', function () { cursorDot.classList.remove('expanded'); });
@@ -613,67 +613,15 @@
     }
   }
 
-  /* ==================== PROJECTS: reveal + 3D tilt ==================== */
+  /* ==================== PROJECTS: staggered row reveal ==================== */
   function revealProjects() {
-    var cards = document.querySelectorAll('.project-card');
-    if (!cards.length) return;
-    // Use yPercent for the reveal so the tilt handler (which writes x/y/z) never
-    // fights the same transform property.
-    gsap.set(cards, { opacity: 0, yPercent: 12 });
-    gsap.to(cards, {
-      opacity: 1, yPercent: 0, duration: 0.7, ease: 'power3.out', stagger: 0.12,
+    var rows = document.querySelectorAll('.project-row');
+    if (!rows.length) return;
+    gsap.set(rows, { opacity: 0, y: 40 });
+    gsap.to(rows, {
+      opacity: 1, y: 0, duration: 0.75, ease: 'power3.out', stagger: 0.14,
       scrollTrigger: { trigger: '#projects', start: 'top 72%' }
     });
-  }
-
-  // Returns an object with destroy(); the whole grid tilts toward the cursor
-  // and each card floats by its data-depth for a parallax gallery feel.
-  function initProjectTilt() {
-    var stage = document.getElementById('projectsStage');
-    var grid = document.getElementById('projectsGrid');
-    if (!stage || !grid || !window.matchMedia('(hover: hover)').matches) return null;
-
-    var rotX = gsap.quickTo(grid, 'rotationX', { duration: 0.8, ease: 'power3' });
-    var rotY = gsap.quickTo(grid, 'rotationY', { duration: 0.8, ease: 'power3' });
-
-    var cards = Array.prototype.slice.call(grid.querySelectorAll('.project-card'));
-    var cardTweens = cards.map(function (card) {
-      return {
-        z: gsap.quickTo(card, 'z', { duration: 0.8, ease: 'power3' }),
-        x: gsap.quickTo(card, 'x', { duration: 0.8, ease: 'power3' }),
-        y: gsap.quickTo(card, 'y', { duration: 0.8, ease: 'power3' }),
-        depth: parseFloat(card.getAttribute('data-depth')) || 1
-      };
-    });
-
-    function onMove(e) {
-      var r = stage.getBoundingClientRect();
-      var nx = (e.clientX - r.left) / r.width - 0.5;
-      var ny = (e.clientY - r.top) / r.height - 0.5;
-      rotY(nx * 12);
-      rotX(-ny * 12);
-      cardTweens.forEach(function (t) {
-        t.z(t.depth * 40);
-        t.x(nx * t.depth * 26);
-        t.y(ny * t.depth * 26);
-      });
-    }
-    function onLeave() {
-      rotX(0); rotY(0);
-      cardTweens.forEach(function (t) { t.z(0); t.x(0); t.y(0); });
-    }
-
-    stage.addEventListener('mousemove', onMove);
-    stage.addEventListener('mouseleave', onLeave);
-
-    return {
-      destroy: function () {
-        stage.removeEventListener('mousemove', onMove);
-        stage.removeEventListener('mouseleave', onLeave);
-        gsap.set(grid, { clearProps: 'transform' });
-        gsap.set(cards, { clearProps: 'transform' });
-      }
-    };
   }
 
   /* ==================== RESPONSIVE / MOTION BRANCHES ==================== */
@@ -717,16 +665,14 @@
       });
     }
 
-    // ----- Projects: staggered reveal + cursor-reactive 3D tilt -----
+    // ----- Projects: staggered row reveal -----
     revealProjects();
-    var tilt = initProjectTilt();
 
     ScrollTrigger.refresh();
 
     return function cleanup() {
       if (smoother) { smoother.kill(); smoother = null; }
       if (carousel) carousel.style.transition = '';
-      if (tilt) tilt.destroy();
       if (titlePressure) { titlePressure.destroy(); titlePressure = null; }
       if (contactPressure) { contactPressure.destroy(); contactPressure = null; }
       splitStore.forEach(function (s) { if (s && s.revert) s.revert(); });
@@ -768,7 +714,7 @@
     gsap.set([
       '#aboutIntroTitle', '#aboutIntroDesc', '.timeline-item', '.reveal-line',
       '.hero-sub', '.hero-scroll-hint', '.section-title', '.section-index',
-      '.project-card', '#timelineSpine'
+      '.project-row', '#timelineSpine'
     ], { clearProps: 'all', opacity: 1 });
     var spine = document.getElementById('timelineSpine');
     if (spine) gsap.set(spine, { scaleY: 1 });
@@ -788,10 +734,55 @@
 
     var A = 'assets/projects/';
     var PROJECTS = {
-      nokia: {
-        title: 'Nokia Bell Labs',
+      g34l: {
+        title: 'G34L Midplane Voltage Drop',
+        story: {
+          sections: [
+            {
+              heading: 'Objective',
+              body: 'Quantify DC voltage drop (\u0394V) and temperature rise (\u0394T) across the midplane of a Nokia G34L system under increasing load. The goal was to stress the power distribution network under a worst-case single-PSU configuration and determine whether a bus bar is needed to keep IR drop within spec.'
+            },
+            {
+              heading: 'Test bench',
+              body: 'A 12 V backplane fed two PSUs, with only one active on 208 V input to capture absolute worst-case delivery. Cooling was held at a constant 50% fan duty cycle. A four-channel electronic load drew current at midplane positions B1, C1, B2, and C2 while four DMM sense points (A1, D1 near the PSU; C4, D4 at the far end) and two temperature probes (T1 near PSU, T2 at the far end) captured electrical and thermal gradients along the board.'
+            },
+            {
+              heading: 'Hardware build',
+              body: 'The experiment required custom high-current wiring and careful mechanical integration. I fabricated 6 AWG harnesses with crimped ring terminals and heat-shrink insulation to route load current from the electronic load to the backplane, then placed loads to maximize \u0394V between sense points while keeping cable routing compatible with the chassis envelope. Four low-duty 24 AWG sense leads with banana jacks fed the DMMs, and digital thermometer probes tracked thermal rise at both ends of the midplane. The chassis top was sealed with tape and beeswax cable ties to approximate production airflow during the run.'
+            },
+            {
+              heading: 'Procedure',
+              body: 'Measurements were recorded at 0 A baseline, then at each programmed load step. Additional readings were captured at intermediate totals (4 A, 16 A, 40 A, 80 A, 100 A, and 150 A) to map how IR drop and dissipation evolved across the midplane.'
+            }
+          ],
+          specs: [
+            'Backplane voltage: 12 V',
+            'Power supplies: 2 installed; 1 active on 208 V input (worst case)',
+            'Fan speed: fixed at 50%',
+            'Electronic load: 1 unit, 4 channels (CH1\u2013CH2: 300 W max; CH3\u2013CH4: 600 W max)',
+            'Load positions: B1, C1, B2, C2',
+            'DMM sense points: A1, D1 (PSU end), C4, D4 (far end)',
+            'Temperature probes: T1 (PSU end), T2 (far end)'
+          ],
+          loadTable: {
+            headers: ['Step', 'CH1', 'CH2', 'CH3', 'CH4', 'Total'],
+            rows: [
+              ['1', '1 A', '1 A', '1 A', '1 A', '4 A / 48 W'],
+              ['2', '10 A', '10 A', '10 A', '10 A', '40 A / 480 W'],
+              ['3', '20 A', '20 A', '20 A', '20 A', '80 A / 960 W'],
+              ['4', '25 A', '25 A', '25 A', '25 A', '100 A / 1200 W'],
+              ['5', '25 A', '25 A', '50 A', '50 A', '150 A / 1800 W']
+            ]
+          }
+        },
         photos: [
-          { src: A + 'nokia-rf.jpg', caption: 'Repairing a broken RF waveform splitter pack on the optics bench at Nokia Bell Labs.' }
+          { src: A + 'g34l-backplane.jpg', caption: 'G34L midplane on the bench before harnessing \u2014 the PCB that distributes 12 V across the chassis.' },
+          { src: A + 'g34l-wiring.jpg', caption: '6 AWG load cables with crimped ring terminals and heat-shrink insulation for high-current delivery to the backplane.' },
+          { src: A + 'g34l-loads.jpg', caption: 'Load placement and cable routing tuned to maximize IR drop between sense points while preserving chassis fit.' },
+          { src: A + 'g34l-chassis.jpg', caption: 'Midplane seated in the chassis with harness routed through the top opening.' },
+          { src: A + 'g34l-sealed.jpg', caption: 'Chassis top sealed and cables secured with beeswax ties to mimic production airflow conditions.' },
+          { src: A + 'g34l-programming.jpg', caption: 'Programming the four-channel electronic load for the staged current steps.' },
+          { src: A + 'g34l-setup.jpg', caption: 'Full bench setup: PSU, electronic load, DMMs, and temperature instrumentation ready for characterization.' }
         ]
       },
       beehive: {
@@ -902,6 +893,69 @@
       return wrap;
     }
 
+    function buildStory(story) {
+      if (!story) return null;
+      var wrap = document.createElement('div');
+      wrap.className = 'project-story';
+
+      (story.sections || []).forEach(function (sec) {
+        var h = document.createElement('h4');
+        h.textContent = sec.heading;
+        wrap.appendChild(h);
+        var p = document.createElement('p');
+        p.textContent = sec.body;
+        wrap.appendChild(p);
+      });
+
+      if (story.specs && story.specs.length) {
+        var hSpecs = document.createElement('h4');
+        hSpecs.textContent = 'Instrumentation & setup';
+        wrap.appendChild(hSpecs);
+        var ul = document.createElement('ul');
+        ul.className = 'project-specs';
+        story.specs.forEach(function (item) {
+          var li = document.createElement('li');
+          li.textContent = item;
+          ul.appendChild(li);
+        });
+        wrap.appendChild(ul);
+      }
+
+      if (story.loadTable) {
+        var hTable = document.createElement('h4');
+        hTable.textContent = 'Load schedule';
+        wrap.appendChild(hTable);
+        var tableWrap = document.createElement('div');
+        tableWrap.className = 'project-table-wrap';
+        var table = document.createElement('table');
+        table.className = 'project-table';
+        var thead = document.createElement('thead');
+        var headRow = document.createElement('tr');
+        story.loadTable.headers.forEach(function (label) {
+          var th = document.createElement('th');
+          th.textContent = label;
+          headRow.appendChild(th);
+        });
+        thead.appendChild(headRow);
+        table.appendChild(thead);
+        var tbody = document.createElement('tbody');
+        story.loadTable.rows.forEach(function (row) {
+          var tr = document.createElement('tr');
+          row.forEach(function (cell) {
+            var td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        tableWrap.appendChild(table);
+        wrap.appendChild(tableWrap);
+      }
+
+      return wrap;
+    }
+
     function openProject(key) {
       var data = PROJECTS[key];
       if (!data) return;
@@ -909,6 +963,9 @@
       titleEl.textContent = data.title;
       galleryEl.innerHTML = '';
       galleryEl.scrollTop = 0;
+
+      var storyEl = buildStory(data.story);
+      if (storyEl) galleryEl.appendChild(storyEl);
 
       var photos = document.createElement('div');
       photos.className = 'gallery-photos';
@@ -954,7 +1011,7 @@
       zoom.addEventListener('transitionend', done);
     }
 
-    var cards = document.querySelectorAll('.project-card[data-project]');
+    var cards = document.querySelectorAll('.project-row[data-project]');
     cards.forEach(function (card) {
       var key = card.getAttribute('data-project');
       card.addEventListener('click', function () { openProject(key); });

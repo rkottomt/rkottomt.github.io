@@ -538,31 +538,29 @@ body {
 }
 
 /* ===================== PROJECT DETAIL MODAL + IMAGE ZOOM ===================== */
-.project-card { cursor: pointer; }
+.project-row { cursor: pointer; }
 
 .project-view {
-  position: absolute;
-  right: 24px;
-  top: 24px;
+  display: inline-block;
+  margin-top: 8px;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-secondary);
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.3s ease, transform 0.3s ease, color 0.3s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
-.project-view::before { content: '\2192  '; }
-.project-card:hover .project-view,
-.project-card:focus-visible .project-view {
-  opacity: 1;
-  transform: translateY(0);
+
+.project-row:hover .project-view,
+.project-row:focus-visible .project-view {
   color: var(--text-primary);
+  transform: translateX(4px);
 }
-.project-card:focus-visible {
+
+.project-row:focus-visible {
   outline: 1px solid rgba(255, 255, 255, 0.45);
   outline-offset: 4px;
+  border-radius: 12px;
 }
 
 body.modal-locked { overflow: hidden; }
@@ -657,6 +655,94 @@ body.modal-locked { overflow: hidden; }
   font-size: 0.82rem;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/* Modal story blocks (G34L technical write-up) */
+.project-story {
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.project-story h4 {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  margin: 22px 0 10px;
+}
+
+.project-story h4:first-child { margin-top: 0; }
+
+.project-story p {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+
+.project-specs {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+}
+
+.project-specs li {
+  position: relative;
+  padding-left: 16px;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.project-specs li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hover-accent, #7aa2ff);
+}
+
+.project-table-wrap {
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+.project-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+
+.project-table th,
+.project-table td {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.project-table th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.65rem;
+}
+
+.project-table td:first-child {
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 /* Air-quality poster + clickable figure hotspots */
@@ -985,7 +1071,7 @@ body.modal-locked { overflow: hidden; }
   font-size: 1rem;
 }
 
-/* ===================== PROJECTS (3D tilt gallery) ===================== */
+/* ===================== PROJECTS (cover + side copy rows) ===================== */
 .projects {
   padding: 140px 40px;
   max-width: 1200px;
@@ -996,48 +1082,51 @@ body.modal-locked { overflow: hidden; }
   margin-bottom: 56px;
 }
 
-.projects-stage {
-  perspective: 1400px;
-}
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-.project-card {
-  position: relative;
-  min-height: 320px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 44px 40px;
+.project-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  transform-style: preserve-3d;
-  will-change: transform;
+  gap: 56px;
+}
+
+.project-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 12px;
+  transition: background 0.3s ease;
+}
+
+.project-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.project-row--reverse .project-cover { order: 2; }
+.project-row--reverse .project-copy { order: 1; }
+
+.project-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.project-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 55%);
-  transition: opacity 0.3s ease;
+.project-row:hover .project-cover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
-.project-card:hover {
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 50px rgba(255, 255, 255, 0.04);
+.project-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 8px 4px;
 }
-
-.project-card:hover::after { opacity: 1; }
 
 .project-num {
   font-family: var(--font-mono);
@@ -1048,7 +1137,7 @@ body.modal-locked { overflow: hidden; }
 
 .project-title {
   font-family: var(--font-heading);
-  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -1058,10 +1147,10 @@ body.modal-locked { overflow: hidden; }
 
 .project-desc {
   font-family: var(--font-body);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  line-height: 1.65;
   color: var(--text-secondary);
-  flex-grow: 1;
+  margin: 0;
 }
 
 .project-tags {
@@ -1398,13 +1487,14 @@ body.modal-locked { overflow: hidden; }
   .coursework .carousel-card { width: 260px; height: 230px; }
   .coursework .carousel-code { font-size: 2rem; }
 
-  .projects-grid {
+  .project-row {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 24px;
   }
 
-  .project-card {
-    min-height: 0;
+  .project-row--reverse .project-cover,
+  .project-row--reverse .project-copy {
+    order: unset;
   }
 
   .timeline-trigger { cursor: pointer; }
