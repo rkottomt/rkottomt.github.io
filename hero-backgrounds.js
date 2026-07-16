@@ -6,12 +6,20 @@
    black + navy/white palette. A shuffle button swaps them live.
    ============================================================ */
 
-const PALETTE = {
-  navy: '#2a4a9c',
-  navyDark: '#1b2540',
-  light: '#8fa6ff',
-  white: '#ffffff'
-};
+const PALETTE = (function readThemePalette() {
+  const root = getComputedStyle(document.documentElement);
+  const token = (name, fallback) => {
+    const value = root.getPropertyValue(name).trim();
+    return value || fallback;
+  };
+  return {
+    navy: token('--hero-accent', '#6b8f71'),
+    navyDark: token('--hero-accent-dark', '#4a6b52'),
+    light: token('--hero-accent-light', '#a8c4aa'),
+    white: token('--hero-accent-bright', '#f7f3ea'),
+    lineColor: token('--hero-wave-line', 'rgba(107, 143, 113, 0.38)')
+  };
+})();
 
 const DPR = Math.min(window.devicePixelRatio || 1, 2);
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -27,6 +35,12 @@ function hexToRgb01(hex) {
   ];
 }
 
+function themeBgRgb01() {
+  const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+  if (bg.startsWith('#')) return hexToRgb01(bg);
+  return [0, 0, 0];
+}
+
 /* ==================== OGL shared helper ==================== */
 let OGL = null;
 
@@ -36,7 +50,8 @@ function oglEffect(container, cfg) {
   const renderer = new OGL.Renderer({ alpha: !cfg.opaque, premultipliedAlpha: false, dpr: DPR });
   const gl = renderer.gl;
   if (cfg.opaque) {
-    gl.clearColor(0, 0, 0, 1);
+    const bg = themeBgRgb01();
+    gl.clearColor(bg[0], bg[1], bg[2], 1);
   } else {
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -533,7 +548,7 @@ function createWaves(container) {
   const canvas = document.createElement('canvas');
   container.appendChild(canvas);
   const ctx = canvas.getContext('2d');
-  const cfg = { lineColor: 'rgba(140,160,220,0.42)', waveSpeedX: 0.0125, waveSpeedY: 0.005, waveAmpX: 32, waveAmpY: 16, xGap: 10, yGap: 32, friction: 0.925, tension: 0.005, maxCursorMove: 100 };
+  const cfg = { lineColor: PALETTE.lineColor, waveSpeedX: 0.0125, waveSpeedY: 0.005, waveAmpX: 32, waveAmpY: 16, xGap: 10, yGap: 32, friction: 0.925, tension: 0.005, maxCursorMove: 100 };
   const noise = new Noise(Math.random());
   let lines = [], bounding = { width: 0, height: 0, left: 0, top: 0 }, raf = null;
   const mouse = { x: -10, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0, set: false };

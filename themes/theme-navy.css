@@ -1,0 +1,66 @@
+/* ============================================================
+   Navy theme (saved for revert)
+   To restore: in index.html + resume.html, swap the theme link
+   from theme-sage-cream.css to theme-navy.css
+   ============================================================ */
+:root {
+  --bg: #05070f;
+  --surface: #0b1022;
+  --border: #1b2540;
+  --text-primary: #ffffff;
+  --text-secondary: #9aa6bd;
+  --hover-accent: #7aa2ff;
+  --accent: #2a4a9c;
+  --accent-soft: rgba(42, 74, 156, 0.12);
+  --accent-muted: rgba(42, 74, 156, 0.38);
+  --on-accent: #05070f;
+  --on-primary: #05070f;
+  --inverse: #05070f;
+  --glow: rgba(40, 70, 160, 0.06);
+
+  --nav-fg: #ffffff;
+  --nav-border: rgba(255, 255, 255, 0.4);
+  --nav-scrim: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0));
+
+  --focus-ring: rgba(255, 255, 255, 0.7);
+  --scrollbar-thumb: #23304f;
+
+  --overlay: rgba(3, 5, 12, 0.72);
+  --overlay-heavy: rgba(3, 5, 12, 0.78);
+  --overlay-zoom: rgba(2, 3, 8, 0.93);
+  --modal-scrim: rgba(0, 0, 0, 0.85);
+
+  --shadow: rgba(0, 0, 0, 0.45);
+  --shadow-strong: rgba(0, 0, 0, 0.6);
+  --row-hover: rgba(255, 255, 255, 0.02);
+  --chip-hover: rgba(255, 255, 255, 0.04);
+  --tile-glow-border: rgba(255, 255, 255, 0.25);
+  --tile-glow-shadow: rgba(255, 255, 255, 0.1);
+  --section-index-color: rgba(255, 255, 255, 0.14);
+
+  --aurora-1: rgba(40, 66, 140, 0.22);
+  --aurora-2: rgba(30, 52, 118, 0.15);
+  --aurora-3: rgba(26, 44, 104, 0.20);
+
+  --hero-scrim: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.28) 42%, rgba(0, 0, 0, 0) 72%);
+  --highlight-underline: rgba(42, 74, 156, 0.38);
+  --cover-bg: #0a0c10;
+  --cover-hover-border: rgba(255, 255, 255, 0.3);
+  --diagram-bg: #0d1117;
+
+  --poster-hotspot-bg: rgba(3, 5, 12, 0.85);
+  --poster-hotspot-border: rgba(42, 74, 156, 0.3);
+  --poster-hotspot-hover-border: rgba(120, 160, 255, 0.9);
+  --poster-thumb-hover-border: rgba(120, 160, 255, 0.7);
+
+  --status-dot: #4ade80;
+  --status-dot-glow: rgba(74, 222, 128, 0.5);
+
+  --hero-accent: #2a4a9c;
+  --hero-accent-dark: #1b2540;
+  --hero-accent-light: #8fa6ff;
+  --hero-accent-bright: #ffffff;
+  --hero-wave-line: rgba(140, 160, 220, 0.42);
+
+  --noise-opacity: 0.06;
+}

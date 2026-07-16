@@ -795,7 +795,7 @@
           { src: A + 'g34l-loads.jpg', caption: 'Load placement and cable routing tuned to maximize IR drop between sense points while preserving chassis fit.' },
           { src: A + 'g34l-chassis.jpg', caption: 'Midplane seated in the chassis with harness routed through the top opening.' },
           { src: A + 'g34l-sealed.jpg', caption: 'Chassis top sealed and cables secured with beeswax ties to mimic production airflow conditions.' },
-          { src: A + 'g34l-programming.jpg?v=3', caption: 'Programming the four-channel electronic load for the staged current steps.' },
+          { src: A + 'g34l-programming.jpg?v=4', caption: 'Programming the four-channel electronic load for the staged current steps.' },
           { src: A + 'g34l-setup.jpg', caption: 'Full bench setup: PSU, electronic load, DMMs, and temperature instrumentation ready for characterization.' }
         ]
       },
@@ -883,7 +883,6 @@
           { src: A + 'das-hw-thor.jpg', caption: 'Jetson Thor \u2014 reference edge platform (~18.8 s/file, ~50% real-time headroom, ~25 W).' },
           { src: A + 'das-hw-dgx-spark.jpg', caption: 'NVIDIA DGX Spark \u2014 team benchmarking and batch regression runs.' },
           { src: A + 'das-hw-orin.jpg', caption: 'Jetson AGX Orin \u2014 generational edge baseline and CPU/GPU decoupling checks.' },
-          { src: A + 'das-hw-vm.jpg', caption: '6-vCPU VM (2 workers) \u2014 minimum credible general-purpose compute; proved GPU unnecessary.' },
           { src: A + 'das-hw-marvell.jpg', caption: 'Marvell CN10624 (OCTEON 10-class Arm board) \u2014 field-oriented target with 48/48 detection parity.' }
         ]
       },

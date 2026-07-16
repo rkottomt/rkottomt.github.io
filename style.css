@@ -7,19 +7,12 @@
 }
 
 :root {
-  --bg: #05070f;
-  --surface: #0b1022;
-  --border: #1b2540;
-  --text-primary: #ffffff;
-  --text-secondary: #9aa6bd;
-  --hover-accent: #ffffff;
-  --accent: #2a4a9c;
-  --glow: rgba(40,70,160,0.06);
   --font-heading: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --transition: all 0.3s ease;
   --sidebar-width: 280px;
+  /* Color tokens live in themes/theme-*.css (loaded before this file). */
 }
 
 html {
@@ -41,7 +34,7 @@ body {
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #23304f; border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
 
 a {
   color: var(--text-primary);
@@ -60,7 +53,7 @@ a:hover {
 a:focus-visible,
 button:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -72,9 +65,9 @@ button:focus-visible,
   left: 12px;
   z-index: 12000;
   padding: 10px 16px;
-  background: #05070f;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: var(--bg);
+  color: var(--text-primary);
+  border: 1px solid var(--focus-ring);
   border-radius: 6px;
   font-family: var(--font-mono);
   font-size: 0.8rem;
@@ -83,7 +76,7 @@ button:focus-visible,
 
 .skip-link:focus {
   top: 12px;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* ===================== CUSTOM CURSOR ===================== */
@@ -125,7 +118,7 @@ button:focus-visible,
   height: 100%;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.06;
+  opacity: var(--noise-opacity);
   /* Pre-rendered noise tile: the turbulence filter rasterizes once for a small
      repeating tile instead of recompositing the full viewport on every paint. */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -317,8 +310,8 @@ button:focus-visible,
 }
 
 .tile.tile-glow {
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), inset 0 0 15px rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 20px var(--tile-glow-shadow), inset 0 0 15px var(--chip-hover);
+  border-color: var(--tile-glow-border);
 }
 
 /* ===================== CANVAS STAGE ===================== */
@@ -349,7 +342,7 @@ button:focus-visible,
 .anim-progress-fill {
   height: 100%;
   width: 0%;
-  background: rgba(255, 255, 255, 0.3);
+  background: color-mix(in srgb, var(--text-primary) 30%, transparent);
   transition: width 0.1s linear;
 }
 
@@ -379,8 +372,8 @@ button:focus-visible,
 
 .tile:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 60px rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 20px 60px var(--chip-hover);
+  border-color: var(--tile-glow-border);
   z-index: 10;
 }
 
@@ -613,14 +606,14 @@ button:focus-visible,
 
 .interest-tag-clickable {
   cursor: pointer;
-  border-color: rgba(255,255,255,0.25);
+  border-color: var(--tile-glow-border);
 }
 
 .interest-tag-clickable:hover,
 .interest-tag-clickable.active {
   color: var(--text-primary);
   border-color: var(--text-primary);
-  background: rgba(255,255,255,0.04);
+  background: var(--chip-hover);
 }
 
 .tag-detail {
@@ -654,7 +647,7 @@ button:focus-visible,
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
+  background: var(--modal-scrim);
   z-index: 9000;
   display: flex;
   align-items: center;
@@ -735,7 +728,7 @@ button:focus-visible,
   font-size: 0.8rem;
   color: var(--text-secondary);
   padding: 7px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--chip-hover);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -824,10 +817,10 @@ button:focus-visible,
 }
 
 .carousel-card.active .carousel-card-inner {
-  border-color: rgba(255,255,255,0.2);
+  border-color: var(--tile-glow-border);
   box-shadow:
-    0 0 40px rgba(255,255,255,0.04),
-    0 30px 80px rgba(0,0,0,0.6);
+    0 0 40px var(--chip-hover),
+    0 30px 80px var(--shadow-strong);
 }
 
 .carousel-semester {
@@ -877,7 +870,7 @@ button:focus-visible,
 .carousel-btn:hover {
   border-color: var(--text-primary);
   color: var(--text-primary);
-  box-shadow: 0 0 20px rgba(255,255,255,0.05);
+  box-shadow: 0 0 20px var(--chip-hover);
 }
 
 .carousel-btn:active {
@@ -939,8 +932,8 @@ button:focus-visible,
 }
 
 .work-card:hover {
-  border-color: rgba(255,255,255,0.25);
-  box-shadow: 0 20px 50px rgba(255,255,255,0.06);
+  border-color: var(--tile-glow-border);
+  box-shadow: 0 20px 50px var(--chip-hover);
 }
 
 .work-card .work-title {
@@ -1158,7 +1151,7 @@ button:focus-visible,
   font-weight: 300;
   line-height: 0.85;
   letter-spacing: -0.03em;
-  color: rgba(255, 255, 255, 0.14);
+  color: var(--section-index-color);
   flex-shrink: 0;
 }
 
