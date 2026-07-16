@@ -23,7 +23,7 @@ JPEG_QUALITY = 90
 
 # Normalized focal overrides (fx, fy). Set to None to auto-detect.
 FOCAL_OVERRIDES: dict[str, tuple[float, float] | None] = {
-    "g34l-programming.jpg": (0.42, 0.58),
+    "g34l-programming.jpg": (0.42, 0.48),
     "beehive-farm.jpg": None,
 }
 
