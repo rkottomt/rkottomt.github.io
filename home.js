@@ -1103,6 +1103,49 @@
             { left: 50.28, top: 75.77, w: 22.10, h: 18.22, src: A + 'fig-rmse.png', label: 'Fig 6 \u00b7 Model RMSE', caption: 'Model RMSE comparison \u2014 LSTM vs. baselines (Mumbai 2019\u20132023).' }
           ]
         }
+      },
+      systems: {
+        title: 'Systems Labs: Cache, Malloc & Shell',
+        story: {
+          lead: 'Three from-scratch C systems labs\u2014a cache simulator and blocked matrix transpose, a full dynamic memory allocator, and a job-controlling Unix shell. Every design decision, debug session, and optimization was done by hand without AI assistants, working from man pages, textbook material, and reasoning about the machine. Correctness came from Valgrind, AddressSanitizer, MemorySanitizer, GDB, and invariant checkers\u2014not just green autograder scores.',
+          sections: [
+            {
+              heading: 'Cache simulator & cache-optimized transpose',
+              body: [
+                'I built a full cache simulator (csim.c) that models arbitrary geometries\u2014set index bits s, associativity E, and block bits b, constrained only by s + b \u2264 64. It implements LRU replacement with a write-back / write-allocate policy, and reports hits, misses, evictions, dirty bytes remaining in cache, and dirty bytes evicted to memory.',
+                'The CLI uses getopt and strtoul with validation for missing arguments, non-numeric inputs, out-of-range values, and unknown flags. Trace parsing is line-oriented via fopen/fgets/strtoul so malformed lines are rejected instead of silently accepted. Cache structures are calloc\u2019d so large geometries do not blow the stack, and the simulator passes Valgrind --leak-check=full with no leaks or invalid accesses.',
+                'I also wrote three hand-crafted traces that produce exact hit/miss/eviction counts on direct-mapped and set-associative geometries\u2014requiring tag/set/offset splits worked out by hand. For the transpose (trans.c), I tuned separately for a 32\u00d732 case on a direct-mapped cache (s=5, E=1, b=6) and a 1024\u00d71024 case on an 8-way L1 (s=6, E=8, b=6), using blocking sized to fit one set\u2019s worth of lines and special-casing the diagonal to avoid conflict misses between rows of A and B that alias in a direct-mapped cache.'
+              ]
+            },
+            {
+              heading: 'Dynamic memory allocator',
+              body: [
+                'I implemented mm_init, malloc, free, realloc, calloc, and a heap consistency checker mm_checkheap on top of a simulated mem_sbrk primitive, targeting space utilization and throughput across a full 64-bit address space.',
+                'The free-list design evolved through three stages: implicit list \u2192 explicit doubly-linked list \u2192 segregated free lists with size-class bucketing, which was the main throughput win. Boundary-tag coalescing merges adjacent free blocks across all four prev/next allocated cases. Internal fragmentation dropped by eliminating footers on allocated blocks (stealing a bit in the next header for previous-allocation status), shrinking the minimum block size for small free blocks that do not need both next and prev pointers, and compressing headers\u2014while keeping every returned pointer 16-byte aligned.',
+                'mm_checkheap walks the implicit block list and every segregated free list, checking prologue/epilogue integrity, alignment, header/footer consistency, the no-adjacent-free invariant, free-list pointer symmetry, and correct size bucketing. Bugs were hunted with GDB (including hprobe on the emulated 64-bit heap), AddressSanitizer, and MemorySanitizer. Pointer work is structured through structs and unions, with unavoidable arithmetic confined to a handful of helpers.'
+              ]
+            },
+            {
+              heading: 'Unix shell (tsh)',
+              body: [
+                'I built a Linux shell that supports foreground/background job control, signal handling, I/O redirection, and the standard jobs/bg/fg/quit built-ins\u2014correctly managing a job list under concurrent SIGCHLD delivery from multiple children.',
+                'After fork and before execve, the child calls setpgid(0, 0) so Ctrl-C does not kill the shell with the foreground job. SIGINT and SIGTSTP are forwarded to the entire foreground process group. Reaping happens only in the SIGCHLD handler via waitpid(-1, \u2026, WNOHANG | WUNTRACED) in a loop, so coalesced signals from near-simultaneous exits are all handled. Foreground wait uses sigsuspend on a mask that blocks SIGCHLD\u2014no busy-waiting or sleep hacks, and no race between checking the job list and sleeping.',
+                'Every access to the shared job list is bracketed by sigprocmask that blocks SIGCHLD, SIGINT, and SIGTSTP. Handlers save/restore errno and use only async-signal-safe functions. I/O redirection for < and > (including the jobs built-in) is done with dup2 in the child before execve, and system-call failures such as bad filenames or failed forks recover instead of exiting the shell.'
+              ]
+            }
+          ],
+          specsTitle: 'What these labs demonstrate',
+          specs: [
+            'Memory hierarchy: tag/set/offset decomposition, associativity, LRU, write-back/write-allocate, and conflict vs. capacity vs. compulsory misses',
+            'Cache-conscious algorithm design: blocking and diagonal special-casing so a transpose does not thrash a direct-mapped cache',
+            'Heap organization: free-list structures, boundary-tag coalescing, and the utilization-vs-throughput tradeoff',
+            'Fragmentation control: footer elimination, minimum-block tricks, and size-class segregated lists',
+            'Process control: fork, execve, waitpid, setpgid, and parent/child signal semantics',
+            'Signal concurrency: blocking, pending-signal coalescing, sigsuspend waits, and async-signal-safety as a hard constraint',
+            'Bit-level C and defensive systems programming: alignment, robust parsing, and invariant-based heap/cache/job-list checking'
+          ]
+        },
+        photos: []
       }
     };
 
