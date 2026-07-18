@@ -1151,6 +1151,14 @@ body.modal-locked { overflow: hidden; }
 .project-row--reverse .project-cover { order: 2; }
 .project-row--reverse .project-copy { order: 1; }
 
+.project-row--text {
+  grid-template-columns: 1fr;
+}
+
+.project-row--text .project-copy {
+  max-width: 52rem;
+}
+
 .project-cover {
   display: block;
   width: 100%;
