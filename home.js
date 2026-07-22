@@ -1195,7 +1195,7 @@
           ]
         },
         photos: [
-          { src: A + 'nba-cover.jpg?v=2', caption: 'NBA In-Game Win Probability \u2014 SystemVerilog Monte Carlo engine with Verilator + ESPN front-end.' }
+          { src: A + 'nba-cover.jpg?v=3', caption: 'NBA In-Game Win Probability \u2014 SystemVerilog Monte Carlo engine with Verilator + ESPN front-end.' }
         ]
       }
     };
