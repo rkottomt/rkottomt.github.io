@@ -1148,7 +1148,7 @@
         photos: []
       },
       nba: {
-        title: 'NBA In-Game Win Probability',
+        title: 'NBA In-Game Win Probability (FPGA)',
         story: {
           lead: 'I built an FPGA-friendly SystemVerilog Monte Carlo engine that estimates each team\u2019s win probability from an in-progress NBA game state\u2014score differential, time remaining, and possession. Sixteen parallel simulation cores, each driven by a Marsaglia xorshift32 RNG, replay possessions until the clock expires and aggregate thousands of trials under Verilator. A Python CLI pulls live or scheduled games from ESPN\u2019s public scoreboard API and runs the simulator in one step.',
           sections: [
