@@ -1146,6 +1146,57 @@
           ]
         },
         photos: []
+      },
+      nba: {
+        title: 'NBA In-Game Win Probability',
+        story: {
+          lead: 'I built an FPGA-friendly SystemVerilog Monte Carlo engine that estimates each team\u2019s win probability from an in-progress NBA game state\u2014score differential, time remaining, and possession. Sixteen parallel simulation cores, each driven by a Marsaglia xorshift32 RNG, replay possessions until the clock expires and aggregate thousands of trials under Verilator. A Python CLI pulls live or scheduled games from ESPN\u2019s public scoreboard API and runs the simulator in one step.',
+          sections: [
+            {
+              heading: 'Why Monte Carlo on hardware?',
+              body: [
+                'In-game win probability is everywhere in sports analytics and broadcasts. Estimating it by simulating remaining possessions is a natural fit for hardware parallelism: each trial is independent, short, and RNG-heavy.',
+                'The goal was to express that algorithm as synthesizable SystemVerilog suitable for FPGA mapping, verify it with Verilator, and connect it to real NBA game state via a lightweight Python front-end\u2014without paid sports data APIs or machine-learning frameworks.'
+              ]
+            },
+            {
+              heading: 'RTL architecture',
+              body: [
+                'The design layers from RNG \u2192 possession model \u2192 trial core \u2192 parallel aggregator \u2192 C++ testbench \u2192 Python CLI/backtest.',
+                'xorshift32 implements a full 32-bit Marsaglia step per cycle (shifts 13, 17, 5). possession_outcome combinationally maps RNG bits to points and duration. sim_core is an IDLE/SIM/FINISH FSM that runs one game trial from a unique CORE_ID seed. monte_carlo_top instantiates 16 cores, runs 4096 trials, and aggregates wins_a / total_trials.',
+                'Each core seeds with base_seed XOR (CORE_ID * 0x9E3779B9). While run stays high, a finished core reloads the initial game state and starts another trial without reloading the RNG, keeping consecutive trials decorrelated.'
+              ]
+            },
+            {
+              heading: 'Possession model',
+              body: [
+                'Outcome rolls use rand_val[15:0] out of 65536. Possession duration is 8 + rand_val[19:16] (uniform 8\u201323 seconds, ~15.5 average). Expected points per possession is about 1.16, matching NBA averages.',
+                'Probability mass: 50% turnover/miss (0 pts), 32% made 2 or two free throws (2), 14% made 3 (3), 2% single free throw (1), 2% and-1 on a 3 (4).'
+              ]
+            },
+            {
+              heading: 'CLI, ESPN feed, and historical backtest',
+              body: [
+                'make cli fetches today\u2019s ESPN scoreboard, prefers live games, prompts for possession, writes game_state.txt, builds the simulator if needed, and prints win probabilities for both teams.',
+                'The backtest evaluates the fixed possession model\u2014no neural weights. For 50 finished games sampled from November 2024\u2013March 2025, it picks a random mid-game play with 120\u20132400 seconds remaining, runs MCWP, and checks whether the favorite matched the final winner.',
+                'Results: 72.0% favorite-match accuracy, mean |p \u2212 outcome| of 0.309, and Brier score 0.152 (0 = perfect, ~0.25 \u2248 coin flip). Known limits include no overtime strategy, no team-specific ratings or home-court factor, and imperfect possession inference from ESPN play team ids.'
+              ]
+            }
+          ],
+          specsTitle: 'Design & evaluation',
+          specs: [
+            '16 parallel sim_core instances; 4096 trials per run under Verilator',
+            'Marsaglia xorshift32 RNG; possession duration 8\u201323 s; ~1.16 expected points/possession',
+            'Stack: SystemVerilog RTL + Verilator C++ testbench + Python ESPN CLI/backtest',
+            'Backtest: 50 mid-game snapshots (Nov 2024\u2013Mar 2025) \u2192 72% favorite-match accuracy, Brier 0.152'
+          ],
+          links: [
+            { href: A + 'nba-mcwp-report.pdf', label: 'Download project report (PDF)' }
+          ]
+        },
+        photos: [
+          { src: A + 'nba-cover.jpg?v=3', caption: 'NBA In-Game Win Probability \u2014 SystemVerilog Monte Carlo engine with Verilator + ESPN front-end.' }
+        ]
       }
     };
 
@@ -1295,6 +1346,21 @@
         table.appendChild(tbody);
         tableWrap.appendChild(table);
         wrap.appendChild(tableWrap);
+      }
+
+      if (story.links && story.links.length) {
+        var linksWrap = document.createElement('p');
+        linksWrap.className = 'project-story-links';
+        story.links.forEach(function (item, i) {
+          if (i > 0) linksWrap.appendChild(document.createTextNode(' \u00b7 '));
+          var a = document.createElement('a');
+          a.href = item.href;
+          a.textContent = item.label;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          linksWrap.appendChild(a);
+        });
+        wrap.appendChild(linksWrap);
       }
 
       return wrap;
