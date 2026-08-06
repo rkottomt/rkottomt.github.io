@@ -1197,6 +1197,135 @@
         photos: [
           { src: A + 'nba-cover.jpg?v=3', caption: 'NBA In-Game Win Probability \u2014 SystemVerilog Monte Carlo engine with Verilator + ESPN front-end.' }
         ]
+      },
+      g34ltelemetry: {
+        title: 'G34L Fleet Telemetry Platform',
+        story: {
+          lead: 'A centralized service, hosted on a single VM, that periodically logs into optical shelves worldwide over SSH or Telnet, runs a defined command set (fan, temperature, PSU, and inventory), lands raw output into a data lake, parses it downstream into SQLite and InfluxDB, visualizes trends in Grafana, updates Jira inventory records, and alerts on-call staff in Microsoft Teams when readings breach thresholds.',
+          sections: [
+            {
+              heading: 'Why a fleet-wide shelf monitor?',
+              body: [
+                'G34L optical shelves are deployed globally, but health and inventory data only exist at login time\u2014scattered across CLI sessions, spreadsheets, and ad-hoc checks. Operations needs a single pipeline that collects the same commands on a schedule, preserves raw output for audit, and turns it into dashboards, alerts, and up-to-date Jira inventory without manual shelf visits.',
+                'The design keeps collection dumb and parsing smart: the collector writes verbatim CLI text to an append-only lake; downstream parsers produce structured records idempotently so re-parsing is always safe.'
+              ]
+            },
+            {
+              heading: 'Architecture at a glance',
+              body: [
+                'A version-controlled JSON inventory in Git tracks every G34L. The collector on the VM reads that file, pulls credentials from a secrets manager, and connects to each shelf in parallel (with a per-shelf mutex to prevent simultaneous logins).',
+                'Command output is written as-is to the raw data lake, tagged with shelf name, timestamp, and command. Parsers read unprocessed lake files within ~5 minutes of batch completion; inventory attributes upsert to SQLite, fan/temp/PSU time series append to InfluxDB. Grafana reads InfluxDB for dashboards and alert rules, firing a Teams webhook on sustained breach. Once a day, a Jira sync job reads the latest parsed state from SQLite and pushes diffs into PSSINV using Ryan Hausmann\u2019s wrapper.'
+              ]
+            },
+            {
+              heading: 'Collector & session handling',
+              body: [
+                'Netmiko provides unified SSH and Telnet handling. G34L shelves require entering a sub-CLI after login (client at the Linux prompt, exit at the end), so the session handler manages that prompt transition explicitly.',
+                'A parallel worker pool respects per-shelf mutexes. Per-command and per-session timeouts, exponential backoff on retries, and a heartbeat metric make a stalled collector itself alertable. Proposed cadence: fan/temperature/PSU every 5\u201310 minutes; full inventory hourly.'
+              ]
+            },
+            {
+              heading: 'Raw data lake layout',
+              body: [
+                'Every command\u2019s raw output lands append-only under lake/shelf=<name>/date=YYYY-MM-DD/<session_id>/. Each session carries _session.json (metadata and command manifest) plus one <command>.txt per CLI invocation\u2014verbatim, unparsed text.',
+                'Each entry records shelf_name, timestamp_utc, command string, raw_output, session_id, and exit_status (OK / timeout / auth-fail / parse-later). The lake is the source of truth; parsers never depend on live shelf access.'
+              ]
+            },
+            {
+              heading: 'Why SQLite and InfluxDB\u2014not one database',
+              body: [
+                'SQLite holds \u201cthe current state\u201d: parsed inventory attributes and an SN \u2192 PSSINV issue-key cache consumed by the daily Jira sync (SN, MAC, mnemonic, module APN, part type).',
+                'InfluxDB holds fan speed, temperature, and PSU time series\u2014purpose-built for range queries and native Grafana integration. SQLite is not a time-series store; InfluxDB is not designed for mutable relational inventory lookups. The raw lake stays unindexed text so future parsers can be added without re-collecting.'
+              ]
+            },
+            {
+              heading: 'Visualization, alerting & Jira sync',
+              body: [
+                'Grafana dashboards cover global overview, per-site, and per-shelf views. Grafana Alerting fires to Microsoft Teams on sustained breaches (e.g. temp > X \u00b0C for Y minutes) and sends automatic Resolved notifications when metrics return to normal.',
+                'The daily Jira sync uses Ryan\u2019s PSSINV wrapper for all interactions. For each component it looks up the issue via the local SN cache (falling back to find_by_sn on miss), creates from a golden-template record if none exists, updates only changed fields, and calls ensure_related to link every FRU (fan, IOP, PSU) to its parent shelf. A --dry-run mode logs planned writes without executing; 429/5xx responses retry with exponential backoff.'
+              ]
+            }
+          ],
+          specsTitle: 'Inventory record fields',
+          specs: [
+            'shelf_name \u2014 human-readable identifier',
+            'protocol \u2014 ssh or telnet',
+            'ip / port \u2014 connection endpoint',
+            'credentials_ref \u2014 pointer to secrets manager',
+            'enabled \u2014 skip shelf when false (e.g. under test)'
+          ],
+          loadTable: {
+            title: 'Inventory command set',
+            headers: ['Command', 'Target'],
+            rows: [
+              ['show inventory', 'Chassis-level inventory'],
+              ['show inventory-1-19', 'IOP 1'],
+              ['show inventory-1-23', 'IOP 2'],
+              ['show inventory-1-20', 'Fan 1'],
+              ['show inventory-1-21', 'Fan 2'],
+              ['show inventory-1-22', 'Fan 3'],
+              ['show inventory-1-24', 'PSU 1'],
+              ['show inventory-1-25', 'PSU 2']
+            ]
+          }
+        },
+        photos: []
+      },
+      f9t: {
+        title: 'ZED-F9T Timing Reference Setup',
+        story: {
+          lead: 'zedf9t_ctl is a Python 3 CLI that automates u-blox ZED-F9T (TIM firmware) bring-up: verify GNSS signal, acquire a 3D fix, run Survey-In, and configure 10 MHz TIMEPULSE1 output when locked\u2014over USB serial or I2C. It replaces a tedious, error-prone u-center click sequence with a repeatable five-step workflow state machine.',
+          sections: [
+            {
+              heading: 'The problem',
+              body: [
+                'Configuring a ZED-F9T evaluation kit for precision timing mode requires a multi-step UBX sequence\u2014signal check, fix acquisition, Survey-In, timepulse config\u2014that is tedious and error-prone in u-center, especially when repeating across lab benches.',
+                'Each bench needs the same sequence every time: confirm TIM firmware, wait for strong satellite visibility, lock a 3D fix, run Survey-In to a target accuracy, then enable a GNSS-locked 10 MHz reference output. Manual steps make it easy to skip a poll or misconfigure a CFG-VALSET key.'
+              ]
+            },
+            {
+              heading: 'What I built',
+              body: [
+                'zedf9t_ctl wraps the full workflow in a five-step state machine with rich step-by-step console output\u2014satellite count, fix type, survey progress\u2014so operators see exactly where the run is and what failed.',
+                'Dual transport support (USB VCP serial or I2C/DDC) sits behind a unified Transport abstraction. The UBX layer is a pyubx2 facade with stream parsing, ACK/NAK handling, and poll/wait helpers. The CLI supports an interactive transport prompt or full flag mode (--survey-accuracy, --freq-hz, --dry-run).'
+              ]
+            },
+            {
+              heading: 'Key features',
+              body: [
+                'Test pyramid: unit tests (UBX parsing, config builders), integration tests (mock end-to-end workflow), and hardware HIL (pytest -m hardware).',
+                'Typed message dataclasses for MON-VER, NAV-PVT, NAV-SAT, and NAV-SVIN. CFG-VALSET builders for Survey-In duration/accuracy and TIMEPULSE1 lock frequency, with VALGET verify after writes.',
+                'Configurable timeouts: signal (120 s), fix (180 s), survey (600 s default). --dry-run stops before writing config\u2014useful for signal validation on a new bench without altering receiver state.'
+              ]
+            },
+            {
+              heading: 'Outcomes & proof points',
+              body: [
+                '14/14 mock tests passing (unit + integration + CLI smoke). Full mock E2E workflow test covers initialize \u2192 survey \u2192 10 MHz configuration.',
+                'Hardware identity test passing on live EVK: MON-VER on COM4 confirmed ZED-F9T-20B TIM 2.25. Published to Nokia GitLab with milestone-based development (M0\u2013M7).'
+              ]
+            }
+          ],
+          specsTitle: 'Stack',
+          specs: [
+            'Python 3, pyubx2, pyserial, smbus2 (I2C), rich, pytest',
+            'UBX: MON-VER, NAV-PVT, NAV-SAT, TIM-SVIN; CFG-VALSET for Survey-In and TIMEPULSE1',
+            'Transports: USB serial (VCP) and I2C (DDC) via unified abstraction',
+            'CLI flags: --survey-accuracy, --freq-hz, --dry-run; interactive or full flag mode'
+          ],
+          loadTable: {
+            title: 'Five-step workflow',
+            headers: ['Step', 'Action'],
+            rows: [
+              ['1', 'Initialize \u2014 poll MON-VER, confirm ZED-F9T TIM firmware, wait for \u22654 SVs at \u226530 dB-Hz'],
+              ['2', 'GNSS lock \u2014 poll NAV-PVT until 3D fix'],
+              ['3', 'Survey-In \u2014 CFG-VALSET for survey duration/accuracy, confirm active'],
+              ['4', 'Survey wait \u2014 poll TIM-SVIN until complete, capture ECEF position'],
+              ['5', 'Timepulse \u2014 configure TIMEPULSE1 for 10 MHz when GNSS-locked; VALGET verify']
+            ]
+          }
+        },
+        photos: []
       }
     };
 
