@@ -282,11 +282,11 @@ body {
   50% { transform: translateY(6px); opacity: 1; }
 }
 
-/* Hero background shuffle control */
-.hero-shuffle {
+/* Hero background shuffle control + play link (mirrored corners) */
+.hero-shuffle,
+.hero-play {
   position: absolute;
   bottom: 30px;
-  left: 40px;
   z-index: 2;
   display: inline-flex;
   align-items: center;
@@ -301,10 +301,15 @@ body {
   text-transform: uppercase;
   color: var(--text-secondary);
   cursor: pointer;
+  text-decoration: none;
   transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 
-.hero-shuffle:hover {
+.hero-shuffle { left: 40px; }
+.hero-play { right: 40px; }
+
+.hero-shuffle:hover,
+.hero-play:hover {
   color: var(--text-primary);
   border-color: var(--text-secondary);
   background: var(--chip-hover);
@@ -312,6 +317,7 @@ body {
 
 @media (max-width: 768px) {
   .hero-shuffle { left: 22px; bottom: 24px; }
+  .hero-play { right: 22px; bottom: 24px; }
 }
 
 /* ===================== ABOUT ME (full screen) ===================== */
