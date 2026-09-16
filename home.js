@@ -1326,6 +1326,52 @@
           }
         },
         photos: []
+      },
+      wikihl: {
+        title: 'Wiki Higher or Lower',
+        story: {
+          lead: 'A browser game and data explorer built on the Wikimedia Pageviews API for CMU 15-113 (Effective Coding with AI). Play higher-or-lower with real monthly view counts, chart how attention to up to four articles changes over time, and browse each month\u2019s most-read pages\u2014live data back to July 2015 in seven Wikipedia languages, as a static site with no API key or backend.',
+          sections: [
+            {
+              heading: 'Turning a noisy feed into a fair game',
+              body: [
+                'The monthly top-1000 endpoint is not a clean list of articles. It includes the Main Page, Special:Search, File: pages, and automated traffic that slips past Wikimedia\u2019s own bot filter\u2014pages like \u201c.xyz\u201d and \u201cJSON-LD\u201d with 96\u2013100% of their views from a single device type.',
+                'I filter non-articles using each wiki\u2019s own namespace names (so German \u201cSpezial:\u201d pages are caught too), and flag likely bots by joining the all-access, desktop, and mobile-web top lists: more than 90% desktop or 95% mobile web is removed, with every exclusion and its reason shown in a Top charts table. Opponents are then chosen by view ratio, so Easy, Normal, and Hard are genuinely different.'
+              ]
+            },
+            {
+              heading: 'Handling the API\u2019s sharp edges',
+              body: [
+                'Reading raw responses before writing code surfaced several traps: redirects are counted separately (\u201cObama\u201d gets a few thousand views while \u201cBarack Obama\u201d gets the real total), a misspelled title returns the same 404 as \u201cno data\u201d, zero-view days are silently omitted, and last month\u2019s rankings may not be published yet.',
+                'The app resolves titles and redirects through the MediaWiki API first and offers \u201cDid you mean\u2026?\u201d suggestions, zero-fills series so charts never skip days, and falls back a month when needed. Every request goes through one module with timeouts, caching, and typed errors, so going offline, rate limiting (429), or a server error produces a clear message and a working retry instead of a crash.'
+              ]
+            },
+            {
+              heading: 'Front end without dependencies',
+              body: [
+                'Everything is vanilla JavaScript modules with no framework or build step. The line chart and sparklines are hand-written SVG with a crosshair tooltip and keyboard control, colors come from a colorblind-validated palette in light and dark mode, and every chart has a table view. Compare links are shareable because the chart state lives in the URL.',
+                'The logic is covered by node:test unit tests with a mocked fetch, and scripted headless-Chromium runs exercised full games, typos, redirects, a German-language shared link, phone-sized dark mode, and offline recovery\u2014catching an autocomplete off-by-one, cropped portraits, and mobile overflow before release.'
+              ]
+            }
+          ],
+          specsTitle: 'Stack & APIs',
+          specs: [
+            'Vanilla JavaScript (ES modules), HTML, and CSS; hosted on GitHub Pages',
+            'Wikimedia Pageviews REST API: per-article daily/monthly views and monthly top-1000 by device type',
+            'MediaWiki Action and REST APIs: redirect resolution, spelling suggestions, thumbnails, autocomplete',
+            'Hand-written SVG charts with crosshair tooltips; colorblind-validated palette; light and dark mode',
+            'node:test unit tests with mocked fetch; scripted headless-Chromium checks'
+          ],
+          links: [
+            { href: 'https://rkottomt.github.io/wiki-higher-lower/', label: 'Play Wiki Higher or Lower' },
+            { href: 'https://github.com/rkottomt/wiki-higher-lower', label: 'Source on GitHub' }
+          ]
+        },
+        photos: [
+          { src: A + 'wikihl-row-cover.jpg?v=1', caption: 'Play \u2014 guess whether the next article got more or fewer views; daily sparklines appear after each reveal.' },
+          { src: A + 'wikihl-compare.jpg?v=1', caption: 'Compare \u2014 daily views for up to four articles with a crosshair tooltip and shareable URL.' },
+          { src: A + 'wikihl-top-charts.jpg?v=1', caption: 'Top charts \u2014 the month\u2019s most-read articles, with device split on hover.' }
+        ]
       }
     };
 
