@@ -1340,6 +1340,13 @@
               ]
             },
             {
+              heading: 'Keeping explicit content out',
+              body: [
+                'Wikipedia is an encyclopedia, not a curated all-ages image source. Articles like \u201cErection\u201d really do appear in a month\u2019s 1,000 most-viewed pages, and their lead images are explicit photographs \u2014 which is exactly what the first version of this project served up in a game round.',
+                'The filter reads four signals from Wikipedia\u2019s own metadata: the title, the short description, the article\u2019s categories (\u201cCategory:Penis\u201d, \u201cCategory:Pornographic film actresses\u201d), and even the page image\u2019s file name. Any one of them removes the article, before it can be shown, charted, or suggested in search. I checked it against the live top-1,000 lists in all seven languages rather than assuming it worked, which is how I found gaps in the non-English phrasings and false positives worth fixing: a film \u201cabout prostitution in India\u201d, a journalist filed under \u201cAnti-pedophile activism\u201d, and the French town of Pornic. Sexual orientation and gender identity are deliberately never treated as adult content, and tests cover that.'
+              ]
+            },
+            {
               heading: 'Handling the API\u2019s sharp edges',
               body: [
                 'Reading raw responses before writing code surfaced several traps: redirects are counted separately (\u201cObama\u201d gets a few thousand views while \u201cBarack Obama\u201d gets the real total), a misspelled title returns the same 404 as \u201cno data\u201d, zero-view days are silently omitted, and last month\u2019s rankings may not be published yet.',
@@ -1360,6 +1367,7 @@
             'Wikimedia Pageviews REST API: per-article daily/monthly views and monthly top-1000 by device type',
             'MediaWiki Action and REST APIs: redirect resolution, spelling suggestions, thumbnails, autocomplete',
             'Hand-written SVG charts with crosshair tooltips; colorblind-validated palette; light and dark mode',
+            'Content filter on titles, descriptions, categories, and image file names, validated against live data in all seven languages',
             'node:test unit tests with mocked fetch; scripted headless-Chromium checks'
           ],
           links: [
