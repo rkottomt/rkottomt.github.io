@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="themes/theme-sage-cream.css?v=1">
   <link rel="stylesheet" href="style.css?v=11">
-  <link rel="stylesheet" href="home.css?v=35">
+  <link rel="stylesheet" href="home.css?v=36">
 </head>
 <body>
   <a class="skip-link" href="#about" data-target="about">Skip to content</a>
@@ -537,6 +537,28 @@
             <a class="contact-cta" href="https://www.linkedin.com/in/rohit-kottomtharayil/" target="_blank" rel="noopener">LinkedIn</a>
             <a class="contact-cta" href="resume.html">Résumé</a>
           </div>
+
+          <form class="ask-form" id="askForm" novalidate>
+            <p class="ask-lede">Or ask me a question here &mdash; it goes straight to my inbox.</p>
+            <div class="ask-row">
+              <label class="ask-field">
+                <span>Name</span>
+                <input type="text" name="name" maxlength="100" autocomplete="name" required>
+              </label>
+              <label class="ask-field">
+                <span>Email</span>
+                <input type="email" name="email" maxlength="200" autocomplete="email" required>
+              </label>
+            </div>
+            <label class="ask-field">
+              <span>Question <em class="ask-count" id="askCount">0/2000</em></span>
+              <textarea name="question" rows="5" maxlength="2000" required></textarea>
+            </label>
+            <div class="ask-footer">
+              <p class="ask-status" id="askStatus" role="status" aria-live="polite"></p>
+              <button type="submit" class="contact-cta contact-cta-primary" id="askSubmit">Send question</button>
+            </div>
+          </form>
         </div>
         <div class="contact-marquee" aria-hidden="true">
           <div class="contact-marquee-inner">
@@ -622,6 +644,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollToPlugin.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
   <script src="home.js?v=35"></script>
+  <script src="ask-form.js?v=1"></script>
   <script type="module" src="hero-backgrounds.js?v=5"></script>
 </body>
 </html>
