@@ -1380,6 +1380,120 @@
           { src: A + 'wikihl-compare.jpg?v=1', caption: 'Compare \u2014 daily views for up to four articles with a crosshair tooltip and shareable URL.' },
           { src: A + 'wikihl-top-charts.jpg?v=1', caption: 'Top charts \u2014 the month\u2019s most-read articles, with device split on hover.' }
         ]
+      },
+      deluge: {
+        title: 'Deluge: Real-Time Flood Simulation',
+        story: {
+          lead: 'Deluge loads real elevation data\u2014USGS 3DEP in the US, Copernicus GLO-30 elsewhere\u2014and solves the 2-D shallow-water equations on the GPU with WebGPU compute shaders, live in a browser tab. Raise the rivers to Pittsburgh\u2019s 1936 crest, build a levee and see the land it keeps dry, crank the rain, and watch an evacuation route re-plan as roads go under. Built for SteelHacks in the No Wrapper track: no language models anywhere in the product.',
+          sections: [
+            {
+              heading: 'Keeping an explicit solver stable on real terrain',
+              body: [
+                'An explicit shallow-water solver on real terrain wants to explode: rivers are deep and fast, floodplains are centimetre-thin films, walls and streets are one cell wide, and everything runs in Float32 on a GPU in parallel.',
+                'Four ingredients keep it stable and exact: a CFL-adaptive timestep using the 2-D Courant number, semi-implicit friction that can only slow water down, a positivity-preserving flux limiter so depth stays \u2265 0 without clamping, and well-balanced face depths so a lake at rest on steep, rough terrain stays at rest. A per-cell ledger books every change to the water\u2014even the GPU\u2019s own rounding\u2014so mass-balance error stays around 10\u207b\u2077 after hours of simulated flooding.'
+              ]
+            },
+            {
+              heading: 'From rising water to decisions',
+              body: [
+                'An Impact & loss panel turns the flood on screen into buildings reached, damaged and destroyed, with a dollar-loss range from JRC depth\u2013damage curves and AIDR H1\u2013H6 hazard classes. A parcel-level Site check gives developers and lenders depth, warning time, when the escape route closes, and what a wall or raised floor would save.',
+                'Beyond rivers and rain: breach any of ~55,000 dams in the National Inventory of Dams and watch the wave arrive down the valley, set a coastal site against NOAA tide-gauge extremes, run GPU ensembles for flood-probability maps, and project 2050\u20132100 climate scenarios.'
+              ]
+            },
+            {
+              heading: 'Glacier hazards in the Himalaya',
+              body: [
+                'Three real events\u2014Nepal 2026, Sikkim 2023, and Chamoli 2021\u2014run as a hazard chain: a glacial-lake breach or rock-ice avalanche, its outflow hydrograph, 1-D routing tens of kilometres down a DEM-derived valley past hydropower plants and towns, then a debris-flow rheology on the 2-D map.',
+                'An early-warning designer places sensors along the valley and shows how many minutes of lead time each town and plant would get. Each scenario reports its error against what was observed rather than being tuned to fit.'
+              ]
+            },
+            {
+              heading: 'Validated, not just pretty',
+              body: [
+                'The solver is tested on a real GPU: a dam break matches the Ritter analytic solution to 1.6%, GPU Float32 tracks a Float64 CPU reference to within 4.3\u00d710\u207b\u2075 m, and a 16\u00d7-finer grid agrees on flooded area to about 1%.',
+                'Against real floods, Hurricane Ian in Fort Myers lands within \u00b10.3 m of all 25 USGS high-water marks (RMSE 0.14 m), and the FEMA 1% flood zone is reproduced with a CSI of 88% in Fort Myers and 82% in Nashville. The misses\u2014Harvey and Helene run low\u2014are documented with their likely causes.'
+              ]
+            }
+          ],
+          specsTitle: 'Stack & data',
+          specs: [
+            'TypeScript + Vite; WGSL compute shaders on WebGPU; Web Workers for the glacier hazard chain',
+            'Terrain: USGS 3DEP and Copernicus GLO-30; imagery and roads from Esri and Census TIGERweb',
+            'Hazards: National Inventory of Dams (Froehlich 2008 breach), NOAA extreme water levels, JRC depth\u2013damage curves',
+            'Performance: 60 fps at ~70\u00d7 real time on an Apple M4, with adaptive substeps and render resolution',
+            'Testing: GPU solver tests through Dawn, plus end-to-end, performance, visual-glitch, and security suites',
+            'Ships as a static site and as an Electron desktop build for offline demos'
+          ],
+          links: [
+            { href: 'https://deluge-ruby.vercel.app', label: 'Try Deluge (needs a WebGPU browser)' },
+            { href: 'https://github.com/rkottomt/deluge-flood-sim', label: 'Source on GitHub' }
+          ]
+        },
+        photos: [
+          { src: A + 'deluge-1936-crest.jpg?v=1', caption: 'Pittsburgh at the 1936 St. Patrick\u2019s Day crest\u2014downtown, the North Shore, and the Strip District under water, solved live on the GPU.' },
+          { src: A + 'deluge-levee.jpg?v=1', caption: 'A one-click levee along the North Shore: the land it keeps dry turns green\u2014about 139 acres and 11 km of streets at the crest.' },
+          { src: A + 'deluge-evacuate.jpg?v=1', caption: 'Evacuation routing to the nearest dry shelter, re-planned as streets flood.' }
+        ]
+      },
+      rv32: {
+        title: 'RV32IMC Pipelined RISC-V Core',
+        story: {
+          lead: 'A 5-stage, in-order, pipelined RISC-V processor (RV32IMC + Zicsr, machine mode) written in Verilog, with caches, branch prediction, and a small SoC\u2014verified with the techniques an industry design-verification team uses: golden-model co-simulation, constrained-random stimulus with functional coverage, formal proofs, and mutation testing. It runs on a Lattice ECP5 FPGA through a fully open-source flow.',
+          sections: [
+            {
+              heading: 'Micro-architecture',
+              body: [
+                'IF \u2192 ID \u2192 EX \u2192 MEM \u2192 WB with full forwarding, a 1-cycle load-use penalty, and precise exceptions at the MEM commit point. M-mode traps and timer, software, and external interrupts with vectored mtvec, plus performance counters.',
+                'A decoupled front end with a 4-entry fetch queue and an aligner for 16- and 32-bit instructions\u2014including ones straddling two words\u2014feeds a BTB, gshare predictor, and return-address stack. Behind it sit a 2-way I-cache with pipelined hits and a 2-way write-back D-cache with store-to-load bypass and FENCE.I coherence.'
+              ]
+            },
+            {
+              heading: 'Verification like an industry DV team',
+              body: [
+                'An independent Python ISS runs in lock-step over RVFI and checks nine architectural fields on every retired instruction. A constrained-random generator produces hazard-dense code, traps, random bus latency and back-pressure, and random interrupts; 500+ seeds pass on both the core and a tiny-cache SoC with slow memory.',
+                'Functional coverage across instructions \u00d7 hazards \u00d7 branches \u00d7 memory \u00d7 traps \u00d7 alignment reached 100% (234/234 bins) after coverage-driven generator improvements. riscv-formal on SymbiYosys passes all 77 checks, and mutation testing caught 16 of 16 realistic injected bugs in forwarding, hazard, cache, predictor, and CSR logic.'
+              ]
+            },
+            {
+              heading: 'Real bugs found and fixed',
+              body: [
+                'Each verification method earned its keep: random co-simulation exposed a divider operand race under memory latency, riscv-tests caught a minstret commit-point bug, formal found an RVFI interrupt-flag corner case, synthesis lint flagged a CSR latch, and performance profiling uncovered a branch-predictor design flaw that was costing 11% IPC.'
+              ]
+            },
+            {
+              heading: 'Performance and timing closure',
+              body: [
+                'A CoreMark and Dhrystone design-space study drove the predictor and cache choices, landing at 2.88 CoreMark/MHz and 1.03 DMIPS/MHz with a CoreMark IPC of 0.81.',
+                'On an ECP5-85F (ULX3S) the SoC uses 17% of LUTs and 24% of BRAM, and critical-path work raised Fmax from 24.7 MHz to 34.7 MHz.'
+              ]
+            }
+          ],
+          specsTitle: 'Stack & tools',
+          specs: [
+            'Verilog RTL; Verilator testbenches; cocotb unit tests, including an exhaustive 49,152-encoding RVC expander check',
+            'Official riscv-tests: 113/113 pass on the core and cached SoC, including under 40% random bus stalls',
+            'riscv-formal on SymbiYosys (BMC, Yices): 77/77 checks',
+            'Verilator line + toggle code coverage: 92%, holes closed with directed tests',
+            'SoC: bus arbiter, 64 KiB RAM, CLINT timer, UART, GPIO',
+            'Open-source FPGA flow: Yosys + nextpnr for Lattice ECP5 (ULX3S)'
+          ],
+          loadTable: {
+            title: 'Verification at a glance',
+            headers: ['Method', 'Result'],
+            rows: [
+              ['Official riscv-tests (rv32ui/um/uc/mi)', '113/113 pass'],
+              ['Lock-step ISS co-simulation', 'Every retired instruction checked'],
+              ['Constrained-random regression', '500+ seeds pass'],
+              ['Functional coverage', '100% (234/234 bins)'],
+              ['riscv-formal', '77/77 pass'],
+              ['Mutation testing', '16/16 bugs detected']
+            ]
+          },
+          links: [
+            { href: 'https://github.com/rkottomt/rv32imc-pipelined-core', label: 'Source on GitHub' }
+          ]
+        },
+        photos: []
       }
     };
 
