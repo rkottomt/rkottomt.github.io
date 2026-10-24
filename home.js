@@ -1327,59 +1327,56 @@
         },
         photos: []
       },
-      wikihl: {
-        title: 'Wiki Higher or Lower',
+      ideacheck: {
+        title: 'Research Idea Checker',
         story: {
-          lead: 'A browser game and data explorer built on the Wikimedia Pageviews API for CMU 15-113 (Effective Coding with AI). Play higher-or-lower with real monthly view counts, chart how attention to up to four articles changes over time, and browse each month\u2019s most-read pages\u2014live data back to July 2015 in seven Wikipedia languages, as a static site with no API key or backend.',
+          lead: 'A command-line research assistant built with a vector database for CMU 15-114 (Effective Coding with AI). Describe an idea in plain English and it searches a persistent ChromaDB store of 1,944 arXiv papers from cs.AR, cs.CV, and cs.LG (2019–2025, plus a targeted FPGA search, since arXiv has no FPGA category) for the closest prior work, rates how crowded the area is, and writes a related-work summary with checked citations. Papers you add and ideas you save become searchable immediately.',
           sections: [
             {
-              heading: 'Turning a noisy feed into a fair game',
+              heading: 'Plain English in, prior work out',
               body: [
-                'The monthly top-1000 endpoint is not a clean list of articles. It includes the Main Page, Special:Search, File: pages, and automated traffic that slips past Wikimedia\u2019s own bot filter\u2014pages like \u201c.xyz\u201d and \u201cJSON-LD\u201d with 96\u2013100% of their views from a single device type.',
-                'I filter non-articles using each wiki\u2019s own namespace names (so German \u201cSpezial:\u201d pages are caught too), and flag likely bots by joining the all-access, desktop, and mobile-web top lists: more than 90% desktop or 95% mobile web is removed, with every exclusion and its reason shown in a Top charts table. Opponents are then chosen by view ratio, so Easy, Normal, and Hard are genuinely different.'
+                'Researchers and newcomers rarely use the same words. “Reprogrammable silicon that runs deep nets faster” shares only the word “deep” with an FPGA deep-learning survey, so keyword search ranks that survey 501st of 1,944; embedding search ranks it first. “An AI that keeps adding to what it knows without wiping out earlier lessons” finds continual-learning papers that share no content words with the query and that keyword search ranks around 1,600th.',
+                'Testing exposed the opposite failure too: a plain-English description of knowledge distillation came back “LOOKS OPEN”, with Hinton’s distillation paper ranked 26th. When an OpenAI key is set, the app now restates the idea in standard research terms, searches with both phrasings, and labels any paper that only the rewrite found.'
               ]
             },
             {
-              heading: 'Keeping explicit content out',
+              heading: 'A novelty score with a baseline',
               body: [
-                'Wikipedia is an encyclopedia, not a curated all-ages image source. Articles like \u201cErection\u201d really do appear in a month\u2019s 1,000 most-viewed pages, and their lead images are explicit photographs \u2014 which is exactly what the first version of this project served up in a game round.',
-                'The filter reads four signals from Wikipedia\u2019s own metadata: the title, the short description, the article\u2019s categories (\u201cCategory:Penis\u201d, \u201cCategory:Pornographic film actresses\u201d), and even the page image\u2019s file name. Any one of them removes the article, before it can be shown, charted, or suggested in search. I checked it against the live top-1,000 lists in all seven languages rather than assuming it worked, which is how I found gaps in the non-English phrasings and false positives worth fixing: a film \u201cabout prostitution in India\u201d, a journalist filed under \u201cAnti-pedophile activism\u201d, and the French town of Pornic. Sexual orientation and gender identity are deliberately never treated as adult content, and tests cover that.'
+                'A raw cosine distance means little on its own, so the verdict is calibrated against the corpus itself: 300 paper titles are used as queries, and an idea’s nearest-paper distance is ranked against their nearest-neighbour distances. Thresholds come from measurements, including an off-topic cutoff set between real matches (0.27–0.63) and nonsense queries (0.68–0.84).',
+                'The related-work summary is written only from the retrieved abstracts. Every [n] citation is parsed and checked against the papers the model was given, and the app warns if it cites one it never saw.'
               ]
             },
             {
-              heading: 'Handling the API\u2019s sharp edges',
+              heading: 'Measuring instead of trusting one example',
               body: [
-                'Reading raw responses before writing code surfaced several traps: redirects are counted separately (\u201cObama\u201d gets a few thousand views while \u201cBarack Obama\u201d gets the real total), a misspelled title returns the same 404 as \u201cno data\u201d, zero-view days are silently omitted, and last month\u2019s rankings may not be published yet.',
-                'The app resolves titles and redirects through the MediaWiki API first and offers \u201cDid you mean\u2026?\u201d suggestions, zero-fills series so charts never skip days, and falls back a month when needed. Every request goes through one module with timeouts, caching, and typed errors, so going offline, rate limiting (429), or a server error produces a clear message and a working retry instead of a crash.'
-              ]
-            },
-            {
-              heading: 'Front end without dependencies',
-              body: [
-                'Everything is vanilla JavaScript modules with no framework or build step. The line chart and sparklines are hand-written SVG with a crosshair tooltip and keyboard control, colors come from a colorblind-validated palette in light and dark mode, and every chart has a table view. Compare links are shareable because the chart state lives in the URL.',
-                'The logic is covered by node:test unit tests with a mocked fetch, and scripted headless-Chromium runs exercised full games, typos, redirects, a German-language shared link, phone-sized dark mode, and offline recovery\u2014catching an autocomplete off-by-one, cropped portraits, and mobile overflow before release.'
+                'A 30-idea evaluation, drawn at random from the store across all three categories, reports hit@5 for each search strategy. It also showed that the merged search was effectively rewrite-only (93% of its top results came from the rewrite), and that a deliberately wrong rewrite could produce 22 false “VERY CLOSE MATCH” verdicts out of 30. A distance check between the idea and its rewrite at 0.56 separated all 30 faithful rewrites from all 30 wrong ones in this test set. The test descriptions were AI-written while reading each abstract, so the numbers are a guide rather than a benchmark.',
+                'Other checks kept the claims honest: the store covers 0.57% of the 339,278 arXiv papers in these categories, so “LOOKS OPEN” only means open in this sample; plain-English wording lands a median 0.227 farther from papers than technical wording, which argues for a warning rather than shifted thresholds; and a sampling check found that 87% of the corpus came from June or December, because the downloader took each half-year’s newest submissions.'
               ]
             }
           ],
-          specsTitle: 'Stack & APIs',
+          specsTitle: 'Stack',
           specs: [
-            'Vanilla JavaScript (ES modules), HTML, and CSS; hosted on GitHub Pages',
-            'Wikimedia Pageviews REST API: per-article daily/monthly views and monthly top-1000 by device type',
-            'MediaWiki Action and REST APIs: redirect resolution, spelling suggestions, thumbnails, autocomplete',
-            'Hand-written SVG charts with crosshair tooltips; colorblind-validated palette; light and dark mode',
-            'Content filter on titles, descriptions, categories, and image file names, validated against live data in all seven languages',
-            'node:test unit tests with mocked fetch; scripted headless-Chromium checks'
+            'Python 3.9; ChromaDB 1.5.9 PersistentClient with cosine distance',
+            'all-MiniLM-L6-v2 embeddings (ONNX, 384 dimensions), run locally with no API key',
+            'arXiv API for the corpus and for adding papers by ID or URL; duplicate and near-duplicate checks',
+            'OpenAI gpt-5.4-mini (optional) for the research-terms rewrite and related-work summary',
+            'Metadata filters by category, year, and source; papers and saved ideas share one collection',
+            'Evaluation scripts: hit@k and MRR, rewrite-drift and fusion stress tests, corpus coverage against live arXiv'
           ],
+          loadTable: {
+            title: 'Retrieval on 30 test ideas (plain-English wording)',
+            headers: ['Search', 'hit@5', 'MRR'],
+            rows: [
+              ['Vector search only', '19/30', '0.540'],
+              ['LLM rewrite only', '24/30', '0.769'],
+              ['Both phrasings merged (app default)', '24/30', '0.769']
+            ]
+          },
           links: [
-            { href: 'https://rkottomt.github.io/wiki-higher-lower/', label: 'Play Wiki Higher or Lower' },
-            { href: 'https://github.com/rkottomt/wiki-higher-lower', label: 'Source on GitHub' }
+            { href: 'https://github.com/rkottomt/research-idea-checker', label: 'Source on GitHub' }
           ]
         },
-        photos: [
-          { src: A + 'wikihl-row-cover.jpg?v=1', caption: 'Play \u2014 guess whether the next article got more or fewer views; daily sparklines appear after each reveal.' },
-          { src: A + 'wikihl-compare.jpg?v=1', caption: 'Compare \u2014 daily views for up to four articles with a crosshair tooltip and shareable URL.' },
-          { src: A + 'wikihl-top-charts.jpg?v=1', caption: 'Top charts \u2014 the month\u2019s most-read articles, with device split on hover.' }
-        ]
+        photos: []
       },
       deluge: {
         title: 'Deluge: Real-Time Flood Simulation',
